@@ -1,0 +1,88 @@
+{
+    "elements":
+            [
+            ],
+    "actions":
+            [
+                {
+                    "name": "ValueR",
+                    "type": "NumberSpinner",
+                    "caption": "R"
+                },
+                {
+                    "name": "ValueG",
+                    "type": "NumberSpinner",
+                    "caption": "G"
+                },
+                {
+                    "name": "ValueB",
+                    "type": "NumberSpinner",
+                    "caption": "B"
+                },
+                {
+                    "name": "Fade",
+                    "type": "NumberSpinner",
+                    "caption": "Fadetime"
+                },
+                {
+                    "type": "Button",
+                    "label": "Set RGB",
+                    "onClick": "MS35_SetRGB($id, $ValueR, $ValueG, $ValueB);"
+                },
+                {
+                    "name": "ValueP",
+                    "type": "NumberSpinner",
+                    "caption": "Program"
+                },
+                {
+                    "type": "Button",
+                    "label": "Start Program",
+                    "onClick": "MS35_RunProgram($id, $ValueP);"
+                },
+                {
+                    "name": "ValueS",
+                    "type": "NumberSpinner",
+                    "caption": "Speed"
+                },
+                {
+                    "type": "Button",
+                    "label": "Set Speed",
+                    "onClick": "MS35_SetSpeed($id, $ValueS);"
+                },
+                {
+                    "name": "ValueH",
+                    "type": "NumberSpinner",
+                    "caption": "Brightness"
+                },
+                {
+                    "type": "Button",
+                    "label": "Set Brightness",
+                    "onClick": "MS35_SetBrightness($id, $ValueH);"
+                },
+                {
+                    "type": "Button",
+                    "label": "Play",
+                    "onClick": "MS35_Play($id);"
+                },
+                {
+                    "type": "Button",
+                    "label": "Pause",
+                    "onClick": "MS35_Pause($id);"
+                },
+                {
+                    "type": "Button",
+                    "label": "Stop",
+                    "onClick": "MS35_Stop($id);"
+                },
+                {
+                    "type": "Button",
+                    "label": "ON",
+                    "onClick": "MS35_Switch($id, true);"
+                },
+                {
+                    "type": "Button",
+                    "label": "OFF",
+                    "onClick": "MS35_Switch($id, false);"
+                }
+            ]
+}
