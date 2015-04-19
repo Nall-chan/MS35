@@ -1,7 +1,10 @@
 <?
-class MS35 extends IPSModule {
 
-    public function __construct($InstanceID) {
+class MS35 extends IPSModule
+{
+
+    public function __construct($InstanceID)
+    {
 
         //Never delete this line!
         parent::__construct($InstanceID);
@@ -9,31 +12,97 @@ class MS35 extends IPSModule {
         //You cannot use variables here. Just static values.
         /*
          *   fInitRunLock    := TCriticalSection.Create();
-  fReadReplyLock  := TCriticalSection.Create();
-  fReadReplyEvent := TEvent.Create(nil,false,false,'fReadyToReadReply'+inttostr(fInstanceID),true);
-  fErrorLock      := TCriticalSection.Create();
-  RegisterVariable('STATE', 'STATE', vtBoolean, '~Switch', ActionHandler);
-  RegisterVariable('Program', 'Program', vtInteger, 'MS35.Program', ActionHandler);
-  RegisterVariable('Speed', 'Speed', vtInteger, 'MS35.Speed',ActionHandler);
-  RegisterVariable('Brightness', 'Brightness', vtInteger, 'MS35.Brightness',ActionHandler);
-  RegisterVariable('Play', 'Play', vtInteger, 'MS35.PrgStatus',ActionHandler);
+          fReadReplyLock  := TCriticalSection.Create();
+          fReadReplyEvent := TEvent.Create(nil,false,false,'fReadyToReadReply'+inttostr(fInstanceID),true);
+          fErrorLock      := TCriticalSection.Create(); */
+        $this->CreateProfil();
 
-  RegisterVariable('Color', 'Color', vtInteger, '~HexColor', ActionHandler);
-
-  RequireParent(IIPSSerialPort, True);
-         */
+        $this->RegisterVariableBoolean('STATE', 'STATE', '~Switch', 1);
+        $this->EnableAction('STATE');
+        $this->RegisterVariableInteger('Color', 'Color', '~HexColor', 2);
+        $this->EnableAction('Color');
+        $this->RegisterVariableInteger('Program', 'Program', 'MS35.Program', 3);
+        $this->EnableAction('Program');
+        $this->RegisterVariableInteger('Play', 'Play', 'MS35.PrgStatus', 4);
+        $this->EnableAction('Play');
+        $this->RegisterVariableInteger('Speed', 'Speed', 'MS35.Speed', 5);
+        $this->EnableAction('Speed');
+        $this->RegisterVariableInteger('Brightness', 'Brightness', 'MS35.Brightness', 6);
+        $this->EnableAction('Brightness');
+//        $this->ConnectParent("{A151ECE9-D733-4FB9-AA15-7F7DD10C58AF}");        
     }
 
-    public function ApplyChanges() {
+    public function ApplyChanges()
+    {
         //Never delete this line!
         parent::ApplyChanges();
     }
 
-################## PRIVATE     
+    public function ReceiveData($JSONString)
+    {
+//        IPS_LogMessage(__CLASS__, __FUNCTION__); // 
+        //FIXME Bei Status inaktiv abbrechen
+        IPS_LogMessage('RecData'.$this->InstanceID, print_r(json_decode($JSONString)->Buffer), true);
+    }
+
+################## PRIVATE    
+
+    private function CreateProfil()
+    {
+        //IPS_LogMessage(__CLASS__, __FUNCTION__); //            
+        if (!IPS_VariableProfileExists('MS35.Program'))
+        {
+            IPS_CreateVariableProfile('MS35.Program', 1);
+            //IPS_SetVariableProfileAssociation('Execute.HM', 0, 'Start', '', -1);
+        }
+        if (!IPS_VariableProfileExists('MS35.PrgStatus'))
+        {
+            IPS_CreateVariableProfile('MS35.PrgStatus', 1);
+            //IPS_SetVariableProfileAssociation('Execute.HM', 0, 'Start', '', -1);
+        }
+        if (!IPS_VariableProfileExists('MS35.Speed'))
+        {
+            IPS_CreateVariableProfile('MS35.Speed', 1);
+            //IPS_SetVariableProfileAssociation('Execute.HM', 0, 'Start', '', -1);
+        }
+        if (!IPS_VariableProfileExists('MS35.Brightness'))
+        {
+            IPS_CreateVariableProfile('MS35.Brightness', 1);
+            //IPS_SetVariableProfileAssociation('Execute.HM', 0, 'Start', '', -1);
+        }
+    }
+
+    private function SendInit()
+    {
+        for ($i = 0; $i < 9; $i++)
+        {
+            $result = $this->SendDataToParent(json_encode(Array("DataID" => "{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}", "Buffer" => chr(0xFD))));
+            IPS_LogMessage('ResponseData'. $this->InstanceID, print_r($result, true));
+        }
+    }
 
 ################## ActionHandler
 
-    public function ActionHandler($StatusVariableIdent, $Value) {
+    public function RequestAction($Ident, $Value)
+    {
+        //IPS_LogMessage(__CLASS__, __FUNCTION__ . ' Ident:.' . $Ident); //     
+        //unset($Value);
+        switch ($Ident)
+        {
+            case 'STATE':
+                $this->SendInit();
+                break;
+            case 'Color':
+                break;
+            case 'Program':
+                break;
+            case 'Play':
+                break;
+            case 'Speed':
+                break;
+            case 'Brightness':
+                break;
+        }
     }
 
 ################## PUBLIC
@@ -42,9 +111,10 @@ class MS35 extends IPSModule {
      * Using the custom prefix this function will be callable from PHP and JSON-RPC through:
      */
 
-    public function SendSwitch($State) {
+    public function SendSwitch($State)
+    {
+        
     }
-
 
 ################## DUMMYS / WOARKAROUNDS - protected
 
@@ -61,23 +131,28 @@ class MS35 extends IPSModule {
         return false;
     }
 
-    protected function SetStatus($data) {
+    protected function SetStatus($data)
+    {
         IPS_LogMessage(__CLASS__, __FUNCTION__); //           
     }
 
-    protected function RegisterTimer($data, $cata) {
+    protected function RegisterTimer($data, $cata)
+    {
         IPS_LogMessage(__CLASS__, __FUNCTION__); //           
     }
 
-    protected function SetTimerInterval($data, $cata) {
+    protected function SetTimerInterval($data, $cata)
+    {
         IPS_LogMessage(__CLASS__, __FUNCTION__); //           
     }
 
-    protected function LogMessage($data, $cata) {
+    protected function LogMessage($data, $cata)
+    {
         
     }
 
-    protected function SetSummary($data) {
+    protected function SetSummary($data)
+    {
         IPS_LogMessage(__CLASS__, __FUNCTION__ . "Data:" . $data); //                   
     }
 
