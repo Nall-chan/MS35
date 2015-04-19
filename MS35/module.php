@@ -40,9 +40,10 @@ class MS35 extends IPSModule
 
     public function ReceiveData($JSONString)
     {
+        IPS_LogMessage('RecData', print_r($JSONString), true);
 //        IPS_LogMessage(__CLASS__, __FUNCTION__); // 
         //FIXME Bei Status inaktiv abbrechen
-        IPS_LogMessage('RecData'.$this->InstanceID, print_r(json_decode($JSONString)->Buffer), true);
+        IPS_LogMessage('RecData', print_r(json_decode($JSONString)), true);
     }
 
 ################## PRIVATE    
