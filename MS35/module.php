@@ -76,7 +76,7 @@ class MS35 extends IPSModule
     {
         for ($i = 0; $i < 9; $i++)
         {
-            $result = $this->SendDataToParent(json_encode(Array("DataID" => "{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}", "Buffer" => chr(0xFD))));
+            $result = $this->SendDataToParent(json_encode(Array("DataID" => "{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}", "Buffer" => chr(0x0D))));
             IPS_LogMessage('ResponseData'. $this->InstanceID, print_r($result, true));
         }
     }
