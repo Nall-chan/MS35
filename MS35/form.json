@@ -77,12 +77,12 @@
                 {
                     "type": "Button",
                     "label": "ON",
-                    "onClick": "MS35_Switch($id, true);"
+                    "onClick": "MS35_SendSwitch($id, true);"
                 },
                 {
                     "type": "Button",
                     "label": "OFF",
-                    "onClick": "MS35_Switch($id, false);"
+                    "onClick": "MS35_SendSwitch($id, false);"
                 }
             ]
 }

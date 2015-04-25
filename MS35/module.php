@@ -40,10 +40,10 @@ class MS35 extends IPSModule
 
     public function ReceiveData($JSONString)
     {
-        IPS_LogMessage('RecData', $JSONString);
+        IPS_LogMessage('RecData', utf8_decode($JSONString));
 //        IPS_LogMessage(__CLASS__, __FUNCTION__); // 
         //FIXME Bei Status inaktiv abbrechen
-   //     IPS_LogMessage('RecData', print_r(json_decode($JSONString)), true);
+        IPS_LogMessage('RecData', utf8_decode(print_r(json_decode($JSONString)), true));
     }
 
 ################## PRIVATE    
@@ -77,8 +77,8 @@ class MS35 extends IPSModule
     {
         for ($i = 0; $i < 9; $i++)
         {
-            $result = $this->SendDataToParent(json_encode(Array("DataID" => "{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}", "Buffer" => chr(0x0D))));
-            IPS_LogMessage('ResponseData'. $this->InstanceID, print_r($result, true));
+            $result = $this->SendDataToParent(json_encode(Array("DataID" => "{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}", "Buffer" => chr(0xFD))));
+            IPS_LogMessage('ResponseData'. $this->InstanceID, utf8_decode(print_r($result, true)));
         }
     }
 
