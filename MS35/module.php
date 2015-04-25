@@ -43,7 +43,8 @@ class MS35 extends IPSModule
         IPS_LogMessage('RecData', utf8_decode($JSONString));
 //        IPS_LogMessage(__CLASS__, __FUNCTION__); // 
         //FIXME Bei Status inaktiv abbrechen
-        IPS_LogMessage('RecData', utf8_decode(print_r(json_decode($JSONString)), true));
+        IPS_LogMessage('RecData', utf8_decode(print_r(json_decode($JSONString), true)));
+        return true;
     }
 
 ################## PRIVATE    
