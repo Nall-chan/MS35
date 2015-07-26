@@ -204,7 +204,7 @@ class MS35 extends IPSModule
                     {
                         $Buffer.= GetValueString($BufferID);
                         $this->SetReplyEvent(FALSE);
-                        if ($Buffer == 'C_RGB')
+                        if ($Buffer == 'C_RGB_1')
                         {
                             $InitState = true;
                             $i = 4;
