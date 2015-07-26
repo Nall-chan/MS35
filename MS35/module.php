@@ -469,18 +469,18 @@ class MS35 extends IPSModule
             throw new Exception("Can not send to Parent");
         }
 // Daten senden
-        try
-        {
+//        try
+//        {
             IPS_SendDataToParent($this->InstanceID, json_encode(Array("DataID" => "{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}", "Buffer" => utf8_encode($Data))));
-        }
-        catch (Exception $exc)
-        {
+//        }
+//        catch (Exception $exc)
+//        {
 // Senden fehlgeschlagen
 
             $this->unlock("ToParent");
-            throw new Exception ($exc);
+//            throw new Exception ($exc);
 //            return false;
-        }
+//        }
         $this->unlock("ToParent");
         return true;
     }
