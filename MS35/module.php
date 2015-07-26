@@ -214,12 +214,15 @@ class MS35 extends IPSModule
                 }
             }
         }
-        $this->SetErrorState(!$InitState);
+        
         if (!$InitState)
         {
+            $this->SetErrorState(true);            
             $this->unlock('InitRun');
             throw new Exception('Could not initialize Controller');
         }
+        $this->SetErrorState(false);            
+        
         $this->unlock('InitRun');
 
         return true;
