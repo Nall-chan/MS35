@@ -204,8 +204,8 @@ class MS35 extends IPSModule
                     {
                         $Buffer.= GetValueString($BufferID);
                         $this->SetReplyEvent(FALSE);
-                        
-                        if (strpos($Buffer,'C_RGB'))
+
+                        if (strpos($Buffer, 'C_RGB'))
                         {
                             $InitState = true;
                             $i = 4;
@@ -214,18 +214,16 @@ class MS35 extends IPSModule
                 }
             }
         }
-        
-        if (!$InitState)
-        {
-            $this->SetErrorState(true);            
-            $this->unlock('InitRun');
-            throw new Exception('Could not initialize Controller');
-        }
-        $this->SetErrorState(false);            
-        
-        $this->unlock('InitRun');
 
-        return true;
+        if ($InitState)
+        {
+            $this->SetErrorState(false);
+            $this->unlock('InitRun');
+            return true;
+        }
+        $this->SetErrorState(true);
+        $this->unlock('InitRun');
+        throw new Exception('Could not initialize Controller');
     }
 
     private function GetErrorState()
@@ -253,7 +251,7 @@ class MS35 extends IPSModule
     private function WaitForResponse($Timeout)
     {
         $Event = $this->GetIDForIdent('ReplyEvent');
-        for ($i = 0; $i < $Timeout/5; $i++)
+        for ($i = 0; $i < $Timeout / 5; $i++)
         {
             if (!GetValueBoolean($Event))
                 IPS_Sleep(5);
