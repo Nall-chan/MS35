@@ -343,6 +343,19 @@ class MS35 extends IPSModule
         throw new Exception('Could not initialize Controller');
     }
 
+    private function AddCRC16($Data)
+    {
+        $crc = 0xFFFF;
+        for ($i = 0; $i < strlen($data); $i++)
+        {
+            $x = (($crc >> 8) ^ ord($data[$i])) & 0xFF;
+            $x ^= $x >> 4;
+            $crc = (($crc << 8) ^ ($x << 12) ^ ($x << 5) ^ $x) & 0xFFFF;
+        }
+        $ret = $Data.pack('N',$crc);
+        return $ret;
+    }
+
     private function GetErrorState()
     {
         return !GetValueBoolean($this->GetIDForIdent('Connected'));
