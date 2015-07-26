@@ -225,41 +225,44 @@ class MS35 extends IPSModule
         $BufferID = $this->GetIDForIdent("BufferIN");
         if ($this->lock('SendCommand'))
         {
-        if (!$this->SendDataToParent($this->AddCRC16($Data)))
-        {
-            if ($this->WaitForResponse(1000))    //warte auf Reply
+            if (!$this->SendDataToParent($this->AddCRC16($Data)))
             {
-                $Buffer = GetValueString($BufferID);
-                SetValueString($BufferID, '');
-                if ($Buffer == 'a')
+                if ($this->WaitForResponse(1000))    //warte auf Reply
                 {
-//Sleep(25);
-                $this->unlock('SendCommand');
-                    
-                    return true;
+                    $Buffer = GetValueString($BufferID);
+                    SetValueString($BufferID, '');
+                    if ($Buffer == 'a')
+                    {
+                        //Sleep(25);
+                        $this->unlock('SendCommand');
+                        return true;
+                    }
+                    else
+                    {
+                        //Senddata('Error','NACK');
+                        $this->SetValueString('BufferIN', '');
+                        $this->SetErrorState(true);
+                        $this->unlock('SendCommand');
+                        throw new Exception('Controller send NACK.');
+                    }
                 }
                 else
                 {
-//Senddata('Error','NACK');
-                    $this->SetValueString('BufferIN','');
+                    //Senddata('Error','Timeout');
                     $this->SetErrorState(true);
-                $this->unlock('SendCommand');
-                    
-                    throw new Exception('Controller send NACK.');
+                    $this->unlock('SendCommand');
+                    throw new Exception('Controller do not response.');
                 }
-            }
-            else
-            {
-//Senddata('Error','Timeout');
-                $this->SetErrorState(true);
-                $this->unlock('SendCommand');
-                throw new Exception('Controller do not response.');
+            } else {
+                $this->unlock('SendCommand');                       
+                throw new Exception('Controller do not response.');        
             }
         }
-        } else {
-                throw new Exception('SendCommand is blocked.');
-            
+        else
+        {
+            throw new Exception('SendCommand is blocked.');
         }
+
     }
 
     private function DoInit()
@@ -356,7 +359,7 @@ class MS35 extends IPSModule
 
     private function AddCRC16($string)
     {
-        $crc=0;
+        $crc = 0;
         for ($x = 0; $x < strlen($string); $x++)
         {
 
@@ -446,12 +449,12 @@ class MS35 extends IPSModule
 // Stream zusammenfügen
         SetValueString($BufferID, utf8_decode($data->Buffer));
 // Empfangs Event setzen
-/*        if (!$this->SetReplyEvent(TRUE))
-        {
-// Empfangs Lock aufheben
-            $this->unlock("ReplyLock");
-            throw new Exception("Can not send to ParentLMS");
-        }*/
+        /*        if (!$this->SetReplyEvent(TRUE))
+          {
+          // Empfangs Lock aufheben
+          $this->unlock("ReplyLock");
+          throw new Exception("Can not send to ParentLMS");
+          } */
         $this->SetReplyEvent(TRUE);
 // Empfangs Lock aufheben
         $this->unlock("ReplyLock");
