@@ -74,10 +74,10 @@ class MS35 extends IPSModule
         $this->EnableAction("Brightness");
 //        $this->ConnectParent("{A151ECE9-D733-4FB9-AA15-7F7DD10C58AF}");        
 
-        $this->RegisterVariableString("BufferOUT", "BufferOUT", "", -4);
+        $this->RegisterVariableString("BufferIN", "BufferIN", "", -4);
         $this->RegisterVariableBoolean("ReplyEvent", "ReplyEvent", "", -5);
         $this->RegisterVariableBoolean("Connected", "Connected", "", -3);
-        IPS_SetHidden($this->GetIDForIdent('BufferOUT'), true);
+        IPS_SetHidden($this->GetIDForIdent('BufferIN'), true);
         IPS_SetHidden($this->GetIDForIdent('ReplyEvent'), true);
         IPS_SetHidden($this->GetIDForIdent('Connected'), true);
     }
