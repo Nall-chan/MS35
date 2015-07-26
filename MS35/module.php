@@ -132,7 +132,7 @@ class MS35 extends IPSModule
         $BufferID = $this->GetIDForIdent("BufferIN");
         if (!$this->SendDataToParent($this->AddCRC16($Data)))
         {
-            if ($this->WaitForResponse())    //warte auf Reply
+            if ($this->WaitForResponse(1000))    //warte auf Reply
             {
 
                 $Buffer = GetValueString($BufferID);
@@ -174,12 +174,16 @@ class MS35 extends IPSModule
         {
             if ($this->SendDataToParent(chr(0xFD)))
             {
-                if ($this->WaitForResponse())    //warte auf Reply
+                if ($this->WaitForResponse(100))    //warte auf Reply
                 {
                     $Buffer = GetValueString($BufferID);
+                    SetValueString($BufferID, '');
                     $this->SetReplyEvent(FALSE);
                     if ($Buffer == 'e')
+                    {
                         $InitState = true;
+                        $i = 9;
+                    }
                 }
             }
             else
@@ -196,12 +200,15 @@ class MS35 extends IPSModule
 
                 for ($i = 0; $i < 4; $i++)
                 {
-                    if ($this->WaitForResponse())    //warte auf Reply
+                    if ($this->WaitForResponse(250))    //warte auf Reply
                     {
                         $Buffer.= GetValueString($BufferID);
                         $this->SetReplyEvent(FALSE);
                         if ($Buffer == 'C_RGB')
+                        {
                             $InitState = true;
+                            $i = 4;
+                        }
                     }
                 }
             }
@@ -209,8 +216,11 @@ class MS35 extends IPSModule
         $this->SetErrorState(!$InitState);
         if (!$InitState)
         {
+            $this->unlock('InitRun');
             throw new Exception('Could not initialize Controller');
         }
+        $this->unlock('InitRun');
+
         return true;
     }
 
