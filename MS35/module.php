@@ -246,13 +246,13 @@ class MS35 extends IPSModule
         return false;
     }
 
-    private function WaitForResponse()
+    private function WaitForResponse($Timeout)
     {
         $Event = $this->GetIDForIdent('ReplyEvent');
-        for ($i = 0; $i < 500; $i++)
+        for ($i = 0; $i < $Timeout/5; $i++)
         {
             if (!GetValueBoolean($Event))
-                IPS_Sleep(10);
+                IPS_Sleep(5);
             else
             {
                 return true;
