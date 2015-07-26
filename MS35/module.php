@@ -122,7 +122,7 @@ class MS35 extends IPSModule
         if (($Red < 0) or ( $Red > 255) or ( $Green < 0) or ( $Green > 255) or ( $Blue < 0) or ( $Blue > 255))
             throw new Exception('Invalid Parameterset');
         $Data = chr(01) . chr(00) . chr($Red) . chr($Green) . chr($Blue) . chr(00) . chr(00);
-        $Color = ($Red << 16) & ($Green << 8) & $Blue;
+        $Color = ($Red << 16) + ($Green << 8) + $Blue;
         IPS_LogMessage('Color',print_r((string)$Color,1));
         IPS_LogMessage('Color', bin2hex($Color));        
         if ($this->SendCommand($Data))
