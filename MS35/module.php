@@ -95,7 +95,7 @@ class MS35 extends IPSModule
         if ($State) //Einschalten
         {
             if (!$OldState)
-                DoInit();
+                $this->DoInit();
         }
         else //Ausschalten
         {
@@ -343,18 +343,39 @@ class MS35 extends IPSModule
         throw new Exception('Could not initialize Controller');
     }
 
-    private function AddCRC16($data)
+    private function AddCRC16($string)
     {
-        $crc = 0xFFFF;
-        for ($i = 0; $i < strlen($data); $i++)
+        for ($x = 0; $x < strlen($string); $x++)
         {
-            $x = (($crc >> 8) ^ ord($data[$i])) & 0xFF;
-            $x ^= $x >> 4;
-            $crc = (($crc << 8) ^ ($x << 12) ^ ($x << 5) ^ $x) & 0xFFFF;
+
+            $crc = $crc ^ ord($string[$x]);
+            for ($y = 0; $y < 8; $y++)
+            {
+
+                if (($crc & 0x0001) == 0x0001)
+                    $crc = ( ($crc >> 1 ) ^ 0xA001 );
+                else
+                    $crc = $crc >> 1;
+            }
         }
-        $ret = $data.pack('N',$crc);
-        return $ret;
+        $high_byte = ($crc & 0xff00) / 256;
+        $low_byte = $crc & 0x00ff;
+
+        $string = $string . chr($high_byte) . chr($low_byte);
+        return $string;
     }
+
+    /*
+      $crc = 0xFFFF;
+      for ($i = 0; $i < strlen($data); $i++)
+      {
+      $x = (($crc >> 8) ^ ord($data[$i])) & 0xFF;
+      $x ^= $x >> 4;
+      $crc = (($crc << 8) ^ ($x << 12) ^ ($x << 5) ^ $x) & 0xFFFF;
+      }
+      $ret = $data.pack('N',$crc);
+      return $ret;
+      } */
 
     private function GetErrorState()
     {
