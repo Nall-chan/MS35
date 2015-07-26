@@ -168,6 +168,7 @@ class MS35 extends IPSModule
         if (!$this->lock('InitRun'))
             return;
         $InitState = false;
+        $BufferID = $this->GetIDForIdent("BufferIN");
 //        $Text = chr(0x0D);
         for ($i = 0; $i < 9; $i++)
         {
@@ -231,6 +232,21 @@ class MS35 extends IPSModule
             SetValueBoolean($EventID, $Value);
             $this->unlock('ReplyEvent');
             return true;
+        }
+        return false;
+    }
+
+    private function WaitForResponse()
+    {
+        $Event = $this->GetIDForIdent('ReplyEvent');
+        for ($i = 0; $i < 500; $i++)
+        {
+            if (!GetValueBoolean($Event))
+                IPS_Sleep(10);
+            else
+            {
+                return true;
+            }
         }
         return false;
     }
@@ -354,6 +370,7 @@ class MS35 extends IPSModule
     {
         IPS_LogMessage(__CLASS__, __FUNCTION__ . "Data:" . $data); //                   
     }
+
     //Remove on next Symcon update
     protected function RegisterProfileInteger($Name, $Icon, $Prefix, $Suffix, $MinValue, $MaxValue, $StepSize)
     {
@@ -394,6 +411,7 @@ class MS35 extends IPSModule
             IPS_SetVariableProfileAssociation($Name, $Association[0], $Association[1], $Association[2], $Association[3]);
         }
     }
+
 }
 
 ?>
