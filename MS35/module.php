@@ -231,6 +231,8 @@ class MS35 extends IPSModule
                 {
                     $Buffer = GetValueString($BufferID);
                     SetValueString($BufferID, '');
+                    $this->SetReplyEvent(FALSE);
+                    IPS_LogMessage('Buffer', print_r($Buffer, 1));
                     if ($Buffer == 'a')
                     {
                         //Sleep(25);
@@ -239,8 +241,9 @@ class MS35 extends IPSModule
                     }
                     else
                     {
+
                         //Senddata('Error','NACK');
-                        $this->SetValueString('BufferIN', '');
+                        SetValueString($BufferID, '');
                         $this->SetErrorState(true);
                         $this->unlock('SendCommand');
                         throw new Exception('Controller send NACK.');
