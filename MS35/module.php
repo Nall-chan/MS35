@@ -228,12 +228,12 @@ class MS35 extends IPSModule
 
     private function GetErrorState()
     {
-        return GetValueBoolean($this->GetIDForIdent('Connected'));
+        return !GetValueBoolean($this->GetIDForIdent('Connected'));
     }
 
     private function SetErrorState($Value)
     {
-        SetValueBoolean($this->GetIDForIdent('Connected'), $Value);
+        SetValueBoolean($this->GetIDForIdent('Connected'), !$Value);
     }
 
     private function SetReplyEvent($Value)
