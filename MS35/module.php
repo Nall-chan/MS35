@@ -223,22 +223,28 @@ class MS35 extends IPSModule
             if (!$this->SendInit())
                 return;
         $BufferID = $this->GetIDForIdent("BufferIN");
+        if ($this->lock('SendCommand'))
+        {
         if (!$this->SendDataToParent($this->AddCRC16($Data)))
         {
             if ($this->WaitForResponse(1000))    //warte auf Reply
             {
-
                 $Buffer = GetValueString($BufferID);
-                $this->SetReplyEvent(FALSE);
+                SetValueString($BufferID, '');
                 if ($Buffer == 'a')
                 {
 //Sleep(25);
+                $this->unlock('SendCommand');
+                    
                     return true;
                 }
                 else
                 {
 //Senddata('Error','NACK');
+                    $this->SetValueString('BufferIN','');
                     $this->SetErrorState(true);
+                $this->unlock('SendCommand');
+                    
                     throw new Exception('Controller send NACK.');
                 }
             }
@@ -246,8 +252,13 @@ class MS35 extends IPSModule
             {
 //Senddata('Error','Timeout');
                 $this->SetErrorState(true);
+                $this->unlock('SendCommand');
                 throw new Exception('Controller do not response.');
             }
+        }
+        } else {
+                throw new Exception('SendCommand is blocked.');
+            
         }
     }
 
@@ -345,6 +356,7 @@ class MS35 extends IPSModule
 
     private function AddCRC16($string)
     {
+        $crc=0;
         for ($x = 0; $x < strlen($string); $x++)
         {
 
@@ -434,12 +446,13 @@ class MS35 extends IPSModule
 // Stream zusammenfügen
         SetValueString($BufferID, utf8_decode($data->Buffer));
 // Empfangs Event setzen
-        if (!$this->SetReplyEvent(TRUE))
+/*        if (!$this->SetReplyEvent(TRUE))
         {
 // Empfangs Lock aufheben
             $this->unlock("ReplyLock");
             throw new Exception("Can not send to ParentLMS");
-        }
+        }*/
+        $this->SetReplyEvent(TRUE);
 // Empfangs Lock aufheben
         $this->unlock("ReplyLock");
         return true;
