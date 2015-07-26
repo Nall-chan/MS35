@@ -80,9 +80,10 @@ class MS35 extends IPSModule
         IPS_SetHidden($this->GetIDForIdent('BufferIN'), true);
         IPS_SetHidden($this->GetIDForIdent('ReplyEvent'), true);
         IPS_SetHidden($this->GetIDForIdent('Connected'), true);
+        $this->DoInit();
     }
 
-    ################## PUBLIC
+################## PUBLIC
     /**
      * This function will be available automatically after the module is imported with the module control.
      * Using the custom prefix this function will be callable from PHP and JSON-RPC through:
@@ -90,7 +91,77 @@ class MS35 extends IPSModule
 
     public function SendSwitch($State)
     {
-        
+        $OldState = GetValueBoolean($this->GetIDForIdent('STATE'));
+        if ($State) //Einschalten
+        {
+            if (!$OldState)
+                DoInit();
+        }
+        else //Ausschalten
+        {
+            $data = chr(01) . chr(00) . chr(00) . chr(00) . chr(00) . chr(00) . chr(00);  // farbe weg
+            if ($this->SendCommand($data))
+            {
+                $this->SetValueBoolean('STATE', false);
+                $this->SetValueInteger('Color', 0);
+                $this->SetValueInteger('Play', 3);
+                $data = chr(0x0B) . chr(01) . chr(00) . chr(00) . chr(00) . chr(00) . chr(00);
+                if ($this->SendCommand($data))
+                    $this->SetValueInteger('Speed', 0);
+                $data = chr(0x0C) . chr(01) . chr(00) . chr(00) . chr(00) . chr(00) . chr(00);
+                if ($this->SendCommand($data))
+                    $this->SetValueInteger('Brightness', 1);
+                $data = chr(0x01) . chr(00) . chr(00) . chr(00) . chr(00) . chr(00) . chr(00);
+                $this->SendCommand($data);
+            }
+        }
+    }
+
+    public function SetRGB($Red, $Green, $Blue)
+    {
+        if (($Red < 0) or ( $Red > 255) or ( $Green < 0) or ( $Green > 255) or ( $Blue < 0) or ( $Blue > 255))
+            throw new Exception('Invalid Parameterset');
+        $Data = chr(01) . chr(00) . chr($Red) . chr($Green) . chr($Blue) . chr(00) . chr(00);
+        if ($this->SendCommand($Data))
+        {
+            $this->SetValueInteger('Color', ($Red << 16) & ($Green << 8) & $Blue);
+            $this->SetValueBoolean('STATE', true);
+            $this->SetValueInteger('Play', 0);
+        }
+    }
+
+    public function Play()
+    {
+        $Data = chr(0x0A) . chr(0x07) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00); //'Play'
+        if ($this->SendCommand($Data))
+        {
+            $this->SetValueBoolean('STATE', true);
+            $this->SetValueInteger('Play', 1);
+        }
+    }
+
+    public function Pause()
+    {
+        $Data = chr(0x0A) . chr(0x06) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00); //'Pause'
+        if ($this->SendCommand($Data))
+        {
+            $this->SetValueBoolean('STATE', true);
+            $this->SetValueInteger('Play', 2);
+        }
+    }
+
+    public function Stop()
+    {
+        $Color = GetValueInteger($this->GetIDForIdent('Color'));
+        $Red = ($Color & 0x00ff0000) >> 16;
+        $Green = ($Color & 0x0000ff00) >> 8;
+        $Blue = $Color & 0x000000ff;
+        $Data = chr(01) . chr(00) . chr($Red) . chr($Green) . chr($Blue) . chr(00) . chr(00);
+        if ($this->SendCommand($Data))
+        {
+            $this->SetValueBoolean('STATE', true);
+            $this->SetValueInteger('Play', 3); //stop
+        }
     }
 
 ################## ActionHandler
@@ -102,17 +173,40 @@ class MS35 extends IPSModule
         switch ($Ident)
         {
             case 'STATE':
-                $this->SendInit();
+                $this->SendSwitch($Value); //SendInit();
                 break;
             case 'Color':
+                $r = ($Value & 0x00ff0000) >> 16;
+                $g = ($Value & 0x0000ff00) >> 8;
+                $b = $Value & 0x000000ff;
+                $this->SetRGB($r, $g, $b);
+
                 break;
             case 'Program':
                 break;
             case 'Play':
+                switch ($Value)
+                {
+                    case 1:
+                        $this->Play();
+                        break;
+                    case 2:
+                        $this->Pause();
+                        break;
+                    case 3:
+                        $this->Stop();
+                        break;
+                    default:
+                        throw new Exception('Invalid Value');
+                        break;
+                }
                 break;
             case 'Speed':
                 break;
             case 'Brightness':
+                break;
+            default:
+                throw new Exception('Invalid Ident');
                 break;
         }
     }
@@ -125,10 +219,9 @@ class MS35 extends IPSModule
             return;
         else
             $this->unlock('InitRun');
-        if (!$this->GetErrorState())
-            return;
-        if (!$this->SendInit())
-            return;
+        if ($this->GetErrorState())
+            if (!$this->SendInit())
+                return;
         $BufferID = $this->GetIDForIdent("BufferIN");
         if (!$this->SendDataToParent($this->AddCRC16($Data)))
         {
@@ -160,7 +253,31 @@ class MS35 extends IPSModule
 
     private function DoInit()
     {
-        
+        try
+        {
+            $ret = $this->SendInit();
+        }
+        catch (Exception $exc)
+        {
+            throw new Exception($exc);
+        }
+        if (!$ret)
+            return false;
+
+
+        $this->SetValueBoolean('STATE', true);
+        $data = chr(0x0B) . chr(0x01) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00);
+        if ($this->SendCommand($data))
+            $this->SetValueInteger('Speed', 0);
+        $data = chr(0x0C) . chr(0x01) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00);
+        if ($this->SendCommand($data))
+            $this->SetValueInteger('Brightness', 1);
+        $data = chr(0x01) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00);
+        if ($this->SendCommand($data))
+            $this->SetValueInteger('Color', 0);
+        $this->SetValueInteger('Play', 3);
+        $this->SetValueInteger('Program', 1);
+        return true;
     }
 
     private function SendInit()
@@ -345,6 +462,24 @@ class MS35 extends IPSModule
 
 ################## DUMMYS / WOARKAROUNDS - protected
 
+    private function SetValueBoolean($Ident, $value)
+    {
+        $id = $this->GetIDForIdent($Ident);
+        SetValueBoolean($id, $value);
+    }
+
+    private function SetValueInteger($Ident, $value)
+    {
+        $id = $this->GetIDForIdent($Ident);
+        SetValueInteger($id, $value);
+    }
+
+    private function SetValueString($Ident, $value)
+    {
+        $id = $this->GetIDForIdent($Ident);
+        SetValueString($id, $value);
+    }
+
     protected function HasActiveParent()
     {
         IPS_LogMessage(__CLASS__, __FUNCTION__); //          
@@ -383,7 +518,7 @@ class MS35 extends IPSModule
         IPS_LogMessage(__CLASS__, __FUNCTION__ . "Data:" . $data); //                   
     }
 
-    //Remove on next Symcon update
+//Remove on next Symcon update
     protected function RegisterProfileInteger($Name, $Icon, $Prefix, $Suffix, $MinValue, $MaxValue, $StepSize)
     {
 
