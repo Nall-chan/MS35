@@ -78,7 +78,7 @@ class MS35 extends IPSModule
         $this->RegisterVariableBoolean("ReplyEvent", "ReplyEvent", "", -5);
         $this->RegisterVariableBoolean("Connected", "Connected", "", -3);
         IPS_SetHidden($this->GetIDForIdent('BufferOUT'), true);
-        IPS_SetHidden($this->GetIDForIdent('WaitForResponse'), true);
+        IPS_SetHidden($this->GetIDForIdent('ReplyEvent'), true);
         IPS_SetHidden($this->GetIDForIdent('Connected'), true);
     }
 
