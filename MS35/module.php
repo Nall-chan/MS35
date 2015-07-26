@@ -478,7 +478,8 @@ class MS35 extends IPSModule
 // Senden fehlgeschlagen
 
             $this->unlock("ToParent");
-            return false;
+            throw new Exception ($exc);
+//            return false;
         }
         $this->unlock("ToParent");
         return true;
