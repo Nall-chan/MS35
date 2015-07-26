@@ -225,7 +225,7 @@ class MS35 extends IPSModule
         $BufferID = $this->GetIDForIdent("BufferIN");
         if ($this->lock('SendCommand'))
         {
-            if (!$this->SendDataToParent($this->AddCRC16($Data)))
+            if ($this->SendDataToParent($this->AddCRC16($Data)))
             {
                 if ($this->WaitForResponse(1000))    //warte auf Reply
                 {
@@ -253,16 +253,17 @@ class MS35 extends IPSModule
                     $this->unlock('SendCommand');
                     throw new Exception('Controller do not response.');
                 }
-            } else {
-                $this->unlock('SendCommand');                       
-                throw new Exception('Controller do not response.');        
+            }
+            else
+            {
+                $this->unlock('SendCommand');
+                throw new Exception('Controller do not response.');
             }
         }
         else
         {
             throw new Exception('SendCommand is blocked.');
         }
-
     }
 
     private function DoInit()
@@ -469,18 +470,18 @@ class MS35 extends IPSModule
             throw new Exception("Can not send to Parent");
         }
 // Daten senden
-//        try
-//        {
+        try
+        {
             IPS_SendDataToParent($this->InstanceID, json_encode(Array("DataID" => "{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}", "Buffer" => utf8_encode($Data))));
-//        }
-//        catch (Exception $exc)
-//        {
+        }
+        catch (Exception $exc)
+        {
 // Senden fehlgeschlagen
 
             $this->unlock("ToParent");
 //            throw new Exception ($exc);
-//            return false;
-//        }
+            return false;
+        }
         $this->unlock("ToParent");
         return true;
     }
