@@ -3,11 +3,10 @@
 class MS35 extends IPSModule
 {
 
-    public function __construct($InstanceID)
+    public function Create()
     {
-
-//Never delete this line!
-        parent::__construct($InstanceID);
+        //Never delete this line!
+        parent::Create();
 //These lines are parsed on Symcon Startup or Instance creation
 //You cannot use variables here. Just static values.
         /*
@@ -117,7 +116,7 @@ class MS35 extends IPSModule
         }
     }
 
-    public function SetRGB($Red, $Green, $Blue)
+    public function SetRGB(integer $Red, integer $Green, integer $Blue)
     {
         if (($Red < 0) or ( $Red > 255) or ( $Green < 0) or ( $Green > 255) or ( $Blue < 0) or ( $Blue > 255))
             throw new Exception('Invalid Parameterset');
