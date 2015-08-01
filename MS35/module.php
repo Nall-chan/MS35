@@ -88,7 +88,7 @@ class MS35 extends IPSModule
      * Using the custom prefix this function will be callable from PHP and JSON-RPC through:
      */
 
-    public function SendSwitch($State)
+    public function SendSwitch(boolean $State)
     {
         $OldState = GetValueBoolean($this->GetIDForIdent('STATE'));
         if ($State) //Einschalten
@@ -166,6 +166,87 @@ class MS35 extends IPSModule
         }
     }
 
+    public function RunProgram(integer $Programm)
+    {
+        if (($Programm < 1) or ( $Programm > 9))
+            throw new Exception('Invalid Program-Index');
+
+        $data = array();
+        $data[0] = chr(0x0A) . chr(0x01) . chr(0x01) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00); //'Color3'
+        $data[1] = chr(0x0A) . chr(0x01) . chr(0x02) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00); //'Color2'
+        $data[2] = chr(0x0A) . chr(0x01) . chr(0x03) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00); //'Color1'
+        $data[3] = chr(0x0A) . chr(0x01) . chr(0x04) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00); //'Gewitter'    ohne Speed
+        $data[4] = chr(0x0A) . chr(0x01) . chr(0x05) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00); //'Fire'        ohne Speed
+        $data[5] = chr(0x0A) . chr(0x01) . chr(0x06) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00); //'Sunrise'
+        $data[6] = chr(0x0A) . chr(0x01) . chr(0x07) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00); //'Flash'
+        $data[7] = chr(0x0A) . chr(0x01) . chr(0x08) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00); //'User1'
+        $data[8] = chr(0x0A) . chr(0x01) . chr(0x09) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00); //'User2'
+        if ($this->SendCommand($data[$Programm - 1]))
+        {
+            $this->SetValueBoolean('STATE', true);
+            $this->SetValueInteger('Program', $Programm);
+            $this->SetValueInteger('Play', 1); //play
+            $wait = true;
+            if (($Programm == 4) or ( $Programm == 5))
+            {
+                $this->SetValueInteger('Speed', 0);
+            }
+            else
+            {
+                $Speed = GetValueInteger($this->GetIDForIdent('Speed'));
+                if (($Speed < 0) or ( $Speed > 8))
+                    $this->SetValueInteger('Speed', 0);
+                else
+                {
+                    if ($Speed <> 0)
+                    {
+                        $send = chr(0x0B) . chr(intval(Power(2, $Speed))) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00);
+                        IPS_Sleep(400);
+                        $wait = false;
+                        $this->SendCommand($send);
+                    }
+                }
+            }
+            $Brightness = GetValueInteger($this->GetIDForIdent('Brightness'));
+            if (($Brightness < 1) or ( $Brightness > 3))
+            {
+                $this->SetValueInteger('Brightness', 1);
+            }
+            else
+            {
+                if ($Brightness <> 1)
+                {
+                    $send = chr(0x0C) . chr(value) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00);
+                    if ($wait)
+                        IPS_Sleep(400);
+                    $this->SendCommand($send);
+                }
+            }
+        }
+    }
+
+    public function SetSpeed(integer $Speed)
+    {
+        if (($Speed < 0) or ( $Speed > 8))
+            throw new Exception('Invalid Speed-Level');
+        $Program = GetValueInteger($this->GetIDForIdent('Program'));
+        if (($Program <> 4) and ( $Program <> 5))
+        {
+            $data = chr(0x0B) . chr(intval(Power(2, $Speed))) . chr(00) . chr(00) . chr(00) . chr(00) . chr(00);
+            if ($this->SendCommand($data))
+                $this->SetValueInteger('Speed', $Speed);
+        }
+    }
+
+    public function SetBrightness(integer $Level)
+    {
+        if (($Level < 1) or ( $Level > 3))
+            throw new Exception('Invalid Brightness-Level');
+        $data = chr(0x0C) . chr($Level) . chr(00) . chr(00) . chr(00) . chr(00) . chr(00);
+        if ($this->SendCommand($data))
+            $this->SetValueInteger('Brightness', $Level);
+    }
+
 ################## ActionHandler
 
     public function RequestAction($Ident, $Value)
@@ -185,6 +266,7 @@ class MS35 extends IPSModule
 
                 break;
             case 'Program':
+                $this->RunProgram($Value);
                 break;
             case 'Play':
                 switch ($Value)
@@ -550,30 +632,32 @@ class MS35 extends IPSModule
         return false;
     }
 
-    protected function SetStatus($data)
-    {
-        IPS_LogMessage(__CLASS__, __FUNCTION__); //           
-    }
+    /*
+      protected function SetStatus($data)
+      {
+      IPS_LogMessage(__CLASS__, __FUNCTION__); //
+      }
 
-    protected function RegisterTimer($data, $cata)
-    {
-        IPS_LogMessage(__CLASS__, __FUNCTION__); //           
-    }
+      protected function RegisterTimer($data, $cata)
+      {
+      IPS_LogMessage(__CLASS__, __FUNCTION__); //
+      }
 
-    protected function SetTimerInterval($data, $cata)
-    {
-        IPS_LogMessage(__CLASS__, __FUNCTION__); //           
-    }
+      protected function SetTimerInterval($data, $cata)
+      {
+      IPS_LogMessage(__CLASS__, __FUNCTION__); //
+      }
 
-    protected function LogMessage($data, $cata)
-    {
-        
-    }
+      protected function LogMessage($data, $cata)
+      {
 
-    protected function SetSummary($data)
-    {
-        IPS_LogMessage(__CLASS__, __FUNCTION__ . "Data:" . $data); //                   
-    }
+      }
+
+      protected function SetSummary($data)
+      {
+      IPS_LogMessage(__CLASS__, __FUNCTION__ . "Data:" . $data); //
+      }
+     */
 
 //Remove on next Symcon update
     protected function RegisterProfileInteger($Name, $Icon, $Prefix, $Suffix, $MinValue, $MaxValue, $StepSize)
