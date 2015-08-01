@@ -200,7 +200,7 @@ class MS35 extends IPSModule
                 {
                     if ($Speed <> 0)
                     {
-                        $send = chr(0x0B) . chr(intval(Power(2, $Speed))) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00);
+                        $send = chr(0x0B) . chr(intval(pow(2, $Speed))) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00);
                         IPS_Sleep(400);
                         $wait = false;
                         $this->SendCommand($send);
@@ -232,7 +232,7 @@ class MS35 extends IPSModule
         $Program = GetValueInteger($this->GetIDForIdent('Program'));
         if (($Program <> 4) and ( $Program <> 5))
         {
-            $data = chr(0x0B) . chr(intval(Power(2, $Speed))) . chr(00) . chr(00) . chr(00) . chr(00) . chr(00);
+            $data = chr(0x0B) . chr(intval(pow(2, $Speed))) . chr(00) . chr(00) . chr(00) . chr(00) . chr(00);
             if ($this->SendCommand($data))
                 $this->SetValueInteger('Speed', $Speed);
         }
