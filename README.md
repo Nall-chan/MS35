@@ -3,25 +3,25 @@ IPS-Modul für den Conrad MS35 RGB-Controller.
 
 ## Inhaltsverzeichnis
 
-1. Funktionsumfang
+1. [Funktionsumfang](#1-funktionsumfang)
 
-2. Voraussetzungen
+2. [Voraussetzungen](#2-voraussetzungen)
 
-3. Software-Installation
+3. [Software-Installation](#3-software-installation)
 
-4. Hardware-Installation & Einrichtung
+4. [Hardware-Installation & Einrichtung](#4-hardware-installation--einrichtung)
 
-5. Einrichten der Instanzen in IPS
+5. [Einrichten der Instanzen in IPS](#5-einrichten-der-instanzen-in-ips)
 
-6. Statusvariablen und Profile
+6. [Statusvariablen und Profile](#6-statusvariablen-und-profile)
 
-7. WebFront
+7. [WebFront](#7-webfront)
 
-8. PHP-Befehlsreferenz
+8. [PHP-Befehlsreferenz](#8-php-befehlsreferenz)
 
-9. Parameter / Modul-Infos
+9. [Parameter / Modul-Infos](#9-parameter--modul-infos)
 
-10. Tips & Tricks
+10. [Tips & Tricks](#10-tips--tricks)
 
 11. [Anhang](#11-anhang) 
 
@@ -91,18 +91,20 @@ IPS-Modul für den Conrad MS35 RGB-Controller.
 
    Die Statusvariablen werden für jeden Controller automatisch angelegt. Löschen kann zu Fehlfunktionen führen; da Sie z.B. für das ausführen eines Farb-Programms benötigt werden. Umbenennen ist natürlich kein Problem.  
    Definition:  
-    - STATE = Status des Controllers als boolescher Wert true = An; false = Aus;  
-    - Color = Aktueller Farbwert (int) , wenn kein Programm läuft.  
-    - Program = Aktuell aktives Programm. (int) 1-9  
-    - Play = Status der Programmausführung (int) 1 = Play; 2 = Pause; 3 = Stop  
-    - Brightness = Helligkeit bei Programmausführung (int) 1=normal; 2 = mittel; 3 = dunkel  
-    - Speed = Geschwindigkeit bei Programmausführung (int) 1,2,4,8,16,32,64,128 fache Verlangsamung.  
+
+   - STATE = Status des Controllers als boolescher Wert true = An; false = Aus;  
+   - Color = Aktueller Farbwert (int) , wenn kein Programm läuft.  
+   - Program = Aktuell aktives Programm. (int) 1-9  
+   - Play = Status der Programmausführung (int) 1 = Play; 2 = Pause; 3 = Stop  
+   - Brightness = Helligkeit bei Programmausführung (int) 1=normal; 2 = mittel; 3 = dunkel  
+   - Speed = Geschwindigkeit bei Programmausführung (int) 1,2,4,8,16,32,64,128 fache Verlangsamung.  
 
    Die benötigten Profile werden ebenfalls automatisch angelegt und heißen:  
-    - MS35.PrgStatus (für die Statusvariable 'Play')  
-    - MS35.Program (für die Statusvariable 'Program' – Enthält die Namen der Programme)  
-    - MS35.Brightness (für die Statusvariable 'Brightness')  
-    - MS35.Speed (für die Statusvariable 'Speed')  
+
+   - MS35.PrgStatus (für die Statusvariable 'Play')  
+   - MS35.Program (für die Statusvariable 'Program' – Enthält die Namen der Programme)  
+   - MS35.Brightness (für die Statusvariable 'Brightness')  
+   - MS35.Speed (für die Statusvariable 'Speed')  
 
    Die Profile können verändert werden. Werden sie jedoch gelöscht; werden Sie automatisch neu angelegt.  
 
@@ -166,9 +168,10 @@ IPS-Modul für den Conrad MS35 RGB-Controller.
         `$Data` ist ein JSON-Codierter String welcher das Programm nach folgendem Schema enthalten muss:  
             (Beispiele im Kapitel 10)  
             `[{"R":255,"G":255,"B":255,"H":5,"F":5},{"R":0,"G":0,"B":255,"H":5,"F":5}]`  
-            - R,G,B sind die Farbwerte der Kanäle von 0-255.  
-            - H  ist die Haltezeit der Farbe von 0-255 x 0,13 Sek (Hold)  
-            - F  ist die Überblendzeit von 0-255 x 0,13 Sek (Fade)  
+
+   - R,G,B sind die Farbwerte der Kanäle von 0-255.  
+   - H  ist die Haltezeit der Farbe von 0-255 x 0,13 Sek (Hold)  
+   - F  ist die Überblendzeit von 0-255 x 0,13 Sek (Fade)  
             Es dürfen maximal 51 dieser Sequenzen übergeben werden.  
 	Konnte der Befehl erfolgreich ausgeführt werden, liefert er als Ergebnis TRUE, andernfalls FALSE.  
 
@@ -188,19 +191,19 @@ IPS-Modul für den Conrad MS35 RGB-Controller.
 
    Folgender PHP-Code liefert **ein** Beispiel wie man den JSON-String mit dem korrekten Aufbau, erzeugen kann:  
 
-    `$Sequenz['R'] = 0x00;`  
-    `$Sequenz['G'] = 0xFF;`  
-    `$Sequenz['B'] = 0xFF;`  
-    `$Sequenz['H'] = 0x05;`  
-    `$Sequenz['F'] = 0x05;`  
-    `$Data[] = $Sequenz;`  
-    `$Sequenz['R'] = 0xFF;`  
-    `$Sequenz['G'] = 0x00;`  
-    `$Sequenz['B'] = 0xFF;`  
-    `$Sequenz['H'] = 0x05;`  
-    `$Sequenz['F'] = 0x05;`  
-    `$Data[] = $Sequenz;`  
-    `MS35_SetProgram(123456 , 8, json_encode($Data));`  
+    $Sequenz['R'] = 0x00;  
+    $Sequenz['G'] = 0xFF;  
+    $Sequenz['B'] = 0xFF;  
+    $Sequenz['H'] = 0x05;  
+    $Sequenz['F'] = 0x05;  
+    $Data[] = $Sequenz;  
+    $Sequenz['R'] = 0xFF;  
+    $Sequenz['G'] = 0x00;  
+    $Sequenz['B'] = 0xFF;  
+    $Sequenz['H'] = 0x05;  
+    $Sequenz['F'] = 0x05;  
+    $Data[] = $Sequenz;  
+    MS35_SetProgram(123456 , 8, json_encode($Data));  
 
 ## 11. Anhang
 
