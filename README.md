@@ -1,120 +1,118 @@
 # IPSMS35
 IPS-Modul für den Conrad MS35 RGB-Controller.  
 
-## Dokumentation
+## Inhaltsverzeichnis
 
-**Inhaltsverzeichnis**
+1. Funktionsumfang
 
-1.Funktionsumfang
+2. Voraussetzungen
 
-2.Voraussetzungen
+3. Software-Installation
 
-3.Software-Installation
+4. Hardware-Installation & Einrichtung
 
-4.Hardware-Installation & Einrichtung
+5. Einrichten der Instanzen in IPS
 
-5.Einrichten der Instanzen in IPS
+6. Statusvariablen und Profile
 
-6.Statusvariablen und Profile
+7. WebFront
 
-7.WebFront
+8. PHP-Befehlsreferenz
 
-8.PHP-Befehlsreferenz
+9. Parameter / Modul-Infos
 
-9.Parameter / Modul-Infos
+10. Tips & Tricks
 
-10.Tips & Tricks
-
-11.Anhang
+11. Anhang
 
 ## 1. Funktionsumfang
 
-    Direkte native Unterstützung des Conrad MS-35 RGB-Controller (EAN: 4016138567267 Bestellnr.: 181818 ).
+   Direkte native Unterstützung des Conrad MS-35 RGB-Controller (EAN: 4016138567267 Bestellnr.: 181818 ).
 
-    -   Setzen einer Farbe.
+   *   Setzen einer Farbe.  
 
-    -   Starten eines der neun internen Programme:
+   *   Starten eines der neun internen Programme:
 
-       -   3x verschiedene Farbwechsel (Programm 1-3)
+      -   3x verschiedene Farbwechsel (Programm 1-3)
 
-       -   Gewitter (Programm 4)
+      -   Gewitter (Programm 4)
 
-       -   Kaminfeuer (Programm 5)
+      -   Kaminfeuer (Programm 5)
 
-       -   Sonnenauf- & untergang (Programm 6)
+      -   Sonnenauf- & untergang (Programm 6)
 
-       -   Farbblitze (Programm 7)
+      -   Farbblitze (Programm 7)
 
-       -   2x Benutzerspezifisch (Programm 8 & 9)
+      -   2x Benutzerspezifisch (Programm 8 & 9)
 
-    -   Setzen der Helligkeit (gilt nur für Programme).
+   *   Setzen der Helligkeit (gilt nur für Programme).
 
-    -   Setzen der Ablauf-Geschwindigkeit (gilt nur für Programme; nicht möglich bei Gewitter und Kaminfeuer).
+   *   Setzen der Ablauf-Geschwindigkeit (gilt nur für Programme; nicht möglich bei Gewitter und Kaminfeuer).
 
-    -   Pause & Fortsetzen des aktiven Programms.
+   *   Pause & Fortsetzen des aktiven Programms.
 
-    -   Ein- und Ausschalten (Aus = dunkel-gesteuert; Ein = Initialisierung der Parameter wie nach Spannungswiederkehr.
+   *   Ein- und Ausschalten (Aus = dunkel-gesteuert; Ein = Initialisierung der Parameter wie nach Spannungswiederkehr.
 
-    -   Programmieren der benutzerspezifischen Programme.
+   *   Programmieren der benutzerspezifischen Programme.
 
 ## 2. Voraussetzungen
 
-    - IPS ab Version 4.0
+   - IPS ab Version 4.0
 
-    - MS-35 RGB-Controller
+   - MS-35 RGB-Controller
 
-    - RS232-Schnittstelle auf TTL-Basis (oder jede andere Form der seriellen Datenanbindung mit 5V; z.B. XBee mit TTL-Adapterplatine)
+   - RS232-Schnittstelle auf TTL-Basis (oder jede andere Form der seriellen Datenanbindung mit 5V; z.B. XBee mit TTL-Adapterplatine)
 
-3.  ## Software-Installation
+## 3. Software-Installation
 
-    Über das Modul-Control folgende URL hinzufügen.  
-    `git://github.com/Nall-chan/IPSMS35.git`  
+   Über das Modul-Control folgende URL hinzufügen.  
+   `git://github.com/Nall-chan/IPSMS35.git`  
 
-4.  ## Hardware-Installation & Einrichtung
+## 4. Hardware-Installation & Einrichtung
 
-    ![](Doku/Doku_html_m4b3399bc.png)  
-    Den Controller gemäß Handbuch beschalten.  
-    ![](Doku/Doku_html_m47910d47.png)  
-    Die serielle Verbindung z.B. mit dem Programmierkabel (oder andere jede Art einer seriellen Anbindung) herstellen.  
+   ![](Doku/Doku_html_m4b3399bc.png)  
+   Den Controller gemäß Handbuch beschalten.  
+   ![](Doku/Doku_html_m47910d47.png)  
+   Die serielle Verbindung z.B. mit dem Programmierkabel (oder andere jede Art einer seriellen Anbindung) herstellen.  
 
-5.  ## Einrichten der Instanzen in IPS
+## 5. Einrichten der Instanzen in IPS
 
-    Unter Instanz hinzufügen ist der 'MS35 RGB-Controller' unter dem Hersteller 'Conrad' aufgeführt.  
-    Es wird automatisch ein SerialPort angelegt.  
-    Die Einstellungen des SerialPort sind auf 38000 Baud zu konfigurieren. Die restlichen Parameter bleiben auf den Standardwerten 8 Datenbits, 1 Stopbit, keine Parität.  
-    Wird eine andere Hardware zur Datenübertragung genutzt, ist diese ebenfalls auf diese Parameter zu konfigurieren und die SerialPort-Instanz zu löschen.  
-    Die Instanz der MS35 benötigt keine eigene Konfiguration.  
-    Dafür wurde das Testcenter umgesetzt, mit dem die Funktion sofort überprüft werden kann.  
-    ![](Doku/Doku_html_m1ed1e14.png)  
+   Unter Instanz hinzufügen ist der 'MS35 RGB-Controller' unter dem Hersteller 'Conrad' aufgeführt.  
+   Es wird automatisch ein SerialPort angelegt.  
+   Die Einstellungen des SerialPort sind auf 38000 Baud zu konfigurieren. Die restlichen Parameter bleiben auf den Standardwerten 8 Datenbits, 1 Stopbit, keine Parität.  
+   Wird eine andere Hardware zur Datenübertragung genutzt, ist diese ebenfalls auf diese Parameter zu konfigurieren und die SerialPort-Instanz zu löschen.  
+   Die Instanz der MS35 benötigt keine eigene Konfiguration.  
+   Dafür wurde das Testcenter umgesetzt, mit dem die Funktion sofort überprüft werden kann.  
+   ![](Doku/Doku_html_m1ed1e14.png)  
 
-6.  ## Statusvariablen und Profile
+## 6. Statusvariablen und Profile
 
-    ![](Doku/Doku_html_74a518cb.png)
+   ![](Doku/Doku_html_74a518cb.png)
 
-    Die Statusvariablen werden für jeden Controller automatisch angelegt. Löschen kann zu Fehlfunktionen führen; da Sie z.B. für das ausführen eines Farb-Programms benötigt werden. Umbenennen ist natürlich kein Problem.  
-    Definition:  
-        - STATE = Status des Controllers als boolescher Wert true = An; false = Aus;  
-        - Color = Aktueller Farbwert (int) , wenn kein Programm läuft.  
-        - Program = Aktuell aktives Programm. (int) 1-9  
-        - Play = Status der Programmausführung (int) 1 = Play; 2 = Pause; 3 = Stop  
-        - Brightness = Helligkeit bei Programmausführung (int) 1=normal; 2 = mittel; 3 = dunkel  
-        - Speed = Geschwindigkeit bei Programmausführung (int) 1,2,4,8,16,32,64,128 fache Verlangsamung.  
+   Die Statusvariablen werden für jeden Controller automatisch angelegt. Löschen kann zu Fehlfunktionen führen; da Sie z.B. für das ausführen eines Farb-Programms benötigt werden. Umbenennen ist natürlich kein Problem.  
+   Definition:  
+    - STATE = Status des Controllers als boolescher Wert true = An; false = Aus;  
+    - Color = Aktueller Farbwert (int) , wenn kein Programm läuft.  
+    - Program = Aktuell aktives Programm. (int) 1-9  
+    - Play = Status der Programmausführung (int) 1 = Play; 2 = Pause; 3 = Stop  
+    - Brightness = Helligkeit bei Programmausführung (int) 1=normal; 2 = mittel; 3 = dunkel  
+    - Speed = Geschwindigkeit bei Programmausführung (int) 1,2,4,8,16,32,64,128 fache Verlangsamung.  
 
-    Die benötigten Profile werden ebenfalls automatisch angelegt und heißen:  
-        - MS35.PrgStatus (für die Statusvariable 'Play')  
-        - MS35.Program (für die Statusvariable 'Program' – Enthält die Namen der Programme)  
-        - MS35.Brightness (für die Statusvariable 'Brightness')  
-        - MS35.Speed (für die Statusvariable 'Speed')  
+   Die benötigten Profile werden ebenfalls automatisch angelegt und heißen:  
+    - MS35.PrgStatus (für die Statusvariable 'Play')  
+    - MS35.Program (für die Statusvariable 'Program' – Enthält die Namen der Programme)  
+    - MS35.Brightness (für die Statusvariable 'Brightness')  
+    - MS35.Speed (für die Statusvariable 'Speed')  
 
-    Die Profile können verändert werden. Werden sie jedoch gelöscht; werden Sie automatisch neu angelegt.  
+   Die Profile können verändert werden. Werden sie jedoch gelöscht; werden Sie automatisch neu angelegt.  
 
-7.  ## WebFront
+## 7. WebFront
 
-    Der Controller kann direkt über das WebFront bedient werden, ohne das weitere erstellen von Scripten.  
-    Es ist für alle Statusvariablen eine Standardaktion hinterlegt, welche sich direkt auf den Controller auswirkt. Dies kann auf Wunsch auch unter dem Reiter 'Statusvariablen' der MS35-Instanz, deaktiviert werden.  
-    ![](Doku/Doku_html_7c4200a.png)  
+   Der Controller kann direkt über das WebFront bedient werden, ohne das weitere erstellen von Scripten.  
+   Es ist für alle Statusvariablen eine Standardaktion hinterlegt, welche sich direkt auf den Controller auswirkt. Dies kann auf Wunsch auch unter dem Reiter 'Statusvariablen' der MS35-Instanz, deaktiviert werden.  
+   ![](Doku/Doku_html_7c4200a.png)  
 
-8.  ## PHP-Befehlsreferenz
+## 8. PHP-Befehlsreferenz
 
     `boolean MS35_SetRGB(integer $InstanzeID, integer $Red, integer $Green, integer $Blue);`  
         Setzt die Farbwerte für Rot (Red), Grün (Green) und Blau (Blue). Ein laufendes Programm wird dadurch unterbrochen (Stop).  
@@ -174,7 +172,7 @@ IPS-Modul für den Conrad MS35 RGB-Controller.
             Es dürfen maximal 51 dieser Sequenzen übergeben werden.  
 	Konnte der Befehl erfolgreich ausgeführt werden, liefert er als Ergebnis TRUE, andernfalls FALSE.  
 
-9.  ## Parameter / Modul-Infos
+## 9. Parameter / Modul-Infos
 
     GUID:
 	{78EC291F-DD08-474C-950B-4EC547F31D26}
@@ -182,7 +180,7 @@ IPS-Modul für den Conrad MS35 RGB-Controller.
     Eigenschaften für Get/SetProperty-Befehle:
      – entfällt –
 
-10.  ## Tips & Tricks
+## 10. Tips & Tricks
 
        - Sollte das Gerät mal nicht korrekt antworten, so wird bei der nächsten Ausführung eines Befehls versucht der Controller neu zu initialisieren. Welches einen Verlust der schon eingestellten Helligkeit und Geschwindigkeit bedeutet.  
        - Das Modul fügt automatisch Zwangspausen in ms Bereich ein, wenn zu viele Befehle auf einmal übertragen werden müssen (z.B. SetProgram). Würde dies nicht passieren, kommt der Controller häufig aus dem Sync zur Schnittstelle und muss neu initialisiert werden. Bevor er auf Befehle wieder reagiert.  
@@ -204,7 +202,7 @@ IPS-Modul für den Conrad MS35 RGB-Controller.
     `$Data[] = $Sequenz;`  
     `MS35_SetProgram(123456 , 8, json_encode($Data));`  
 
-11.  ## Anhang
+## 11. Anhang
 
     Changlog:  
     2.0. : Erstes (noch nicht endgültig getestetes) öffentliches Release für IPS 4.0
