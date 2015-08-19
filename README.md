@@ -1,7 +1,7 @@
 # IPSMS35
 IPS-Modul für den Conrad MS35 RGB-Controller.  
 
-**Dokumentation**
+## Dokumentation
 
 **Inhaltsverzeichnis**
 
@@ -27,7 +27,7 @@ IPS-Modul für den Conrad MS35 RGB-Controller.
 
 11.Anhang
 
-1.  **Funktionsumfang**
+1.  ## Funktionsumfang
 
     Direkte native Unterstützung des Conrad MS-35 RGB-Controller (EAN: 4016138567267 Bestellnr.: 181818 ).
 
@@ -57,7 +57,7 @@ IPS-Modul für den Conrad MS35 RGB-Controller.
 
 -   Programmieren der benutzerspezifischen Programme.
 
-2.  **Voraussetzungen**
+2.  ## Voraussetzungen
 
     - IPS ab Version 4.0
 
@@ -65,19 +65,19 @@ IPS-Modul für den Conrad MS35 RGB-Controller.
 
     - RS232-Schnittstelle auf TTL-Basis (oder jede andere Form der seriellen Datenanbindung mit 5V; z.B. XBee mit TTL-Adapterplatine)
 
-2.  **Software-Installation**
+3.  ## Software-Installation
 
     Über das Modul-Control folgende URL hinzufügen.  
     `git://github.com/Nall-chan/IPSMS35.git`  
 
-3.  **Hardware-Installation & Einrichtung**
+4.  ## Hardware-Installation & Einrichtung
 
     ![](Doku/Doku_html_m4b3399bc.png)  
     Den Controller gemäß Handbuch beschalten.  
     ![](Doku/Doku_html_m47910d47.png)  
     Die serielle Verbindung z.B. mit dem Programmierkabel (oder andere jede Art einer seriellen Anbindung) herstellen.  
 
-4.  **Einrichten der Instanzen in IPS**
+5.  ## Einrichten der Instanzen in IPS
 
     Unter Instanz hinzufügen ist der 'MS35 RGB-Controller' unter dem Hersteller 'Conrad' aufgeführt.  
     Es wird automatisch ein SerialPort angelegt.  
@@ -87,7 +87,7 @@ IPS-Modul für den Conrad MS35 RGB-Controller.
     Dafür wurde das Testcenter umgesetzt, mit dem die Funktion sofort überprüft werden kann.  
     ![](Doku/Doku_html_m1ed1e14.png)  
 
-5.  **Statusvariablen und Profile**
+6.  ## Statusvariablen und Profile
 
     ![](Doku/Doku_html_74a518cb.png)
 
@@ -108,13 +108,13 @@ IPS-Modul für den Conrad MS35 RGB-Controller.
 
     Die Profile können verändert werden. Werden sie jedoch gelöscht; werden Sie automatisch neu angelegt.  
 
-6.  **WebFront**
+7.  ## WebFront
 
     Der Controller kann direkt über das WebFront bedient werden, ohne das weitere erstellen von Scripten.  
     Es ist für alle Statusvariablen eine Standardaktion hinterlegt, welche sich direkt auf den Controller auswirkt. Dies kann auf Wunsch auch unter dem Reiter 'Statusvariablen' der MS35-Instanz, deaktiviert werden.  
     ![](Doku/Doku_html_7c4200a.png)  
 
-7.  **PHP-Befehlsreferenz**
+8.  ## PHP-Befehlsreferenz
 
     `boolean MS35_SetRGB(integer $InstanzeID, integer $Red, integer $Green, integer $Blue);`  
         Setzt die Farbwerte für Rot (Red), Grün (Green) und Blau (Blue). Ein laufendes Programm wird dadurch unterbrochen (Stop).  
@@ -174,7 +174,7 @@ IPS-Modul für den Conrad MS35 RGB-Controller.
             Es dürfen maximal 51 dieser Sequenzen übergeben werden.  
 	Konnte der Befehl erfolgreich ausgeführt werden, liefert er als Ergebnis TRUE, andernfalls FALSE.  
 
-8.  **Parameter / Modul-Infos**
+9.  ## Parameter / Modul-Infos
 
     GUID:
 	{78EC291F-DD08-474C-950B-4EC547F31D26}
@@ -182,7 +182,7 @@ IPS-Modul für den Conrad MS35 RGB-Controller.
     Eigenschaften für Get/SetProperty-Befehle:
      – entfällt –
 
-9.  **Tips & Tricks**
+10.  ## Tips & Tricks
 
        - Sollte das Gerät mal nicht korrekt antworten, so wird bei der nächsten Ausführung eines Befehls versucht der Controller neu zu initialisieren. Welches einen Verlust der schon eingestellten Helligkeit und Geschwindigkeit bedeutet.  
        - Das Modul fügt automatisch Zwangspausen in ms Bereich ein, wenn zu viele Befehle auf einmal übertragen werden müssen (z.B. SetProgram). Würde dies nicht passieren, kommt der Controller häufig aus dem Sync zur Schnittstelle und muss neu initialisiert werden. Bevor er auf Befehle wieder reagiert.  
@@ -190,23 +190,23 @@ IPS-Modul für den Conrad MS35 RGB-Controller.
 
     Folgender PHP-Code liefert **ein** Beispiel wie man den JSON-String mit dem korrekten Aufbau, erzeugen kann:  
 
-    `$Sequenz['R'] = 0x00;   
-    $Sequenz['G'] = 0xFF;   
-    $Sequenz['B'] = 0xFF;   
-    $Sequenz['H'] = 0x05;   
-    $Sequenz['F'] = 0x05;   
-    $Data[] = $Sequenz;   
-    $Sequenz['R'] = 0xFF;   
-    $Sequenz['G'] = 0x00;   
-    $Sequenz['B'] = 0xFF;   
-    $Sequenz['H'] = 0x05;   
-    $Sequenz['F'] = 0x05;   
-    $Data[] = $Sequenz;   
-    MS35_SetProgram(123456 , 8, json_encode($Data));`   
+    `$Sequenz['R'] = 0x00;`  
+    `$Sequenz['G'] = 0xFF;`  
+    `$Sequenz['B'] = 0xFF;`  
+    `$Sequenz['H'] = 0x05;`  
+    `$Sequenz['F'] = 0x05;`  
+    `$Data[] = $Sequenz;`  
+    `$Sequenz['R'] = 0xFF;`  
+    `$Sequenz['G'] = 0x00;`  
+    `$Sequenz['B'] = 0xFF;`  
+    `$Sequenz['H'] = 0x05;`  
+    `$Sequenz['F'] = 0x05;`  
+    `$Data[] = $Sequenz;`  
+    `MS35_SetProgram(123456 , 8, json_encode($Data));`  
 
-10.  **Anhang**
+11.  ## Anhang
 
     Changlog:  
-    2.0. : Erstes öffentliches Release für IPS 4.0
+    2.0. : Erstes (noch nicht endgültig getestetes) öffentliches Release für IPS 4.0
 
 
