@@ -27,37 +27,37 @@ IPS-Modul für den Conrad MS35 RGB-Controller.
 
 11.Anhang
 
-1.  ## Funktionsumfang
+## 1. Funktionsumfang
 
     Direkte native Unterstützung des Conrad MS-35 RGB-Controller (EAN: 4016138567267 Bestellnr.: 181818 ).
 
--   Setzen einer Farbe.
+    -   Setzen einer Farbe.
 
--   Starten eines der neun internen Programme:
+    -   Starten eines der neun internen Programme:
 
-    -   3x verschiedene Farbwechsel (Programm 1-3)
+       -   3x verschiedene Farbwechsel (Programm 1-3)
 
-    -   Gewitter (Programm 4)
+       -   Gewitter (Programm 4)
 
-    -   Kaminfeuer (Programm 5)
+       -   Kaminfeuer (Programm 5)
 
-    -   Sonnenauf- & untergang (Programm 6)
+       -   Sonnenauf- & untergang (Programm 6)
 
-    -   Farbblitze (Programm 7)
+       -   Farbblitze (Programm 7)
 
-    -   2x Benutzerspezifisch (Programm 8 & 9)
+       -   2x Benutzerspezifisch (Programm 8 & 9)
 
--   Setzen der Helligkeit (gilt nur für Programme).
+    -   Setzen der Helligkeit (gilt nur für Programme).
 
--   Setzen der Ablauf-Geschwindigkeit (gilt nur für Programme; nicht möglich bei Gewitter und Kaminfeuer).
+    -   Setzen der Ablauf-Geschwindigkeit (gilt nur für Programme; nicht möglich bei Gewitter und Kaminfeuer).
 
--   Pause & Fortsetzen des aktiven Programms.
+    -   Pause & Fortsetzen des aktiven Programms.
 
--   Ein- und Ausschalten (Aus = dunkel-gesteuert; Ein = Initialisierung der Parameter wie nach Spannungswiederkehr.
+    -   Ein- und Ausschalten (Aus = dunkel-gesteuert; Ein = Initialisierung der Parameter wie nach Spannungswiederkehr.
 
--   Programmieren der benutzerspezifischen Programme.
+    -   Programmieren der benutzerspezifischen Programme.
 
-2.  ## Voraussetzungen
+## 2. Voraussetzungen
 
     - IPS ab Version 4.0
 
