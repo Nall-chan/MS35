@@ -23,7 +23,7 @@ IPS-Modul für den Conrad MS35 RGB-Controller.
 
 10. Tips & Tricks
 
-11. Anhang
+11. [Anhang](#11-anhang) 
 
 ## 1. Funktionsumfang
 
@@ -114,37 +114,37 @@ IPS-Modul für den Conrad MS35 RGB-Controller.
 
 ## 8. PHP-Befehlsreferenz
 
-    `boolean MS35_SetRGB(integer $InstanzeID, integer $Red, integer $Green, integer $Blue);`  
+   `boolean MS35_SetRGB(integer $InstanzeID, integer $Red, integer $Green, integer $Blue);`  
         Setzt die Farbwerte für Rot (Red), Grün (Green) und Blau (Blue). Ein laufendes Programm wird dadurch unterbrochen (Stop).  
-	Erlaubte Werte für die Farben sind 0 bis 255.  
-	Konnte der Befehl erfolgreich ausgeführt werden, liefert er als Ergebnis TRUE, andernfalls FALSE.  
+        Erlaubte Werte für die Farben sind 0 bis 255.  
+        Konnte der Befehl erfolgreich ausgeführt werden, liefert er als Ergebnis TRUE, andernfalls FALSE.  
 
-    `boolean MS35_Switch(integer $InstanzeID, boolean State);`  
+   `boolean MS35_Switch(integer $InstanzeID, boolean State);`  
         Schaltet den Controller aus oder ein.  
         Dabei wird das Gerät nicht komplett abgeschaltet, da es sonst nicht mehr erreichbar wäre.  
         Aus ist hier das setzten der Farbe auf 0 (Alle Kanäle auf 0%).  
         Aus- / Einschalten setzt außerdem alle Werte für Brightness und Speed auf die Werte wie nach Spannungswiederkehr.  
         Konnte der Befehl erfolgreich ausgeführt werden, liefert er als Ergebnis TRUE, andernfalls FALSE.  
 
-    `boolean MS35_Play(integer $InstanzeID);`  
+   `boolean MS35_Play(integer $InstanzeID);`  
         Das aktuell ausgewählte Programm wird fortgesetzt.  
 	Konnte der Befehl erfolgreich ausgeführt werden, liefert er als Ergebnis TRUE, andernfalls FALSE.  
 
-    `boolean MS35_Pause(integer $InstanzeID);`  
+   `boolean MS35_Pause(integer $InstanzeID);`  
         Das aktuell wiedergegebene Programm wird angehalten.  
 	Konnte der Befehl erfolgreich ausgeführt werden, liefert er als Ergebnis TRUE, andernfalls FALSE.  
 
-    `boolean MS35_Stop(integer $InstanzeID);`  
+   `boolean MS35_Stop(integer $InstanzeID);`  
         Das aktuell wiedergegebene Programm wird beendet.  
         Konnte der Befehl erfolgreich ausgeführt werden, liefert er als Ergebnis TRUE, andernfalls FALSE.  
 
-    `boolean MS35_RunProgram(integer $InstanzeID, integer $Program);`  
+   `boolean MS35_RunProgram(integer $InstanzeID, integer $Program);`  
         Das Programm mit dem Index `$Program` wird wiedergegeben.  
 	`$Program` muss zwischen 1 bis 9 liegen.  
         Eine Übersicht ist im ersten Kapitel.  
         Konnte der Befehl erfolgreich ausgeführt werden, liefert er als Ergebnis TRUE, andernfalls FALSE.  
 
-    `string MS35_SetSpeed(integer $InstanzeID, integer $Speed);`  
+   `string MS35_SetSpeed(integer $InstanzeID, integer $Speed);`  
         Legt die Geschwindigkeit für die Ausführung eines Programmes fest.  
         Kann vor oder nach RunProgramm aufgerufen werden.  
         Kann aber nicht zusammen mit den Programmen 4 & 5 verwendet werden.  
@@ -153,14 +153,14 @@ IPS-Modul für den Conrad MS35 RGB-Controller.
         Wobei 0 normale Geschwindigkeit ist, und jede Stufe von 1-8 eine Halbierung der Geschwindigkeit ist (1/2, 1/4, 1/8, 1/16, usw.)  
         Konnte der Befehl erfolgreich ausgeführt werden, liefert er als Ergebnis TRUE, andernfalls FALSE.  
 
-    `string MS35_SetBrightness(integer $InstanzeID, integer $Brightness);`  
+   `string MS35_SetBrightness(integer $InstanzeID, integer $Brightness);`  
         Legt die Helligkeit für die Ausführung eines Programmes fest.  
         Kann vor oder nach RunProgramm aufgerufen werden.  
         `$Brightness` muss dabei zwischen 1 und 3 liegen.  
         Wobei 1 der vollen, 2 der mittlere und 3 der niedrige Helligkeit entspricht.  
         Konnte der Befehl erfolgreich ausgeführt werden, liefert er als Ergebnis TRUE, andernfalls FALSE.  
 
-    `string MS35_SetProgram(integer $InstanzeID, integer $Program, string $Data);`  
+   `string MS35_SetProgram(integer $InstanzeID, integer $Program, string $Data);`  
         Schreibt eines der benutzerspezifischen Programme 8 oder 9 in den Controller.  
 	`$Programm` darf nur 8 oder 9 enthalten.  
         `$Data` ist ein JSON-Codierter String welcher das Programm nach folgendem Schema enthalten muss:  
@@ -174,19 +174,19 @@ IPS-Modul für den Conrad MS35 RGB-Controller.
 
 ## 9. Parameter / Modul-Infos
 
-    GUID:
+   GUID:
 	{78EC291F-DD08-474C-950B-4EC547F31D26}
 
-    Eigenschaften für Get/SetProperty-Befehle:
+   Eigenschaften für Get/SetProperty-Befehle:
      – entfällt –
 
 ## 10. Tips & Tricks
 
-       - Sollte das Gerät mal nicht korrekt antworten, so wird bei der nächsten Ausführung eines Befehls versucht der Controller neu zu initialisieren. Welches einen Verlust der schon eingestellten Helligkeit und Geschwindigkeit bedeutet.  
-       - Das Modul fügt automatisch Zwangspausen in ms Bereich ein, wenn zu viele Befehle auf einmal übertragen werden müssen (z.B. SetProgram). Würde dies nicht passieren, kommt der Controller häufig aus dem Sync zur Schnittstelle und muss neu initialisiert werden. Bevor er auf Befehle wieder reagiert.  
-       - SetProgram kann maximal 51 Squenzen aufnehmen und im Controller abspeichern. Diese Übertragung dauert Zeit. Im Zweifelsfall ist die maximal Ausführungszeit des Scriptes anzupassen.  
+   - Sollte das Gerät mal nicht korrekt antworten, so wird bei der nächsten Ausführung eines Befehls versucht der Controller neu zu initialisieren. Welches einen Verlust der schon eingestellten Helligkeit und Geschwindigkeit bedeutet.  
+   - Das Modul fügt automatisch Zwangspausen in ms Bereich ein, wenn zu viele Befehle auf einmal übertragen werden müssen (z.B. SetProgram). Würde dies nicht passieren, kommt der Controller häufig aus dem Sync zur Schnittstelle und muss neu initialisiert werden. Bevor er auf Befehle wieder reagiert.  
+   - SetProgram kann maximal 51 Squenzen aufnehmen und im Controller abspeichern. Diese Übertragung dauert Zeit. Im Zweifelsfall ist die maximal Ausführungszeit des Scriptes anzupassen.  
 
-    Folgender PHP-Code liefert **ein** Beispiel wie man den JSON-String mit dem korrekten Aufbau, erzeugen kann:  
+   Folgender PHP-Code liefert **ein** Beispiel wie man den JSON-String mit dem korrekten Aufbau, erzeugen kann:  
 
     `$Sequenz['R'] = 0x00;`  
     `$Sequenz['G'] = 0xFF;`  
@@ -204,7 +204,7 @@ IPS-Modul für den Conrad MS35 RGB-Controller.
 
 ## 11. Anhang
 
-    Changlog:  
-    2.0. : Erstes (noch nicht endgültig getestetes) öffentliches Release für IPS 4.0
+   Changlog:  
+   2.0. : Erstes (noch nicht endgültig getestetes) öffentliches Release für IPS 4.0
 
 
