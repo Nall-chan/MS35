@@ -14,6 +14,7 @@ class MS35 extends IPSModule
           fReadReplyLock  := TCriticalSection.Create();
           fReadReplyEvent := TEvent.Create(nil,false,false,'fReadyToReadReply'+inttostr(fInstanceID),true);
           fErrorLock      := TCriticalSection.Create(); */
+        $this->RequireParent("{6DC3D946-0D31-450F-A8C6-C42DB8D7D4F1}");
     }
 
     public function ApplyChanges()
@@ -22,6 +23,7 @@ class MS35 extends IPSModule
         parent::ApplyChanges();
 
 //        $this->RequireParent("{96A9AB3A-2538-42C5-A130-FC34205A706A}");        
+        // 1. Verfügbarer SerialPort wird verbunden oder neu erzeugt, wenn nicht vorhanden.
 
         $this->RegisterProfileIntegerEx("MS35.Program", "MS35.Program", "", "", Array(
             Array(1, 'Farbwechsel 1', '', -1),
@@ -79,6 +81,31 @@ class MS35 extends IPSModule
         IPS_SetHidden($this->GetIDForIdent('BufferIN'), true);
         IPS_SetHidden($this->GetIDForIdent('ReplyEvent'), true);
         IPS_SetHidden($this->GetIDForIdent('Connected'), true);
+
+        //prüfen ob IO ein SerialPort ist
+//        
+        // Zwangskonfiguration des SerialPort, wenn vorhanden und verbunden
+        $ParentID = $this->GetParent();
+
+        if (!($ParentID === false))
+        {
+
+            $ParentInstance = IPS_GetInstance($ParentID);
+            if ($ParentInstance['ModuleInfo']['ModuleID'] == '{6DC3D946-0D31-450F-A8C6-C42DB8D7D4F1}')
+            {
+                if (IPS_GetProperty($ParentID, 'StopBits') <> '1')
+                    IPS_SetProperty($ParentID, 'StopBits', '1');
+                if (IPS_GetProperty($ParentID, 'BaudRate') <> '38400')
+                    IPS_SetProperty($ParentID, 'BaudRate', '38400');
+                if (IPS_GetProperty($ParentID, 'Parity') <> 'None')
+                    IPS_SetProperty($ParentID, 'Parity', 'None');
+                if (IPS_GetProperty($ParentID, 'DataBits') <> '8')
+                    IPS_SetProperty($ParentID, 'DataBits', '8');
+                if (IPS_HasChanges($ParentID))
+                    IPS_ApplyChanges($ParentID);
+            }
+        }
+
         try
         {
             $this->DoInit();
@@ -637,6 +664,12 @@ class MS35 extends IPSModule
                 return true;
         }
         return false;
+    }
+
+    protected function GetParent()
+    {
+        $instance = IPS_GetInstance($this->InstanceID);
+        return ($instance['ConnectionID'] > 0) ? $instance['ConnectionID'] : false;
     }
 
     /*
