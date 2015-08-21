@@ -21,7 +21,7 @@ class MS35 extends IPSModule
 //Never delete this line!
         parent::ApplyChanges();
 
-//        $this->RequireParent("{61051B08-5B92-472B-AFB2-6D971D9B99EE}");        
+//        $this->RequireParent("{96A9AB3A-2538-42C5-A130-FC34205A706A}");        
 
         $this->RegisterProfileIntegerEx("MS35.Program", "MS35.Program", "", "", Array(
             Array(1, 'Farbwechsel 1', '', -1),
