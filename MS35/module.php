@@ -79,7 +79,14 @@ class MS35 extends IPSModule
         IPS_SetHidden($this->GetIDForIdent('BufferIN'), true);
         IPS_SetHidden($this->GetIDForIdent('ReplyEvent'), true);
         IPS_SetHidden($this->GetIDForIdent('Connected'), true);
-        $this->DoInit();
+        try
+        {
+            $this->DoInit();
+        }
+        catch (Exception $exc)
+        {
+            unset($exc);
+        }
     }
 
 ################## PUBLIC
@@ -385,7 +392,7 @@ class MS35 extends IPSModule
     private function SendInit()
     {
         if (!$this->lock('InitRun'))
-            return;
+            return false;
         $InitState = false;
         $BufferID = $this->GetIDForIdent("BufferIN");
 //        $Text = chr(0x0D);
