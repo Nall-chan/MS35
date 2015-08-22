@@ -25,7 +25,7 @@ class MS35 extends IPSModule
 //        $this->RequireParent("{96A9AB3A-2538-42C5-A130-FC34205A706A}");        
         // 1. Verfügbarer SerialPort wird verbunden oder neu erzeugt, wenn nicht vorhanden.
 
-        $this->RegisterProfileIntegerEx("MS35.Program", "MS35.Program", "", "", Array(
+        $this->RegisterProfileIntegerEx("MS35.Program", "Gear", "", "", Array(
             Array(1, 'Farbwechsel 1', '', -1),
             Array(2, 'Farbwechsel 2', '', -1),
             Array(3, 'Farbwechsel 3', '', -1),
@@ -38,13 +38,13 @@ class MS35 extends IPSModule
         ));
 
 
-        $this->RegisterProfileIntegerEx("MS35.PrgStatus", "MS35.PrgStatus", "", "", Array(
+        $this->RegisterProfileIntegerEx("MS35.PrgStatus", "Bulb", "", "", Array(
             Array(1, 'Play', '', -1),
             Array(2, 'Pause', '', -1),
             Array(3, 'Stop', '', -1)
         ));
 
-        $this->RegisterProfileIntegerEx("MS35.Speed", "MS35.Speed", "", "", Array(
+        $this->RegisterProfileIntegerEx("MS35.Speed", "Intensity", "", "", Array(
             Array(0, 'normal', '', -1),
             Array(1, '1/2', '', -1),
             Array(2, '1/4', '', -1),
@@ -55,7 +55,7 @@ class MS35 extends IPSModule
             Array(7, '1/128', '', -1)
         ));
 
-        $this->RegisterProfileIntegerEx("MS35.Brightness", "MS35.Brightness", "", "", Array(
+        $this->RegisterProfileIntegerEx("MS35.Brightness", "Sun", "", "", Array(
             Array(1, 'normal', '', -1),
             Array(2, '1/2', '', -1),
             Array(3, '1/3', '', -1)
