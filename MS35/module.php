@@ -588,6 +588,8 @@ class MS35 extends IPSModule
     protected function SendDataToParent($Data)
     {
 //Semaphore setzen
+        if (!$this->HasActiveParent())
+            throw new Exception("Instance has no active Parent.");            
         if (!$this->lock("ToParent"))
         {
             throw new Exception("Can not send to Parent");
