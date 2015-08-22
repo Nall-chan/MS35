@@ -651,11 +651,11 @@ class MS35 extends IPSModule
         SetValueInteger($id, $value);
     }
 
-    private function SetValueString($Ident, $value)
+/*    private function SetValueString($Ident, $value)
     {
         $id = $this->GetIDForIdent($Ident);
         SetValueString($id, $value);
-    }
+    }*/
 
     protected function HasActiveParent()
     {
@@ -664,7 +664,7 @@ class MS35 extends IPSModule
         if ($instance['ConnectionID'] > 0)
         {
             $parent = IPS_GetInstance($instance['ConnectionID']);
-            if ($parent['InstanceStatus'] == IS_ACTIVE)
+            if ($parent['InstanceStatus'] == 102)
                 return true;
         }
         return false;
