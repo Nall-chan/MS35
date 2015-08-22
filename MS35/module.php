@@ -320,8 +320,10 @@ class MS35 extends IPSModule
                 }
                 break;
             case 'Speed':
+                $this->SetSpeed($Value);
                 break;
             case 'Brightness':
+                $this->SetBrightness($Value);
                 break;
             default:
                 throw new Exception('Invalid Ident');
