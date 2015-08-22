@@ -281,6 +281,11 @@ class MS35 extends IPSModule
             $this->SetValueInteger('Brightness', $Level);
     }
 
+    public function SetProgramm(string $JSONData)
+    {
+        
+    }
+
 ################## ActionHandler
 
     public function RequestAction($Ident, $Value)
@@ -589,7 +594,7 @@ class MS35 extends IPSModule
     {
 //Semaphore setzen
         if (!$this->HasActiveParent())
-            throw new Exception("Instance has no active Parent.");            
+            throw new Exception("Instance has no active Parent.");
         if (!$this->lock("ToParent"))
         {
             throw new Exception("Can not send to Parent");
@@ -651,11 +656,11 @@ class MS35 extends IPSModule
         SetValueInteger($id, $value);
     }
 
-/*    private function SetValueString($Ident, $value)
-    {
-        $id = $this->GetIDForIdent($Ident);
-        SetValueString($id, $value);
-    }*/
+    /*    private function SetValueString($Ident, $value)
+      {
+      $id = $this->GetIDForIdent($Ident);
+      SetValueString($id, $value);
+      } */
 
     protected function HasActiveParent()
     {
