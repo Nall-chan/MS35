@@ -281,9 +281,38 @@ class MS35 extends IPSModule
             $this->SetValueInteger('Brightness', $Level);
     }
 
-    public function SetProgramm(string $JSONData)
+    public function SetProgramm(integer $Programm, string $Data)
     {
+        if (($Programm < 8) or ( $Programm > 9))
+            throw new Exception('Invalid Program-Index');
         
+        $PrgData = json_decode($Data);
+        if ($PrgData == NULL)
+            throw new Exception('Error in Program-Data');
+        
+        if ($Programm == 8)
+            $Programm = 2;
+        if ($Programm == 9)
+            $Programm = 4;
+        
+        $i = count($PrgData);
+        if (($i < 1) or ( $i > 51))
+            throw new Exception('Error in Program-Data');
+        
+        $this->SendCommand(chr($Programm) + chr($i) + chr(0) + chr(0) + chr(0) + chr(0) + chr(0));
+        $Programm++;
+        
+        foreach ($PrgData as $i => $Slot)
+        {
+            $Red = $Slot->R;
+            $Green = $Slot->G;
+            $Blue = $Slot->B;
+            $Fade = $Slot->F;
+            $Hold = $Slot->H;
+            if (($Red < 0) or ( $Red > 255) or ( $Green < 0) or ( $Green > 255) or ( $Blue < 0) or ( $Blue > 255) or ( $Fade < 0) or ( $Fade > 255) or ( $Hold < 0) or ( $Hold > 255))
+                throw new Exception('Error in Program-Data');
+            $this->SendCommand(chr($Programm) + chr($i + 1) + chr($Red) + chr($Green) + chr($Blue) + chr($Fade) + chr($Hold));
+        }
     }
 
 ################## ActionHandler
