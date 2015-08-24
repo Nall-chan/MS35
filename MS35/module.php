@@ -299,7 +299,7 @@ class MS35 extends IPSModule
         if (($i < 1) or ( $i > 51))
             throw new Exception('Error in Program-Data');
         
-        $this->SendCommand(chr($Programm) + chr($i) + chr(0) + chr(0) + chr(0) + chr(0) + chr(0));
+        $this->SendCommand(chr($Programm) . chr($i) . chr(0) . chr(0) . chr(0) . chr(0) . chr(0));
         $Programm++;
         
         foreach ($PrgData as $i => $Slot)
@@ -311,7 +311,7 @@ class MS35 extends IPSModule
             $Hold = $Slot->H;
             if (($Red < 0) or ( $Red > 255) or ( $Green < 0) or ( $Green > 255) or ( $Blue < 0) or ( $Blue > 255) or ( $Fade < 0) or ( $Fade > 255) or ( $Hold < 0) or ( $Hold > 255))
                 throw new Exception('Error in Program-Data');
-            $this->SendCommand(chr($Programm) + chr($i + 1) + chr($Red) + chr($Green) + chr($Blue) + chr($Fade) + chr($Hold));
+            $this->SendCommand(chr($Programm) . chr($i + 1) . chr($Red) . chr($Green) . chr($Blue) . chr($Fade) . chr($Hold));
         }
     }
 
