@@ -281,7 +281,7 @@ class MS35 extends IPSModule
             $this->SetValueInteger('Brightness', $Level);
     }
 
-    public function SetProgramm(integer $Programm, string $Data)
+    public function SetProgram(integer $Programm, string $Data)
     {
         if (($Programm < 8) or ( $Programm > 9))
             throw new Exception('Invalid Program-Index');
