@@ -57,7 +57,7 @@ IPS-Modul für den Conrad MS35 RGB-Controller.
 
 ## 2. Voraussetzungen
 
-   - IPS ab Version 4.0
+   - IPS ab Version 3.1 oder Version 4.x
 
    - MS-35 RGB-Controller
 
@@ -65,6 +65,10 @@ IPS-Modul für den Conrad MS35 RGB-Controller.
 
 ## 3. Software-Installation
 
+**IPS 3.1 bis 3.4:**
+
+
+**IPS 4.x:**
    Über das Modul-Control folgende URL hinzufügen.  
    `git://github.com/Nall-chan/IPSMS35.git`  
 
