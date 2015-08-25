@@ -285,23 +285,23 @@ class MS35 extends IPSModule
     {
         if (($Programm < 8) or ( $Programm > 9))
             throw new Exception('Invalid Program-Index');
-        
+
         $PrgData = json_decode($Data);
         if ($PrgData == NULL)
             throw new Exception('Error in Program-Data');
-        
+
         if ($Programm == 8)
             $Programm = 2;
         if ($Programm == 9)
             $Programm = 4;
-        
+
         $i = count($PrgData);
         if (($i < 1) or ( $i > 51))
             throw new Exception('Error in Program-Data');
-        
+
         $this->SendCommand(chr($Programm) . chr($i) . chr(0) . chr(0) . chr(0) . chr(0) . chr(0));
         $Programm++;
-        
+
         foreach ($PrgData as $i => $Slot)
         {
             $Red = $Slot->R;
@@ -379,7 +379,16 @@ class MS35 extends IPSModule
         $BufferID = $this->GetIDForIdent("BufferIN");
         if ($this->lock('SendCommand'))
         {
-            if ($this->SendDataToParent($this->AddCRC16($Data)))
+            try
+            {
+                $sendok = $this->SendDataToParent($this->AddCRC16($Data));
+            }
+            catch (Exception $exc)
+            {
+                $this->unlock('SendCommand');
+                throw new $exc;
+            }
+            if ($sendok)
             {
                 if ($this->WaitForResponse(1000))    //warte auf Reply
                 {
@@ -461,7 +470,16 @@ class MS35 extends IPSModule
 //        $Text = chr(0x0D);
         for ($i = 0; $i < 9; $i++)
         {
-            if ($this->SendDataToParent(chr(0xFD)))
+            try
+            {
+                $sendok = $this->SendDataToParent(chr(0xFD));
+            }
+            catch (Exception $exc)
+            {
+                $this->unlock('InitRun');
+                throw new $exc;
+            }
+            if ($sendok)
             {
                 if ($this->WaitForResponse(100))    //warte auf Reply
                 {
@@ -483,7 +501,17 @@ class MS35 extends IPSModule
         if ($InitState)
         {
             $InitState = false;
-            if ($this->SendDataToParent(chr(0xFD) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0xCF) . chr(0x2C)))
+            try
+            {
+                $sendok = $this->SendDataToParent(chr(0xFD) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0xCF) . chr(0x2C));
+            }
+            catch (Exception $exc)
+            {
+                $this->unlock('InitRun');
+                throw new $exc;
+            }
+            
+            if ($sendok)
             {
                 $Buffer = '';
 
@@ -638,8 +666,7 @@ class MS35 extends IPSModule
 // Senden fehlgeschlagen
 
             $this->unlock("ToParent");
-//            throw new Exception ($exc);
-            return false;
+            throw new Exception($exc);
         }
         $this->unlock("ToParent");
         return true;
@@ -651,7 +678,7 @@ class MS35 extends IPSModule
     {
         for ($i = 0; $i < 100; $i++)
         {
-            if (IPS_SemaphoreEnter("LMS_" . (string) $this->InstanceID . (string) $ident, 1))
+            if (IPS_SemaphoreEnter("MS35_" . (string) $this->InstanceID . (string) $ident, 1))
             {
 //                IPS_LogMessage((string)$this->InstanceID,"Lock:LMS_" . (string) $this->InstanceID . (string) $ident);
                 return true;
@@ -668,7 +695,7 @@ class MS35 extends IPSModule
     {
 //                IPS_LogMessage((string)$this->InstanceID,"Unlock:LMS_" . (string) $this->InstanceID . (string) $ident);
 
-        IPS_SemaphoreLeave("LMS_" . (string) $this->InstanceID . (string) $ident);
+        IPS_SemaphoreLeave("MS35_" . (string) $this->InstanceID . (string) $ident);
     }
 
 ################## DUMMYS / WOARKAROUNDS - protected
