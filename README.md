@@ -122,7 +122,7 @@ IPS-Modul für den Conrad MS35 RGB-Controller.
 
 ## 8. PHP-Befehlsreferenz
 
-   `boolean MS35_SetRGB(integer $InstanzeID, integer $Red, integer $Green, integer $Blue);`  
+   `php boolean MS35_SetRGB(integer $InstanzeID, integer $Red, integer $Green, integer $Blue);`  
         Setzt die Farbwerte für Rot (Red), Grün (Green) und Blau (Blue). Ein laufendes Programm wird dadurch unterbrochen (Stop).  
         Erlaubte Werte für die Farben sind 0 bis 255.  
         Konnte der Befehl erfolgreich ausgeführt werden, liefert er als Ergebnis TRUE, andernfalls FALSE.  
