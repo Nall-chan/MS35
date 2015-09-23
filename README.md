@@ -1,5 +1,5 @@
 # IPSMS35
-IPS-Modul für den Conrad MS35 RGB-Controller.  
+IPS-Modul fÃ¼r den Conrad MS35 RGB-Controller.  
 
 ## Inhaltsverzeichnis
 
@@ -27,7 +27,7 @@ IPS-Modul für den Conrad MS35 RGB-Controller.
 
 ## 1. Funktionsumfang
 
-   Direkte native Unterstützung des Conrad MS-35 RGB-Controller (EAN: 4016138567267 Bestellnr.: 181818 ).
+   Direkte native UnterstÃ¼tzung des Conrad MS-35 RGB-Controller (EAN: 4016138567267 Bestellnr.: 181818 ).
 
    *   Setzen einer Farbe.  
 
@@ -45,9 +45,9 @@ IPS-Modul für den Conrad MS35 RGB-Controller.
 
       -   2x Benutzerspezifisch (Programm 8 & 9)
 
-   *   Setzen der Helligkeit (gilt nur für Programme).
+   *   Setzen der Helligkeit (gilt nur fÃ¼r Programme).
 
-   *   Setzen der Ablauf-Geschwindigkeit (gilt nur für Programme; nicht möglich bei Gewitter und Kaminfeuer).
+   *   Setzen der Ablauf-Geschwindigkeit (gilt nur fÃ¼r Programme; nicht mÃ¶glich bei Gewitter und Kaminfeuer).
 
    *   Pause & Fortsetzen des aktiven Programms.
 
@@ -71,102 +71,103 @@ IPS-Modul für den Conrad MS35 RGB-Controller.
    Ist der Ordner Modules nicht vorhanden, so ist er anzulegen.  
 
 **IPS 4.x:**  
-   Über das Modul-Control folgende URL hinzufügen.  
+   Ãœber das Modul-Control folgende URL hinzufÃ¼gen.  
    `git://github.com/Nall-chan/IPSMS35.git`  
 
 ## 4. Hardware-Installation & Einrichtung
 
    ![](Doku/Doku_html_m4b3399bc.png)  
-   Den Controller gemäß Handbuch beschalten.  
+   Den Controller gemÃ¤ÃŸ Handbuch beschalten.  
    ![](Doku/Doku_html_m47910d47.png)  
    Die serielle Verbindung z.B. mit dem Programmierkabel (oder andere jede Art einer seriellen Anbindung) herstellen.  
 
 ## 5. Einrichten der Instanzen in IPS
 
-   Unter Instanz hinzufügen ist der 'MS35 RGB-Controller' unter dem Hersteller 'Conrad' aufgeführt.  
+   Unter Instanz hinzufÃ¼gen ist der 'MS35 RGB-Controller' unter dem Hersteller 'Conrad' aufgefÃ¼hrt.  
    Es wird automatisch ein SerialPort angelegt.  
-   Die Einstellungen des SerialPort sind auf 38000 Baud zu konfigurieren. Die restlichen Parameter bleiben auf den Standardwerten 8 Datenbits, 1 Stopbit, keine Parität.  
-   Wird eine andere Hardware zur Datenübertragung genutzt, ist diese ebenfalls auf diese Parameter zu konfigurieren und die SerialPort-Instanz zu löschen.  
-   Die Instanz der MS35 benötigt keine eigene Konfiguration.  
-   Dafür wurde das Testcenter umgesetzt, mit dem die Funktion sofort überprüft werden kann.  
+   Die Einstellungen des SerialPort sind auf 38000 Baud zu konfigurieren. Die restlichen Parameter bleiben auf den Standardwerten 8 Datenbits, 1 Stopbit, keine ParitÃ¤t.  
+   Wird eine andere Hardware zur DatenÃ¼bertragung genutzt, ist diese ebenfalls auf diese Parameter zu konfigurieren und die SerialPort-Instanz zu lÃ¶schen.  
+   Die Instanz der MS35 benÃ¶tigt keine eigene Konfiguration.  
+   DafÃ¼r wurde das Testcenter umgesetzt, mit dem die Funktion sofort Ã¼berprÃ¼ft werden kann.  
    ![](Doku/Doku_html_m1ed1e14.png)  
 
 ## 6. Statusvariablen und Profile
 
    ![](Doku/Doku_html_74a518cb.png)
 
-   Die Statusvariablen werden für jeden Controller automatisch angelegt. Löschen kann zu Fehlfunktionen führen; da Sie z.B. für das ausführen eines Farb-Programms benötigt werden. Umbenennen ist natürlich kein Problem.  
+   Die Statusvariablen werden fÃ¼r jeden Controller automatisch angelegt. LÃ¶schen kann zu Fehlfunktionen fÃ¼hren; da Sie z.B. fÃ¼r das ausfÃ¼hren eines Farb-Programms benÃ¶tigt werden. Umbenennen ist natÃ¼rlich kein Problem.  
    Definition:  
 
    - STATE = Status des Controllers als boolescher Wert true = An; false = Aus;  
-   - Color = Aktueller Farbwert (int) , wenn kein Programm läuft.  
+   - Color = Aktueller Farbwert (int) , wenn kein Programm lÃ¤uft.  
    - Program = Aktuell aktives Programm. (int) 1-9  
-   - Play = Status der Programmausführung (int) 1 = Play; 2 = Pause; 3 = Stop  
-   - Brightness = Helligkeit bei Programmausführung (int) 1=normal; 2 = mittel; 3 = dunkel  
-   - Speed = Geschwindigkeit bei Programmausführung (int) 1,2,4,8,16,32,64,128 fache Verlangsamung.  
+   - Play = Status der ProgrammausfÃ¼hrung (int) 1 = Play; 2 = Pause; 3 = Stop  
+   - Brightness = Helligkeit bei ProgrammausfÃ¼hrung (int) 1=normal; 2 = mittel; 3 = dunkel  
+   - Speed = Geschwindigkeit bei ProgrammausfÃ¼hrung (int) 1,2,4,8,16,32,64,128 fache Verlangsamung.  
 
-   Die benötigten Profile werden ebenfalls automatisch angelegt und heißen:  
+   Die benÃ¶tigten Profile werden ebenfalls automatisch angelegt und heiÃŸen:  
 
-   - MS35.PrgStatus (für die Statusvariable 'Play')  
-   - MS35.Program (für die Statusvariable 'Program' – Enthält die Namen der Programme)  
-   - MS35.Brightness (für die Statusvariable 'Brightness')  
-   - MS35.Speed (für die Statusvariable 'Speed')  
+   - MS35.PrgStatus (fÃ¼r die Statusvariable 'Play')  
+   - MS35.Program (fÃ¼r die Statusvariable 'Program' â€“ EnthÃ¤lt die Namen der Programme)  
+   - MS35.Brightness (fÃ¼r die Statusvariable 'Brightness')  
+   - MS35.Speed (fÃ¼r die Statusvariable 'Speed')  
 
-   Die Profile können verändert werden. Werden sie jedoch gelöscht; werden Sie automatisch neu angelegt.  
+   Die Profile kÃ¶nnen verÃ¤ndert werden. Werden sie jedoch gelÃ¶scht; werden Sie automatisch neu angelegt.  
 
 ## 7. WebFront
 
-   Der Controller kann direkt über das WebFront bedient werden, ohne das weitere erstellen von Scripten.  
-   Es ist für alle Statusvariablen eine Standardaktion hinterlegt, welche sich direkt auf den Controller auswirkt. Dies kann auf Wunsch auch unter dem Reiter 'Statusvariablen' der MS35-Instanz, deaktiviert werden.  
+   Der Controller kann direkt Ã¼ber das WebFront bedient werden, ohne das weitere erstellen von Scripten.  
+   Es ist fÃ¼r alle Statusvariablen eine Standardaktion hinterlegt, welche sich direkt auf den Controller auswirkt. Dies kann auf Wunsch auch unter dem Reiter 'Statusvariablen' der MS35-Instanz, deaktiviert werden.  
    ![](Doku/Doku_html_7c4200a.png)  
 
 ## 8. PHP-Befehlsreferenz
 
-   `php boolean MS35_SetRGB(integer $InstanzeID, integer $Red, integer $Green, integer $Blue);`  
-        Setzt die Farbwerte für Rot (Red), Grün (Green) und Blau (Blue). Ein laufendes Programm wird dadurch unterbrochen (Stop).  
-        Erlaubte Werte für die Farben sind 0 bis 255.  
-        Konnte der Befehl erfolgreich ausgeführt werden, liefert er als Ergebnis TRUE, andernfalls FALSE.  
+   `php
+ boolean MS35_SetRGB(integer $InstanzeID, integer $Red, integer $Green, integer $Blue);`  
+        Setzt die Farbwerte fÃ¼r Rot (Red), GrÃ¼n (Green) und Blau (Blue). Ein laufendes Programm wird dadurch unterbrochen (Stop).  
+        Erlaubte Werte fÃ¼r die Farben sind 0 bis 255.  
+        Konnte der Befehl erfolgreich ausgefÃ¼hrt werden, liefert er als Ergebnis TRUE, andernfalls FALSE.  
 
    `boolean MS35_Switch(integer $InstanzeID, boolean State);`  
         Schaltet den Controller aus oder ein.  
-        Dabei wird das Gerät nicht komplett abgeschaltet, da es sonst nicht mehr erreichbar wäre.  
-        Aus ist hier das setzten der Farbe auf 0 (Alle Kanäle auf 0%).  
-        Aus- / Einschalten setzt außerdem alle Werte für Brightness und Speed auf die Werte wie nach Spannungswiederkehr.  
-        Konnte der Befehl erfolgreich ausgeführt werden, liefert er als Ergebnis TRUE, andernfalls FALSE.  
+        Dabei wird das GerÃ¤t nicht komplett abgeschaltet, da es sonst nicht mehr erreichbar wÃ¤re.  
+        Aus ist hier das setzten der Farbe auf 0 (Alle KanÃ¤le auf 0%).  
+        Aus- / Einschalten setzt auÃŸerdem alle Werte fÃ¼r Brightness und Speed auf die Werte wie nach Spannungswiederkehr.  
+        Konnte der Befehl erfolgreich ausgefÃ¼hrt werden, liefert er als Ergebnis TRUE, andernfalls FALSE.  
 
    `boolean MS35_Play(integer $InstanzeID);`  
-        Das aktuell ausgewählte Programm wird fortgesetzt.  
-	Konnte der Befehl erfolgreich ausgeführt werden, liefert er als Ergebnis TRUE, andernfalls FALSE.  
+        Das aktuell ausgewÃ¤hlte Programm wird fortgesetzt.  
+	Konnte der Befehl erfolgreich ausgefÃ¼hrt werden, liefert er als Ergebnis TRUE, andernfalls FALSE.  
 
    `boolean MS35_Pause(integer $InstanzeID);`  
         Das aktuell wiedergegebene Programm wird angehalten.  
-	Konnte der Befehl erfolgreich ausgeführt werden, liefert er als Ergebnis TRUE, andernfalls FALSE.  
+	Konnte der Befehl erfolgreich ausgefÃ¼hrt werden, liefert er als Ergebnis TRUE, andernfalls FALSE.  
 
    `boolean MS35_Stop(integer $InstanzeID);`  
         Das aktuell wiedergegebene Programm wird beendet.  
-        Konnte der Befehl erfolgreich ausgeführt werden, liefert er als Ergebnis TRUE, andernfalls FALSE.  
+        Konnte der Befehl erfolgreich ausgefÃ¼hrt werden, liefert er als Ergebnis TRUE, andernfalls FALSE.  
 
    `boolean MS35_RunProgram(integer $InstanzeID, integer $Program);`  
         Das Programm mit dem Index `$Program` wird wiedergegeben.  
 	`$Program` muss zwischen 1 bis 9 liegen.  
-        Eine Übersicht ist im ersten Kapitel.  
-        Konnte der Befehl erfolgreich ausgeführt werden, liefert er als Ergebnis TRUE, andernfalls FALSE.  
+        Eine Ãœbersicht ist im ersten Kapitel.  
+        Konnte der Befehl erfolgreich ausgefÃ¼hrt werden, liefert er als Ergebnis TRUE, andernfalls FALSE.  
 
    `string MS35_SetSpeed(integer $InstanzeID, integer $Speed);`  
-        Legt die Geschwindigkeit für die Ausführung eines Programmes fest.  
+        Legt die Geschwindigkeit fÃ¼r die AusfÃ¼hrung eines Programmes fest.  
         Kann vor oder nach RunProgramm aufgerufen werden.  
         Kann aber nicht zusammen mit den Programmen 4 & 5 verwendet werden.  
         Der Befehl wird dann ignoriert bzw. beim laden von Diesen Programmen auf 0 gesetzt.  
         `$Speed` muss dabei zwischen 0 und 8 liegen.  
         Wobei 0 normale Geschwindigkeit ist, und jede Stufe von 1-8 eine Halbierung der Geschwindigkeit ist (1/2, 1/4, 1/8, 1/16, usw.)  
-        Konnte der Befehl erfolgreich ausgeführt werden, liefert er als Ergebnis TRUE, andernfalls FALSE.  
+        Konnte der Befehl erfolgreich ausgefÃ¼hrt werden, liefert er als Ergebnis TRUE, andernfalls FALSE.  
 
    `string MS35_SetBrightness(integer $InstanzeID, integer $Brightness);`  
-        Legt die Helligkeit für die Ausführung eines Programmes fest.  
+        Legt die Helligkeit fÃ¼r die AusfÃ¼hrung eines Programmes fest.  
         Kann vor oder nach RunProgramm aufgerufen werden.  
         `$Brightness` muss dabei zwischen 1 und 3 liegen.  
         Wobei 1 der vollen, 2 der mittlere und 3 der niedrige Helligkeit entspricht.  
-        Konnte der Befehl erfolgreich ausgeführt werden, liefert er als Ergebnis TRUE, andernfalls FALSE.  
+        Konnte der Befehl erfolgreich ausgefÃ¼hrt werden, liefert er als Ergebnis TRUE, andernfalls FALSE.  
 
    `string MS35_SetProgram(integer $InstanzeID, integer $Program, string $Data);`  
         Schreibt eines der benutzerspezifischen Programme 8 oder 9 in den Controller.  
@@ -175,25 +176,25 @@ IPS-Modul für den Conrad MS35 RGB-Controller.
             (Beispiele im Kapitel 10)  
             `[{"R":255,"G":255,"B":255,"H":5,"F":5},{"R":0,"G":0,"B":255,"H":5,"F":5}]`  
 
-   - R,G,B sind die Farbwerte der Kanäle von 0-255.  
+   - R,G,B sind die Farbwerte der KanÃ¤le von 0-255.  
    - H  ist die Haltezeit der Farbe von 0-255 x 0,13 Sek (Hold)  
-   - F  ist die Überblendzeit von 0-255 x 0,13 Sek (Fade)  
-            Es dürfen maximal 51 dieser Sequenzen übergeben werden.  
-	Konnte der Befehl erfolgreich ausgeführt werden, liefert er als Ergebnis TRUE, andernfalls FALSE.  
+   - F  ist die Ãœberblendzeit von 0-255 x 0,13 Sek (Fade)  
+            Es dÃ¼rfen maximal 51 dieser Sequenzen Ã¼bergeben werden.  
+	Konnte der Befehl erfolgreich ausgefÃ¼hrt werden, liefert er als Ergebnis TRUE, andernfalls FALSE.  
 
 ## 9. Parameter / Modul-Infos
 
    GUID:
 	{78EC291F-DD08-474C-950B-4EC547F31D26}
 
-   Eigenschaften für Get/SetProperty-Befehle:
-     – entfällt –
+   Eigenschaften fÃ¼r Get/SetProperty-Befehle:
+     â€“ entfÃ¤llt â€“
 
 ## 10. Tips & Tricks
 
-   - Sollte das Gerät mal nicht korrekt antworten, so wird bei der nächsten Ausführung eines Befehls versucht der Controller neu zu initialisieren. Welches einen Verlust der schon eingestellten Helligkeit und Geschwindigkeit bedeutet.  
-   - Das Modul fügt automatisch Zwangspausen in ms Bereich ein, wenn zu viele Befehle auf einmal übertragen werden müssen (z.B. SetProgram). Würde dies nicht passieren, kommt der Controller häufig aus dem Sync zur Schnittstelle und muss neu initialisiert werden. Bevor er auf Befehle wieder reagiert.  
-   - SetProgram kann maximal 51 Squenzen aufnehmen und im Controller abspeichern. Diese Übertragung dauert Zeit. Im Zweifelsfall ist die maximal Ausführungszeit des Scriptes anzupassen.  
+   - Sollte das GerÃ¤t mal nicht korrekt antworten, so wird bei der nÃ¤chsten AusfÃ¼hrung eines Befehls versucht der Controller neu zu initialisieren. Welches einen Verlust der schon eingestellten Helligkeit und Geschwindigkeit bedeutet.  
+   - Das Modul fÃ¼gt automatisch Zwangspausen in ms Bereich ein, wenn zu viele Befehle auf einmal Ã¼bertragen werden mÃ¼ssen (z.B. SetProgram). WÃ¼rde dies nicht passieren, kommt der Controller hÃ¤ufig aus dem Sync zur Schnittstelle und muss neu initialisiert werden. Bevor er auf Befehle wieder reagiert.  
+   - SetProgram kann maximal 51 Squenzen aufnehmen und im Controller abspeichern. Diese Ãœbertragung dauert Zeit. Im Zweifelsfall ist die maximal AusfÃ¼hrungszeit des Scriptes anzupassen.  
 
    Folgender PHP-Code liefert **ein** Beispiel wie man den JSON-String mit dem korrekten Aufbau, erzeugen kann:  
 
@@ -214,6 +215,6 @@ IPS-Modul für den Conrad MS35 RGB-Controller.
 ## 11. Anhang
 
    Changlog:  
-   2.0. : Erstes (noch nicht endgültig getestetes) öffentliches Release für IPS 4.0
+   2.0. : Erstes (noch nicht endgÃ¼ltig getestetes) Ã¶ffentliches Release fÃ¼r IPS 4.0
 
 

@@ -23,7 +23,7 @@ class MS35 extends IPSModule
         parent::ApplyChanges();
 
 //        $this->RequireParent("{96A9AB3A-2538-42C5-A130-FC34205A706A}");        
-        // 1. Verfügbarer SerialPort wird verbunden oder neu erzeugt, wenn nicht vorhanden.
+        // 1. VerfÃ¼gbarer SerialPort wird verbunden oder neu erzeugt, wenn nicht vorhanden.
 
         $this->RegisterProfileIntegerEx("MS35.Program", "Gear", "", "", Array(
             Array(1, 'Farbwechsel 1', '', -1),
@@ -82,7 +82,7 @@ class MS35 extends IPSModule
         IPS_SetHidden($this->GetIDForIdent('ReplyEvent'), true);
         IPS_SetHidden($this->GetIDForIdent('Connected'), true);
 
-        //prüfen ob IO ein SerialPort ist
+        //prÃ¼fen ob IO ein SerialPort ist
 //        
         // Zwangskonfiguration des SerialPort, wenn vorhanden und verbunden
         $ParentID = $this->GetParent();
@@ -630,9 +630,9 @@ class MS35 extends IPSModule
             throw new Exception("ReceiveBuffer is locked");
         }
         /*
-          // Datenstream zusammenfügen
+          // Datenstream zusammenfÃ¼gen
           $Head = GetValueString($BufferID); */
-// Stream zusammenfügen
+// Stream zusammenfÃ¼gen
         SetValueString($BufferID, utf8_decode($data->Buffer));
 // Empfangs Event setzen
         /*        if (!$this->SetReplyEvent(TRUE))
