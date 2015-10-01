@@ -623,6 +623,9 @@ class MS35 extends IPSModule
 //        IPS_LogMessage(__CLASS__, __FUNCTION__); // 
 //FIXME Bei Status inaktiv abbrechen
         $data = json_decode($JSONString);
+                if ($data->DataID <> '{018EF6B5-AB94-40C6-AA53-46943E824ACF}')
+            return false;
+
         $BufferID = $this->GetIDForIdent("BufferIN");
 // Empfangs Lock setzen
         if (!$this->lock("ReplyLock"))
