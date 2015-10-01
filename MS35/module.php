@@ -481,7 +481,7 @@ class MS35 extends IPSModule
             }
             if ($sendok)
             {
-                if ($this->WaitForResponse(100))    //warte auf Reply
+                if ($this->WaitForResponse(250))    //warte auf Reply
                 {
                     $Buffer = GetValueString($BufferID);
                     SetValueString($BufferID, '');
@@ -517,7 +517,7 @@ class MS35 extends IPSModule
 
                 for ($i = 0; $i < 4; $i++)
                 {
-                    if ($this->WaitForResponse(250))    //warte auf Reply
+                    if ($this->WaitForResponse(500))    //warte auf Reply
                     {
                         $Buffer.= GetValueString($BufferID);
                         $this->SetReplyEvent(FALSE);
