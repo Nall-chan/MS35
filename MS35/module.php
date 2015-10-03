@@ -395,7 +395,7 @@ class MS35 extends IPSModule
                     $Buffer = GetValueString($BufferID);
                     SetValueString($BufferID, '');
                     $this->SetReplyEvent(FALSE);
-                    IPS_LogMessage('Buffer', print_r($Buffer, 1));
+//                    IPS_LogMessage('Buffer', print_r($Buffer, 1));
                     if ($Buffer == 'a')
                     {
                         //Sleep(25);
