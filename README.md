@@ -69,6 +69,7 @@ IPS-Modul für den Conrad MS35 RGB-Controller.
    Bei GitHub das gepackte Modul als ZIP-File laden: [MS35.ZIP](https://github.com/Nall-chan/IPSMS35/raw/master/IPS3.X/MS35.zip)  
    Die enthaltende Datei MS35.dll in das /modules Verzeichnis von IPS kopieren.  
    Ist der Ordner Modules nicht vorhanden, so ist er anzulegen.  
+   IPS-Dienst neustarten.
 
 **IPS 4.x:**  
    Über das Modul-Control folgende URL hinzufügen.  
