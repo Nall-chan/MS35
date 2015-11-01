@@ -1,29 +1,161 @@
 <?
 
+if (@constant('IPS_BASE') == null) //Nur wenn Konstanten noch nicht bekannt sind.
+{
+// --- BASE MESSAGE
+    define('IPS_BASE', 10000);                             //Base Message
+    define('IPS_KERNELSHUTDOWN', IPS_BASE + 1);            //Pre Shutdown Message, Runlevel UNINIT Follows
+    define('IPS_KERNELSTARTED', IPS_BASE + 2);             //Post Ready Message
+// --- KERNEL
+    define('IPS_KERNELMESSAGE', IPS_BASE + 100);           //Kernel Message
+    define('KR_CREATE', IPS_KERNELMESSAGE + 1);            //Kernel is beeing created
+    define('KR_INIT', IPS_KERNELMESSAGE + 2);              //Kernel Components are beeing initialised, Modules loaded, Settings read
+    define('KR_READY', IPS_KERNELMESSAGE + 3);             //Kernel is ready and running
+    define('KR_UNINIT', IPS_KERNELMESSAGE + 4);            //Got Shutdown Message, unloading all stuff
+    define('KR_SHUTDOWN', IPS_KERNELMESSAGE + 5);          //Uninit Complete, Destroying Kernel Inteface
+// --- KERNEL LOGMESSAGE
+    define('IPS_LOGMESSAGE', IPS_BASE + 200);              //Logmessage Message
+    define('KL_MESSAGE', IPS_LOGMESSAGE + 1);              //Normal Message                      | FG: Black | BG: White  | STLYE : NONE
+    define('KL_SUCCESS', IPS_LOGMESSAGE + 2);              //Success Message                     | FG: Black | BG: Green  | STYLE : NONE
+    define('KL_NOTIFY', IPS_LOGMESSAGE + 3);               //Notiy about Changes                 | FG: Black | BG: Blue   | STLYE : NONE
+    define('KL_WARNING', IPS_LOGMESSAGE + 4);              //Warnings                            | FG: Black | BG: Yellow | STLYE : NONE
+    define('KL_ERROR', IPS_LOGMESSAGE + 5);                //Error Message                       | FG: Black | BG: Red    | STLYE : BOLD
+    define('KL_DEBUG', IPS_LOGMESSAGE + 6);                //Debug Informations + Script Results | FG: Grey  | BG: White  | STLYE : NONE
+    define('KL_CUSTOM', IPS_LOGMESSAGE + 7);               //User Message                        | FG: Black | BG: White  | STLYE : NONE
+// --- MODULE LOADER
+    define('IPS_MODULEMESSAGE', IPS_BASE + 300);           //ModuleLoader Message
+    define('ML_LOAD', IPS_MODULEMESSAGE + 1);              //Module loaded
+    define('ML_UNLOAD', IPS_MODULEMESSAGE + 2);            //Module unloaded
+// --- OBJECT MANAGER
+    define('IPS_OBJECTMESSAGE', IPS_BASE + 400);
+    define('OM_REGISTER', IPS_OBJECTMESSAGE + 1);          //Object was registered
+    define('OM_UNREGISTER', IPS_OBJECTMESSAGE + 2);        //Object was unregistered
+    define('OM_CHANGEPARENT', IPS_OBJECTMESSAGE + 3);      //Parent was Changed
+    define('OM_CHANGENAME', IPS_OBJECTMESSAGE + 4);        //Name was Changed
+    define('OM_CHANGEINFO', IPS_OBJECTMESSAGE + 5);        //Info was Changed
+    define('OM_CHANGETYPE', IPS_OBJECTMESSAGE + 6);        //Type was Changed
+    define('OM_CHANGESUMMARY', IPS_OBJECTMESSAGE + 7);     //Summary was Changed
+    define('OM_CHANGEPOSITION', IPS_OBJECTMESSAGE + 8);    //Position was Changed
+    define('OM_CHANGEREADONLY', IPS_OBJECTMESSAGE + 9);    //ReadOnly was Changed
+    define('OM_CHANGEHIDDEN', IPS_OBJECTMESSAGE + 10);     //Hidden was Changed
+    define('OM_CHANGEICON', IPS_OBJECTMESSAGE + 11);       //Icon was Changed
+    define('OM_CHILDADDED', IPS_OBJECTMESSAGE + 12);       //Child for Object was added
+    define('OM_CHILDREMOVED', IPS_OBJECTMESSAGE + 13);     //Child for Object was removed
+    define('OM_CHANGEIDENT', IPS_OBJECTMESSAGE + 14);      //Ident was Changed
+// --- INSTANCE MANAGER
+    define('IPS_INSTANCEMESSAGE', IPS_BASE + 500);         //Instance Manager Message
+    define('IM_CREATE', IPS_INSTANCEMESSAGE + 1);          //Instance created
+    define('IM_DELETE', IPS_INSTANCEMESSAGE + 2);          //Instance deleted
+    define('IM_CONNECT', IPS_INSTANCEMESSAGE + 3);         //Instance connectged
+    define('IM_DISCONNECT', IPS_INSTANCEMESSAGE + 4);      //Instance disconncted
+    define('IM_CHANGESTATUS', IPS_INSTANCEMESSAGE + 5);    //Status was Changed
+    define('IM_CHANGESETTINGS', IPS_INSTANCEMESSAGE + 6);  //Settings were Changed
+    define('IM_CHANGESEARCH', IPS_INSTANCEMESSAGE + 7);    //Searching was started/stopped
+    define('IM_SEARCHUPDATE', IPS_INSTANCEMESSAGE + 8);    //Searching found new results
+    define('IM_SEARCHPROGRESS', IPS_INSTANCEMESSAGE + 9);  //Searching progress in %
+    define('IM_SEARCHCOMPLETE', IPS_INSTANCEMESSAGE + 10); //Searching is complete
+// --- VARIABLE MANAGER
+    define('IPS_VARIABLEMESSAGE', IPS_BASE + 600);              //Variable Manager Message
+    define('VM_CREATE', IPS_VARIABLEMESSAGE + 1);               //Variable Created
+    define('VM_DELETE', IPS_VARIABLEMESSAGE + 2);               //Variable Deleted
+    define('VM_UPDATE', IPS_VARIABLEMESSAGE + 3);               //On Variable Update
+    define('VM_CHANGEPROFILENAME', IPS_VARIABLEMESSAGE + 4);    //On Profile Name Change
+    define('VM_CHANGEPROFILEACTION', IPS_VARIABLEMESSAGE + 5);  //On Profile Action Change
+// --- SCRIPT MANAGER
+    define('IPS_SCRIPTMESSAGE', IPS_BASE + 700);           //Script Manager Message
+    define('SM_CREATE', IPS_SCRIPTMESSAGE + 1);            //On Script Create
+    define('SM_DELETE', IPS_SCRIPTMESSAGE + 2);            //On Script Delete
+    define('SM_CHANGEFILE', IPS_SCRIPTMESSAGE + 3);        //On Script File changed
+    define('SM_BROKEN', IPS_SCRIPTMESSAGE + 4);            //Script Broken Status changed
+// --- EVENT MANAGER
+    define('IPS_EVENTMESSAGE', IPS_BASE + 800);             //Event Scripter Message
+    define('EM_CREATE', IPS_EVENTMESSAGE + 1);             //On Event Create
+    define('EM_DELETE', IPS_EVENTMESSAGE + 2);             //On Event Delete
+    define('EM_UPDATE', IPS_EVENTMESSAGE + 3);
+    define('EM_CHANGEACTIVE', IPS_EVENTMESSAGE + 4);
+    define('EM_CHANGELIMIT', IPS_EVENTMESSAGE + 5);
+    define('EM_CHANGESCRIPT', IPS_EVENTMESSAGE + 6);
+    define('EM_CHANGETRIGGER', IPS_EVENTMESSAGE + 7);
+    define('EM_CHANGETRIGGERVALUE', IPS_EVENTMESSAGE + 8);
+    define('EM_CHANGETRIGGEREXECUTION', IPS_EVENTMESSAGE + 9);
+    define('EM_CHANGECYCLIC', IPS_EVENTMESSAGE + 10);
+    define('EM_CHANGECYCLICDATEFROM', IPS_EVENTMESSAGE + 11);
+    define('EM_CHANGECYCLICDATETO', IPS_EVENTMESSAGE + 12);
+    define('EM_CHANGECYCLICTIMEFROM', IPS_EVENTMESSAGE + 13);
+    define('EM_CHANGECYCLICTIMETO', IPS_EVENTMESSAGE + 14);
+// --- MEDIA MANAGER
+    define('IPS_MEDIAMESSAGE', IPS_BASE + 900);           //Media Manager Message
+    define('MM_CREATE', IPS_MEDIAMESSAGE + 1);             //On Media Create
+    define('MM_DELETE', IPS_MEDIAMESSAGE + 2);             //On Media Delete
+    define('MM_CHANGEFILE', IPS_MEDIAMESSAGE + 3);         //On Media File changed
+    define('MM_AVAILABLE', IPS_MEDIAMESSAGE + 4);          //Media Available Status changed
+    define('MM_UPDATE', IPS_MEDIAMESSAGE + 5);
+// --- LINK MANAGER
+    define('IPS_LINKMESSAGE', IPS_BASE + 1000);           //Link Manager Message
+    define('LM_CREATE', IPS_LINKMESSAGE + 1);             //On Link Create
+    define('LM_DELETE', IPS_LINKMESSAGE + 2);             //On Link Delete
+    define('LM_CHANGETARGET', IPS_LINKMESSAGE + 3);       //On Link TargetID change
+// --- DATA HANDLER
+    define('IPS_DATAMESSAGE', IPS_BASE + 1100);             //Data Handler Message
+    define('DM_CONNECT', IPS_DATAMESSAGE + 1);             //On Instance Connect
+    define('DM_DISCONNECT', IPS_DATAMESSAGE + 2);          //On Instance Disconnect
+// --- SCRIPT ENGINE
+    define('IPS_ENGINEMESSAGE', IPS_BASE + 1200);           //Script Engine Message
+    define('SE_UPDATE', IPS_ENGINEMESSAGE + 1);             //On Library Refresh
+    define('SE_EXECUTE', IPS_ENGINEMESSAGE + 2);            //On Script Finished execution
+    define('SE_RUNNING', IPS_ENGINEMESSAGE + 3);            //On Script Started execution
+// --- PROFILE POOL
+    define('IPS_PROFILEMESSAGE', IPS_BASE + 1300);
+    define('PM_CREATE', IPS_PROFILEMESSAGE + 1);
+    define('PM_DELETE', IPS_PROFILEMESSAGE + 2);
+    define('PM_CHANGETEXT', IPS_PROFILEMESSAGE + 3);
+    define('PM_CHANGEVALUES', IPS_PROFILEMESSAGE + 4);
+    define('PM_CHANGEDIGITS', IPS_PROFILEMESSAGE + 5);
+    define('PM_CHANGEICON', IPS_PROFILEMESSAGE + 6);
+    define('PM_ASSOCIATIONADDED', IPS_PROFILEMESSAGE + 7);
+    define('PM_ASSOCIATIONREMOVED', IPS_PROFILEMESSAGE + 8);
+    define('PM_ASSOCIATIONCHANGED', IPS_PROFILEMESSAGE + 9);
+// --- TIMER POOL
+    define('IPS_TIMERMESSAGE', IPS_BASE + 1400);            //Timer Pool Message
+    define('TM_REGISTER', IPS_TIMERMESSAGE + 1);
+    define('TM_UNREGISTER', IPS_TIMERMESSAGE + 2);
+    define('TM_SETINTERVAL', IPS_TIMERMESSAGE + 3);
+    define('TM_UPDATE', IPS_TIMERMESSAGE + 4);
+    define('TM_RUNNING', IPS_TIMERMESSAGE + 5);
+// --- STATUS CODES
+    define('IS_SBASE', 100);
+    define('IS_CREATING', IS_SBASE + 1); //module is being created
+    define('IS_ACTIVE', IS_SBASE + 2); //module created and running
+    define('IS_DELETING', IS_SBASE + 3); //module us being deleted
+    define('IS_INACTIVE', IS_SBASE + 4); //module is not beeing used
+// --- ERROR CODES
+    define('IS_EBASE', 200);          //default errorcode
+    define('IS_NOTCREATED', IS_EBASE + 1); //instance could not be created
+// --- Search Handling
+    define('FOUND_UNKNOWN', 0);     //Undefined value
+    define('FOUND_NEW', 1);         //Device is new and not configured yet
+    define('FOUND_OLD', 2);         //Device is already configues (InstanceID should be set)
+    define('FOUND_CURRENT', 3);     //Device is already configues (InstanceID is from the current/searching Instance)
+    define('FOUND_UNSUPPORTED', 4); //Device is not supported by Module
+
+    define('vtBoolean', 0);
+    define('vtInteger', 1);
+    define('vtFloat', 2);
+    define('vtString', 3);
+}
+
 class MS35 extends IPSModule
 {
 
     public function Create()
     {
-        //Never delete this line!
         parent::Create();
-//These lines are parsed on Symcon Startup or Instance creation
-//You cannot use variables here. Just static values.
-        /*
-         *   fInitRunLock    := TCriticalSection.Create();
-          fReadReplyLock  := TCriticalSection.Create();
-          fReadReplyEvent := TEvent.Create(nil,false,false,'fReadyToReadReply'+inttostr(fInstanceID),true);
-          fErrorLock      := TCriticalSection.Create(); */
         $this->RequireParent("{6DC3D946-0D31-450F-A8C6-C42DB8D7D4F1}");
     }
 
     public function ApplyChanges()
     {
-//Never delete this line!
         parent::ApplyChanges();
-
-//        $this->RequireParent("{96A9AB3A-2538-42C5-A130-FC34205A706A}");        
-        // 1. Verfügbarer SerialPort wird verbunden oder neu erzeugt, wenn nicht vorhanden.
 
         $this->RegisterProfileIntegerEx("MS35.Program", "Gear", "", "", Array(
             Array(1, 'Farbwechsel 1', '', -1),
@@ -36,7 +168,6 @@ class MS35 extends IPSModule
             Array(8, 'User 1', '', -1),
             Array(9, 'User 2', '', -1)
         ));
-
 
         $this->RegisterProfileIntegerEx("MS35.PrgStatus", "Bulb", "", "", Array(
             Array(1, 'Play', '', -1),
@@ -73,7 +204,6 @@ class MS35 extends IPSModule
         $this->EnableAction("Speed");
         $this->RegisterVariableInteger("Brightness", "Brightness", "MS35.Brightness", 6);
         $this->EnableAction("Brightness");
-//        $this->ConnectParent("{A151ECE9-D733-4FB9-AA15-7F7DD10C58AF}");        
 
         $this->RegisterVariableString("BufferIN", "BufferIN", "", -4);
         $this->RegisterVariableBoolean("ReplyEvent", "ReplyEvent", "", -5);
@@ -83,36 +213,39 @@ class MS35 extends IPSModule
         IPS_SetHidden($this->GetIDForIdent('Connected'), true);
 
         //prüfen ob IO ein SerialPort ist
-//        
+        //        
         // Zwangskonfiguration des SerialPort, wenn vorhanden und verbunden
-        $ParentID = $this->GetParent();
-
-        if (!($ParentID === false))
+        // Aber nie bei einem Neustart :)
+        if (IPS_GetKernelRunlevel == KR_READY)
         {
+            $ParentID = $this->GetParent();
 
-            $ParentInstance = IPS_GetInstance($ParentID);
-            if ($ParentInstance['ModuleInfo']['ModuleID'] == '{6DC3D946-0D31-450F-A8C6-C42DB8D7D4F1}')
+            if (!($ParentID === false))
             {
-                if (IPS_GetProperty($ParentID, 'StopBits') <> '1')
-                    IPS_SetProperty($ParentID, 'StopBits', '1');
-                if (IPS_GetProperty($ParentID, 'BaudRate') <> '38400')
-                    IPS_SetProperty($ParentID, 'BaudRate', '38400');
-                if (IPS_GetProperty($ParentID, 'Parity') <> 'None')
-                    IPS_SetProperty($ParentID, 'Parity', 'None');
-                if (IPS_GetProperty($ParentID, 'DataBits') <> '8')
-                    IPS_SetProperty($ParentID, 'DataBits', '8');
-                if (IPS_HasChanges($ParentID))
-                    IPS_ApplyChanges($ParentID);
+
+                $ParentInstance = IPS_GetInstance($ParentID);
+                if ($ParentInstance['ModuleInfo']['ModuleID'] == '{6DC3D946-0D31-450F-A8C6-C42DB8D7D4F1}')
+                {
+                    if (IPS_GetProperty($ParentID, 'StopBits') <> '1')
+                        IPS_SetProperty($ParentID, 'StopBits', '1');
+                    if (IPS_GetProperty($ParentID, 'BaudRate') <> '38400')
+                        IPS_SetProperty($ParentID, 'BaudRate', '38400');
+                    if (IPS_GetProperty($ParentID, 'Parity') <> 'None')
+                        IPS_SetProperty($ParentID, 'Parity', 'None');
+                    if (IPS_GetProperty($ParentID, 'DataBits') <> '8')
+                        IPS_SetProperty($ParentID, 'DataBits', '8');
+                    if (IPS_HasChanges($ParentID))
+                        IPS_ApplyChanges($ParentID);
+                }
             }
         }
-
         try
         {
             $this->DoInit();
-        }
-        catch (Exception $exc)
+        } catch (Exception $exc)
         {
-            unset($exc);
+            if (IPS_GetKernelRunlevel == KR_READY)
+                trigger_error($exc->getMessage(), $exc->getCode());
         }
     }
 
@@ -128,7 +261,17 @@ class MS35 extends IPSModule
         if ($State) //Einschalten
         {
             if (!$OldState)
-                $this->DoInit();
+            {
+                try
+                {
+                $this->DoInit();                    
+                } catch (Exception $exc)
+                {
+                    trigger_error($exc->getMessage(),$exc->getCode());
+                }
+
+
+            }
         }
         else //Ausschalten
         {
@@ -153,11 +296,12 @@ class MS35 extends IPSModule
     public function SetRGB(integer $Red, integer $Green, integer $Blue)
     {
         if (($Red < 0) or ( $Red > 255) or ( $Green < 0) or ( $Green > 255) or ( $Blue < 0) or ( $Blue > 255))
-            throw new Exception('Invalid Parameterset');
+        {
+            trigger_error('Invalid Parameterset',E_USER_NOTICE);
+            return false;
+        }
         $Data = chr(01) . chr(00) . chr($Red) . chr($Green) . chr($Blue) . chr(00) . chr(00);
         $Color = ($Red << 16) + ($Green << 8) + $Blue;
-//        IPS_LogMessage('Color',print_r((string)$Color,1));
-//        IPS_LogMessage('Color', bin2hex($Color));        
         if ($this->SendCommand($Data))
         {
             $this->SetValueInteger('Color', $Color);
@@ -203,7 +347,11 @@ class MS35 extends IPSModule
     public function RunProgram(integer $Programm)
     {
         if (($Programm < 1) or ( $Programm > 9))
-            throw new Exception('Invalid Program-Index');
+        {
+            trigger_error('Invalid Program-Index',E_USER_NOTICE);
+        return false;
+            
+        }
 
         $data = array();
         $data[0] = chr(0x0A) . chr(0x01) . chr(0x01) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00); //'Color3'
@@ -224,8 +372,7 @@ class MS35 extends IPSModule
             if (($Programm == 4) or ( $Programm == 5))
             {
                 $this->SetValueInteger('Speed', 0);
-            }
-            else
+            } else
             {
                 $Speed = GetValueInteger($this->GetIDForIdent('Speed'));
                 if (($Speed < 0) or ( $Speed > 8))
@@ -245,8 +392,7 @@ class MS35 extends IPSModule
             if (($Brightness < 1) or ( $Brightness > 3))
             {
                 $this->SetValueInteger('Brightness', 1);
-            }
-            else
+            } else
             {
                 if ($Brightness <> 1)
                 {
@@ -262,7 +408,10 @@ class MS35 extends IPSModule
     public function SetSpeed(integer $Speed)
     {
         if (($Speed < 0) or ( $Speed > 8))
-            throw new Exception('Invalid Speed-Level');
+        {
+            trigger_error('Invalid Speed-Level',E_USER_NOTICE);
+            return false;
+        }
         $Program = GetValueInteger($this->GetIDForIdent('Program'));
         if (($Program <> 4) and ( $Program <> 5))
         {
@@ -275,7 +424,10 @@ class MS35 extends IPSModule
     public function SetBrightness(integer $Level)
     {
         if (($Level < 1) or ( $Level > 3))
-            throw new Exception('Invalid Brightness-Level');
+        {
+            trigger_error('Invalid Brightness-Level',E_USER_NOTICE);
+            return false;
+        }
         $data = chr(0x0C) . chr($Level) . chr(00) . chr(00) . chr(00) . chr(00) . chr(00);
         if ($this->SendCommand($data))
             $this->SetValueInteger('Brightness', $Level);
@@ -284,11 +436,17 @@ class MS35 extends IPSModule
     public function SetProgram(integer $Programm, string $Data)
     {
         if (($Programm < 8) or ( $Programm > 9))
-            throw new Exception('Invalid Program-Index');
+        {
+            trigger_error('Invalid Program-Index',E_USER_NOTICE);
+            return false;
+        }
 
         $PrgData = json_decode($Data);
         if ($PrgData == NULL)
-            throw new Exception('Error in Program-Data');
+        {
+            trigger_error('Error in Program-Data',E_USER_NOTICE);
+            return false;
+        }
 
         if ($Programm == 8)
             $Programm = 2;
@@ -297,7 +455,10 @@ class MS35 extends IPSModule
 
         $i = count($PrgData);
         if (($i < 1) or ( $i > 51))
-            throw new Exception('Error in Program-Data');
+        {
+            trigger_error('Error in Program-Data',E_USER_NOTICE);
+            return false;
+        }
 
         $this->SendCommand(chr($Programm) . chr($i) . chr(0) . chr(0) . chr(0) . chr(0) . chr(0));
         $Programm++;
@@ -310,7 +471,10 @@ class MS35 extends IPSModule
             $Fade = $Slot->F;
             $Hold = $Slot->H;
             if (($Red < 0) or ( $Red > 255) or ( $Green < 0) or ( $Green > 255) or ( $Blue < 0) or ( $Blue > 255) or ( $Fade < 0) or ( $Fade > 255) or ( $Hold < 0) or ( $Hold > 255))
-                throw new Exception('Error in Program-Data');
+            {
+                trigger_error('Error in Program-Data',E_USER_NOTICE);
+                continue;
+            }
             $this->SendCommand(chr($Programm) . chr($i + 1) . chr($Red) . chr($Green) . chr($Blue) . chr($Fade) . chr($Hold));
         }
     }
@@ -349,7 +513,8 @@ class MS35 extends IPSModule
                         $this->Stop();
                         break;
                     default:
-                        throw new Exception('Invalid Value');
+                        trigger_error('Invalid Value',E_USER_NOTICE);
+                        return;
                         break;
                 }
                 break;
@@ -360,7 +525,7 @@ class MS35 extends IPSModule
                 $this->SetBrightness($Value);
                 break;
             default:
-                throw new Exception('Invalid Ident');
+                trigger_error('Invalid Ident',E_USER_NOTICE);
                 break;
         }
     }
@@ -370,23 +535,32 @@ class MS35 extends IPSModule
     private function SendCommand($Data)
     {
         if (!$this->lock('InitRun'))
-            return;
+            return false;
         else
             $this->unlock('InitRun');
         if ($this->GetErrorState())
-            if (!$this->SendInit())
-                return;
+            try
+            {
+                if (!$this->SendInit())
+                    return false;
+                
+            } catch (Exception $exc)
+            {
+                trigger_error($exc->getMessage(),$exc->getCode());
+                return false;
+            }
+
         $BufferID = $this->GetIDForIdent("BufferIN");
         if ($this->lock('SendCommand'))
         {
             try
             {
                 $sendok = $this->SendDataToParent($this->AddCRC16($Data));
-            }
-            catch (Exception $exc)
+            } catch (Exception $exc)
             {
                 $this->unlock('SendCommand');
-                throw new $exc;
+                trigger_error($exc->getMessage(),$exc->getCode());
+                return false;
             }
             if ($sendok)
             {
@@ -401,34 +575,39 @@ class MS35 extends IPSModule
                         //Sleep(25);
                         $this->unlock('SendCommand');
                         return true;
-                    }
-                    else
+                    } else
                     {
 
                         //Senddata('Error','NACK');
                         SetValueString($BufferID, '');
                         $this->SetErrorState(true);
                         $this->unlock('SendCommand');
-                        throw new Exception('Controller send NACK.');
+                        
+                        trigger_error('Controller send NACK.',E_USER_NOTICE);
+                        return false;
                     }
-                }
-                else
+                } else
                 {
                     //Senddata('Error','Timeout');
                     $this->SetErrorState(true);
                     $this->unlock('SendCommand');
-                    throw new Exception('Controller do not response.');
+                    trigger_error('Controller do not response.',E_USER_NOTICE);
+                
+                return false;
+                    
                 }
-            }
-            else
+            } else
             {
                 $this->unlock('SendCommand');
-                throw new Exception('Controller do not response.');
+                trigger_error('Controller do not response.',E_USER_NOTICE);
+                return false;
+                
             }
-        }
-        else
+        } else
         {
-            throw new Exception('SendCommand is blocked.');
+            trigger_error('SendCommand is blocked.',E_USER_NOTICE);
+                return false;
+            
         }
     }
 
@@ -437,10 +616,9 @@ class MS35 extends IPSModule
         try
         {
             $ret = $this->SendInit();
-        }
-        catch (Exception $exc)
+        } catch (Exception $exc)
         {
-            throw new Exception($exc);
+            throw $exc;
         }
         if (!$ret)
             return false;
@@ -473,11 +651,10 @@ class MS35 extends IPSModule
             try
             {
                 $sendok = $this->SendDataToParent(chr(0xFD));
-            }
-            catch (Exception $exc)
+            } catch (Exception $exc)
             {
                 $this->unlock('InitRun');
-                throw new $exc;
+                throw  $exc;
             }
             if ($sendok)
             {
@@ -492,8 +669,7 @@ class MS35 extends IPSModule
                         $i = 9;
                     }
                 }
-            }
-            else
+            } else
             {
                 $i = 9;
             }
@@ -504,13 +680,12 @@ class MS35 extends IPSModule
             try
             {
                 $sendok = $this->SendDataToParent(chr(0xFD) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0xCF) . chr(0x2C));
-            }
-            catch (Exception $exc)
+            } catch (Exception $exc)
             {
                 $this->unlock('InitRun');
-                throw new $exc;
+                throw $exc;
             }
-            
+
             if ($sendok)
             {
                 $Buffer = '';
@@ -540,7 +715,7 @@ class MS35 extends IPSModule
         }
         $this->SetErrorState(true);
         $this->unlock('InitRun');
-        throw new Exception('Could not initialize Controller');
+        throw new Exception('Could not initialize Controller',E_USER_NOTICE);
     }
 
     private function AddCRC16($string)
@@ -623,14 +798,15 @@ class MS35 extends IPSModule
 //        IPS_LogMessage(__CLASS__, __FUNCTION__); // 
 //FIXME Bei Status inaktiv abbrechen
         $data = json_decode($JSONString);
-                if ($data->DataID <> '{018EF6B5-AB94-40C6-AA53-46943E824ACF}')
+        if ($data->DataID <> '{018EF6B5-AB94-40C6-AA53-46943E824ACF}')
             return false;
 
         $BufferID = $this->GetIDForIdent("BufferIN");
 // Empfangs Lock setzen
         if (!$this->lock("ReplyLock"))
         {
-            throw new Exception("ReceiveBuffer is locked");
+            
+            trigger_error("ReceiveBuffer is locked",E_USER_NOTICE);
         }
         /*
           // Datenstream zusammenfügen
@@ -654,22 +830,21 @@ class MS35 extends IPSModule
     {
 //Semaphore setzen
         if (!$this->HasActiveParent())
-            throw new Exception("Instance has no active Parent.");
+            throw new Exception("Instance has no active Parent.",E_USER_NOTICE);
         if (!$this->lock("ToParent"))
         {
-            throw new Exception("Can not send to Parent");
+            throw new Exception("Can not send to Parent",E_USER_NOTICE);
         }
 // Daten senden
         try
         {
             IPS_SendDataToParent($this->InstanceID, json_encode(Array("DataID" => "{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}", "Buffer" => utf8_encode($Data))));
-        }
-        catch (Exception $exc)
+        } catch (Exception $exc)
         {
 // Senden fehlgeschlagen
 
             $this->unlock("ToParent");
-            throw new Exception($exc);
+            throw $exc;
         }
         $this->unlock("ToParent");
         return true;
@@ -683,10 +858,8 @@ class MS35 extends IPSModule
         {
             if (IPS_SemaphoreEnter("MS35_" . (string) $this->InstanceID . (string) $ident, 1))
             {
-//                IPS_LogMessage((string)$this->InstanceID,"Lock:LMS_" . (string) $this->InstanceID . (string) $ident);
                 return true;
-            }
-            else
+            } else
             {
                 IPS_Sleep(mt_rand(1, 5));
             }
@@ -696,8 +869,6 @@ class MS35 extends IPSModule
 
     private function unlock($ident)
     {
-//                IPS_LogMessage((string)$this->InstanceID,"Unlock:LMS_" . (string) $this->InstanceID . (string) $ident);
-
         IPS_SemaphoreLeave("MS35_" . (string) $this->InstanceID . (string) $ident);
     }
 
@@ -715,15 +886,10 @@ class MS35 extends IPSModule
         SetValueInteger($id, $value);
     }
 
-    /*    private function SetValueString($Ident, $value)
-      {
-      $id = $this->GetIDForIdent($Ident);
-      SetValueString($id, $value);
-      } */
 
     protected function HasActiveParent()
     {
-        $instance = IPS_GetInstance($this->InstanceID);
+        $instance = @IPS_GetInstance($this->InstanceID);
         if ($instance['ConnectionID'] > 0)
         {
             $parent = IPS_GetInstance($instance['ConnectionID']);
@@ -735,36 +901,9 @@ class MS35 extends IPSModule
 
     protected function GetParent()
     {
-        $instance = IPS_GetInstance($this->InstanceID);
+        $instance = @IPS_GetInstance($this->InstanceID);
         return ($instance['ConnectionID'] > 0) ? $instance['ConnectionID'] : false;
     }
-
-    /*
-      protected function SetStatus($data)
-      {
-      IPS_LogMessage(__CLASS__, __FUNCTION__); //
-      }
-
-      protected function RegisterTimer($data, $cata)
-      {
-      IPS_LogMessage(__CLASS__, __FUNCTION__); //
-      }
-
-      protected function SetTimerInterval($data, $cata)
-      {
-      IPS_LogMessage(__CLASS__, __FUNCTION__); //
-      }
-
-      protected function LogMessage($data, $cata)
-      {
-
-      }
-
-      protected function SetSummary($data)
-      {
-      IPS_LogMessage(__CLASS__, __FUNCTION__ . "Data:" . $data); //
-      }
-     */
 
 //Remove on next Symcon update
     protected function RegisterProfileInteger($Name, $Icon, $Prefix, $Suffix, $MinValue, $MaxValue, $StepSize)
@@ -773,12 +912,11 @@ class MS35 extends IPSModule
         if (!IPS_VariableProfileExists($Name))
         {
             IPS_CreateVariableProfile($Name, 1);
-        }
-        else
+        } else
         {
             $profile = IPS_GetVariableProfile($Name);
             if ($profile['ProfileType'] != 1)
-                throw new Exception("Variable profile type does not match for profile " . $Name);
+                throw new Exception("Variable profile type does not match for profile " . $Name,E_USER_NOTICE);
         }
 
         IPS_SetVariableProfileIcon($Name, $Icon);
@@ -792,8 +930,7 @@ class MS35 extends IPSModule
         {
             $MinValue = 0;
             $MaxValue = 0;
-        }
-        else
+        } else
         {
             $MinValue = $Associations[0][0];
             $MaxValue = $Associations[sizeof($Associations) - 1][0];
