@@ -216,7 +216,7 @@ class MS35 extends IPSModule
         //        
         // Zwangskonfiguration des SerialPort, wenn vorhanden und verbunden
         // Aber nie bei einem Neustart :)
-        if (IPS_GetKernelRunlevel == KR_READY)
+        if (IPS_GetKernelRunlevel() == KR_READY)
         {
             $ParentID = $this->GetParent();
 
@@ -244,7 +244,7 @@ class MS35 extends IPSModule
             $this->DoInit();
         } catch (Exception $exc)
         {
-            if (IPS_GetKernelRunlevel == KR_READY)
+            if (IPS_GetKernelRunlevel() == KR_READY)
                 trigger_error($exc->getMessage(), $exc->getCode());
         }
     }
