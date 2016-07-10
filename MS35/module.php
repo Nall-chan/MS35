@@ -153,9 +153,53 @@ class MS35 extends IPSModule
         $this->RequireParent("{6DC3D946-0D31-450F-A8C6-C42DB8D7D4F1}");
     }
 
+    public function MessageSink($TimeStamp, $SenderID, $Message, $Data)
+    {
+        switch ($Message)
+        {
+            case IPS_KERNELMESSAGE:
+                if ($Data[0] == KR_READY)
+                {
+                    if ($this->SetParentConfig())
+                        try
+                        {
+                            $this->DoInit();
+                        }
+                        catch (Exception $exc)
+                        {
+                            trigger_error($exc->getMessage(), $exc->getCode());
+                        }
+                }
+                break;
+            case DM_CONNECT:
+            case DM_DISCONNECT:
+                $this->SetParentConfig();
+                break;
+            case IM_CHANGESTATUS:
+                if ($this->SetParentConfig())
+                    if (($SenderID == @IPS_GetInstance($this->InstanceID)['ConnectionID']) and ( $Data[0] == IS_ACTIVE))
+                        try
+                        {
+                            $this->DoInit();
+                        }
+                        catch (Exception $exc)
+                        {
+                            trigger_error($exc->getMessage(), $exc->getCode());
+                        }
+                break;
+        }
+    }
+
     public function ApplyChanges()
     {
         parent::ApplyChanges();
+
+        // Workaround 4.1 Tester
+        $this->SetReceiveDataFilter(".*018EF6B5-AB94-40C6-AA53-46943E824ACF.*");
+
+        $this->RegisterMessage(0, IPS_KERNELMESSAGE);
+        $this->RegisterMessage($this->InstanceID, DM_CONNECT);
+        $this->RegisterMessage($this->InstanceID, DM_DISCONNECT);
 
         $this->RegisterProfileIntegerEx("MS35.Program", "Gear", "", "", Array(
             Array(1, 'Farbwechsel 1', '', -1),
@@ -205,47 +249,64 @@ class MS35 extends IPSModule
         $this->RegisterVariableInteger("Brightness", "Brightness", "MS35.Brightness", 6);
         $this->EnableAction("Brightness");
 
-        $this->RegisterVariableString("BufferIN", "BufferIN", "", -4);
-        $this->RegisterVariableBoolean("ReplyEvent", "ReplyEvent", "", -5);
-        $this->RegisterVariableBoolean("Connected", "Connected", "", -3);
-        IPS_SetHidden($this->GetIDForIdent('BufferIN'), true);
-        IPS_SetHidden($this->GetIDForIdent('ReplyEvent'), true);
-        IPS_SetHidden($this->GetIDForIdent('Connected'), true);
+        //$this->RegisterVariableString("BufferIN", "BufferIN", "", -4);
+        //$this->RegisterVariableBoolean("ReplyEvent", "ReplyEvent", "", -5);
+        //$this->RegisterVariableBoolean("Connected", "Connected", "", -3);
+        //IPS_SetHidden($this->GetIDForIdent('BufferIN'), true);
+        //IPS_SetHidden($this->GetIDForIdent('ReplyEvent'), true);
+        //IPS_SetHidden($this->GetIDForIdent('Connected'), true);
 
-        //prüfen ob IO ein SerialPort ist
-        //        
-        // Zwangskonfiguration des SerialPort, wenn vorhanden und verbunden
-        // Aber nie bei einem Neustart :)
-        if (IPS_GetKernelRunlevel() == KR_READY)
-        {
-            $ParentID = $this->GetParent();
+        if (IPS_GetKernelRunlevel() <> KR_READY)
+            return;
 
-            if (!($ParentID === false))
+        if ($this->SetParentConfig())
+            try
             {
+                $this->DoInit();
+            }
+            catch (Exception $exc)
+            {
+                trigger_error($exc->getMessage(), $exc->getCode());
+            }
+    }
 
-                $ParentInstance = IPS_GetInstance($ParentID);
-                if ($ParentInstance['ModuleInfo']['ModuleID'] == '{6DC3D946-0D31-450F-A8C6-C42DB8D7D4F1}')
-                {
-                    if (IPS_GetProperty($ParentID, 'StopBits') <> '1')
-                        IPS_SetProperty($ParentID, 'StopBits', '1');
-                    if (IPS_GetProperty($ParentID, 'BaudRate') <> '38400')
-                        IPS_SetProperty($ParentID, 'BaudRate', '38400');
-                    if (IPS_GetProperty($ParentID, 'Parity') <> 'None')
-                        IPS_SetProperty($ParentID, 'Parity', 'None');
-                    if (IPS_GetProperty($ParentID, 'DataBits') <> '8')
-                        IPS_SetProperty($ParentID, 'DataBits', '8');
-                    if (IPS_HasChanges($ParentID))
-                        IPS_ApplyChanges($ParentID);
-                }
+    private function SetParentConfig()
+    {
+        $OldParentId = $this->GetBuffer('Parent');
+        $ParentId = @IPS_GetInstance($this->InstanceID)['ConnectionID'];
+        if ($ParentId <> $OldParentId)
+        {
+            if ($OldParentId > 0)
+                $this->UnregisterMessage($OldParentId, IM_CHANGESTATUS);
+            if ($ParentId > 0)
+            {
+                $this->RegisterMessage($ParentId, IM_CHANGESTATUS);
+                $this->SetBuffer('Parent', $ParentId);
             }
         }
-        try
+
+        if ($ParentId > 0)
         {
-            $this->DoInit();
-        } catch (Exception $exc)
+            $this->SetSummary(IPS_GetProperty($ParentId, 'Port'));
+
+            $ParentInstance = IPS_GetInstance($ParentId);
+            if ($ParentInstance['ModuleInfo']['ModuleID'] == '{6DC3D946-0D31-450F-A8C6-C42DB8D7D4F1}')
+            {
+                if (IPS_GetProperty($ParentId, 'StopBits') <> '1')
+                    IPS_SetProperty($ParentId, 'StopBits', '1');
+                if (IPS_GetProperty($ParentId, 'BaudRate') <> '38400')
+                    IPS_SetProperty($ParentId, 'BaudRate', '38400');
+                if (IPS_GetProperty($ParentId, 'Parity') <> 'None')
+                    IPS_SetProperty($ParentId, 'Parity', 'None');
+                if (IPS_GetProperty($ParentId, 'DataBits') <> '8')
+                    IPS_SetProperty($ParentId, 'DataBits', '8');
+                if (IPS_HasChanges($ParentId))
+                    IPS_ApplyChanges($ParentId);
+            }
+        }
+        else
         {
-            if (IPS_GetKernelRunlevel() == KR_READY)
-                trigger_error($exc->getMessage(), $exc->getCode());
+            $this->SetSummary('(none)');
         }
     }
 
@@ -264,13 +325,12 @@ class MS35 extends IPSModule
             {
                 try
                 {
-                $this->DoInit();                    
-                } catch (Exception $exc)
-                {
-                    trigger_error($exc->getMessage(),$exc->getCode());
+                    $this->DoInit();
                 }
-
-
+                catch (Exception $exc)
+                {
+                    trigger_error($exc->getMessage(), $exc->getCode());
+                }
             }
         }
         else //Ausschalten
@@ -297,7 +357,7 @@ class MS35 extends IPSModule
     {
         if (($Red < 0) or ( $Red > 255) or ( $Green < 0) or ( $Green > 255) or ( $Blue < 0) or ( $Blue > 255))
         {
-            trigger_error('Invalid Parameterset',E_USER_NOTICE);
+            trigger_error('Invalid Parameterset', E_USER_NOTICE);
             return false;
         }
         $Data = chr(01) . chr(00) . chr($Red) . chr($Green) . chr($Blue) . chr(00) . chr(00);
@@ -348,9 +408,8 @@ class MS35 extends IPSModule
     {
         if (($Programm < 1) or ( $Programm > 9))
         {
-            trigger_error('Invalid Program-Index',E_USER_NOTICE);
-        return false;
-            
+            trigger_error('Invalid Program-Index', E_USER_NOTICE);
+            return false;
         }
 
         $data = array();
@@ -372,7 +431,8 @@ class MS35 extends IPSModule
             if (($Programm == 4) or ( $Programm == 5))
             {
                 $this->SetValueInteger('Speed', 0);
-            } else
+            }
+            else
             {
                 $Speed = GetValueInteger($this->GetIDForIdent('Speed'));
                 if (($Speed < 0) or ( $Speed > 8))
@@ -392,7 +452,8 @@ class MS35 extends IPSModule
             if (($Brightness < 1) or ( $Brightness > 3))
             {
                 $this->SetValueInteger('Brightness', 1);
-            } else
+            }
+            else
             {
                 if ($Brightness <> 1)
                 {
@@ -409,7 +470,7 @@ class MS35 extends IPSModule
     {
         if (($Speed < 0) or ( $Speed > 8))
         {
-            trigger_error('Invalid Speed-Level',E_USER_NOTICE);
+            trigger_error('Invalid Speed-Level', E_USER_NOTICE);
             return false;
         }
         $Program = GetValueInteger($this->GetIDForIdent('Program'));
@@ -425,7 +486,7 @@ class MS35 extends IPSModule
     {
         if (($Level < 1) or ( $Level > 3))
         {
-            trigger_error('Invalid Brightness-Level',E_USER_NOTICE);
+            trigger_error('Invalid Brightness-Level', E_USER_NOTICE);
             return false;
         }
         $data = chr(0x0C) . chr($Level) . chr(00) . chr(00) . chr(00) . chr(00) . chr(00);
@@ -437,14 +498,14 @@ class MS35 extends IPSModule
     {
         if (($Programm < 8) or ( $Programm > 9))
         {
-            trigger_error('Invalid Program-Index',E_USER_NOTICE);
+            trigger_error('Invalid Program-Index', E_USER_NOTICE);
             return false;
         }
 
         $PrgData = json_decode($Data);
         if ($PrgData == NULL)
         {
-            trigger_error('Error in Program-Data',E_USER_NOTICE);
+            trigger_error('Error in Program-Data', E_USER_NOTICE);
             return false;
         }
 
@@ -456,7 +517,7 @@ class MS35 extends IPSModule
         $i = count($PrgData);
         if (($i < 1) or ( $i > 51))
         {
-            trigger_error('Error in Program-Data',E_USER_NOTICE);
+            trigger_error('Error in Program-Data', E_USER_NOTICE);
             return false;
         }
 
@@ -472,7 +533,7 @@ class MS35 extends IPSModule
             $Hold = $Slot->H;
             if (($Red < 0) or ( $Red > 255) or ( $Green < 0) or ( $Green > 255) or ( $Blue < 0) or ( $Blue > 255) or ( $Fade < 0) or ( $Fade > 255) or ( $Hold < 0) or ( $Hold > 255))
             {
-                trigger_error('Error in Program-Data',E_USER_NOTICE);
+                trigger_error('Error in Program-Data', E_USER_NOTICE);
                 continue;
             }
             $this->SendCommand(chr($Programm) . chr($i + 1) . chr($Red) . chr($Green) . chr($Blue) . chr($Fade) . chr($Hold));
@@ -513,9 +574,8 @@ class MS35 extends IPSModule
                         $this->Stop();
                         break;
                     default:
-                        trigger_error('Invalid Value',E_USER_NOTICE);
+                        trigger_error('Invalid Value', E_USER_NOTICE);
                         return;
-                        break;
                 }
                 break;
             case 'Speed':
@@ -525,7 +585,7 @@ class MS35 extends IPSModule
                 $this->SetBrightness($Value);
                 break;
             default:
-                trigger_error('Invalid Ident',E_USER_NOTICE);
+                trigger_error('Invalid Ident', E_USER_NOTICE);
                 break;
         }
     }
@@ -534,80 +594,78 @@ class MS35 extends IPSModule
 
     private function SendCommand($Data)
     {
-        if (!$this->lock('InitRun'))
+        if ($this->GetBuffer('InitRun') === true)
             return false;
-        else
-            $this->unlock('InitRun');
+
         if ($this->GetErrorState())
             try
             {
                 if (!$this->SendInit())
                     return false;
-                
-            } catch (Exception $exc)
+            }
+            catch (Exception $exc)
             {
-                trigger_error($exc->getMessage(),$exc->getCode());
+                trigger_error($exc->getMessage(), $exc->getCode());
                 return false;
             }
 
-        $BufferID = $this->GetIDForIdent("BufferIN");
         if ($this->lock('SendCommand'))
         {
             try
             {
                 $sendok = $this->SendDataToParent($this->AddCRC16($Data));
-            } catch (Exception $exc)
+            }
+            catch (Exception $exc)
             {
                 $this->unlock('SendCommand');
-                trigger_error($exc->getMessage(),$exc->getCode());
+                trigger_error($exc->getMessage(), $exc->getCode());
                 return false;
             }
             if ($sendok)
             {
                 if ($this->WaitForResponse(1000))    //warte auf Reply
                 {
-                    $Buffer = GetValueString($BufferID);
-                    SetValueString($BufferID, '');
-                    $this->SetReplyEvent(FALSE);
+                    $Buffer = $this->GetBuffer('ReceiveBuffer');
+                    $this->SetBuffer('ReceiveBuffer', '');
 //                    IPS_LogMessage('Buffer', print_r($Buffer, 1));
                     if ($Buffer == 'a')
                     {
                         //Sleep(25);
                         $this->unlock('SendCommand');
                         return true;
-                    } else
+                    }
+                    else
                     {
 
                         //Senddata('Error','NACK');
-                        SetValueString($BufferID, '');
                         $this->SetErrorState(true);
                         $this->unlock('SendCommand');
-                        
-                        trigger_error('Controller send NACK.',E_USER_NOTICE);
+
+                        trigger_error('Controller send NACK.', E_USER_NOTICE);
                         return false;
                     }
-                } else
+                }
+                else
                 {
                     //Senddata('Error','Timeout');
                     $this->SetErrorState(true);
                     $this->unlock('SendCommand');
-                    trigger_error('Controller do not response.',E_USER_NOTICE);
-                
-                return false;
-                    
+                    trigger_error('Controller do not response.', E_USER_NOTICE);
+
+                    return false;
                 }
-            } else
+            }
+            else
             {
                 $this->unlock('SendCommand');
-                trigger_error('Controller do not response.',E_USER_NOTICE);
+                trigger_error('Controller do not response.', E_USER_NOTICE);
                 return false;
-                
             }
-        } else
+        }
+        else
         {
-            trigger_error('SendCommand is blocked.',E_USER_NOTICE);
-                return false;
-            
+            trigger_error('SendCommand is blocked.', E_USER_NOTICE);
+            return false;
         }
     }
 
@@ -616,7 +674,8 @@ class MS35 extends IPSModule
         try
         {
             $ret = $this->SendInit();
-        } catch (Exception $exc)
+        }
+        catch (Exception $exc)
         {
             throw $exc;
         }
@@ -641,35 +700,36 @@ class MS35 extends IPSModule
 
     private function SendInit()
     {
-        if (!$this->lock('InitRun'))
+        if ($this->GetBuffer('InitRun') === true)
             return false;
+        $this->SetBuffer('InitRun', TRUE);
         $InitState = false;
-        $BufferID = $this->GetIDForIdent("BufferIN");
 //        $Text = chr(0x0D);
         for ($i = 0; $i < 9; $i++)
         {
             try
             {
                 $sendok = $this->SendDataToParent(chr(0xFD));
-            } catch (Exception $exc)
+            }
+            catch (Exception $exc)
             {
-                $this->unlock('InitRun');
-                throw  $exc;
+                $this->SetBuffer('InitRun', FALSE);
+                throw $exc;
             }
             if ($sendok)
             {
                 if ($this->WaitForResponse(250))    //warte auf Reply
                 {
-                    $Buffer = GetValueString($BufferID);
-                    SetValueString($BufferID, '');
-                    $this->SetReplyEvent(FALSE);
+                    $Buffer = $this->GetBuffer('ReceiveBuffer');
+                    $this->SetBuffer('ReceiveBuffer', '');
                     if ($Buffer == 'e')
                     {
                         $InitState = true;
                         $i = 9;
                     }
                 }
-            } else
+            }
+            else
             {
                 $i = 9;
             }
@@ -680,9 +740,11 @@ class MS35 extends IPSModule
             try
             {
                 $sendok = $this->SendDataToParent(chr(0xFD) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0xCF) . chr(0x2C));
-            } catch (Exception $exc)
+            }
+            catch (Exception $exc)
             {
-                $this->unlock('InitRun');
+                $this->SetBuffer('InitRun', FALSE);
+
                 throw $exc;
             }
 
@@ -694,9 +756,7 @@ class MS35 extends IPSModule
                 {
                     if ($this->WaitForResponse(500))    //warte auf Reply
                     {
-                        $Buffer.= GetValueString($BufferID);
-                        $this->SetReplyEvent(FALSE);
-
+                        $Buffer .= $this->GetBuffer('ReceiveBuffer');
                         if (strpos($Buffer, 'C_RGB'))
                         {
                             $InitState = true;
@@ -710,12 +770,14 @@ class MS35 extends IPSModule
         if ($InitState)
         {
             $this->SetErrorState(false);
-            $this->unlock('InitRun');
+            $this->SetBuffer('InitRun', FALSE);
+
             return true;
         }
         $this->SetErrorState(true);
-        $this->unlock('InitRun');
-        throw new Exception('Could not initialize Controller',E_USER_NOTICE);
+        $this->SetBuffer('InitRun', FALSE);
+
+        throw new Exception('Could not initialize Controller', E_USER_NOTICE);
     }
 
     private function AddCRC16($string)
@@ -755,35 +817,23 @@ class MS35 extends IPSModule
 
     private function GetErrorState()
     {
-        return !GetValueBoolean($this->GetIDForIdent('Connected'));
+        return !$this->GetBuffer('Connected');
     }
 
     private function SetErrorState($Value)
     {
-        SetValueBoolean($this->GetIDForIdent('Connected'), !$Value);
-    }
-
-    private function SetReplyEvent($Value)
-    {
-        $EventID = $this->GetIDForIdent('ReplyEvent');
-        if ($this->lock('ReplyEvent'))
-        {
-            SetValueBoolean($EventID, $Value);
-            $this->unlock('ReplyEvent');
-            return true;
-        }
-        return false;
+        $this->SetBuffer('Connected', !$Value);
     }
 
     private function WaitForResponse($Timeout)
     {
-        $Event = $this->GetIDForIdent('ReplyEvent');
         for ($i = 0; $i < $Timeout / 5; $i++)
         {
-            if (!GetValueBoolean($Event))
+            if ($this->GetBuffer('ReplyEvent') !== TRUE)
                 IPS_Sleep(5);
             else
             {
+                $this->SetBuffer('ReplyEvent', FALSE);
                 return true;
             }
         }
@@ -798,31 +848,18 @@ class MS35 extends IPSModule
 //        IPS_LogMessage(__CLASS__, __FUNCTION__); // 
 //FIXME Bei Status inaktiv abbrechen
         $data = json_decode($JSONString);
-        if ($data->DataID <> '{018EF6B5-AB94-40C6-AA53-46943E824ACF}')
-            return false;
 
         $BufferID = $this->GetIDForIdent("BufferIN");
 // Empfangs Lock setzen
-        if (!$this->lock("ReplyLock"))
+        if (!$this->lock("ReceiveLock"))
         {
-            
-            trigger_error("ReceiveBuffer is locked",E_USER_NOTICE);
+            trigger_error("ReceiveBuffer is locked", E_USER_NOTICE);
         }
-        /*
-          // Datenstream zusammenfügen
-          $Head = GetValueString($BufferID); */
-// Stream zusammenfügen
-        SetValueString($BufferID, utf8_decode($data->Buffer));
-// Empfangs Event setzen
-        /*        if (!$this->SetReplyEvent(TRUE))
-          {
-          // Empfangs Lock aufheben
-          $this->unlock("ReplyLock");
-          throw new Exception("Can not send to ParentLMS");
-          } */
-        $this->SetReplyEvent(TRUE);
+        $this->SetBuffer('ReceiveBuffer', $Head . utf8_decode($data->Buffer));
 // Empfangs Lock aufheben
-        $this->unlock("ReplyLock");
+        $this->unlock("ReceiveLock");
+// Empfangs Event setzen
+        $this->SetBuffer('ReplyEvent', TRUE);
         return true;
     }
 
@@ -830,16 +867,17 @@ class MS35 extends IPSModule
     {
 //Semaphore setzen
         if (!$this->HasActiveParent())
-            throw new Exception("Instance has no active Parent.",E_USER_NOTICE);
+            throw new Exception("Instance has no active Parent.", E_USER_NOTICE);
         if (!$this->lock("ToParent"))
         {
-            throw new Exception("Can not send to Parent",E_USER_NOTICE);
+            throw new Exception("Can not send to Parent", E_USER_NOTICE);
         }
 // Daten senden
         try
         {
             IPS_SendDataToParent($this->InstanceID, json_encode(Array("DataID" => "{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}", "Buffer" => utf8_encode($Data))));
-        } catch (Exception $exc)
+        }
+        catch (Exception $exc)
         {
 // Senden fehlgeschlagen
 
@@ -859,7 +897,8 @@ class MS35 extends IPSModule
             if (IPS_SemaphoreEnter("MS35_" . (string) $this->InstanceID . (string) $ident, 1))
             {
                 return true;
-            } else
+            }
+            else
             {
                 IPS_Sleep(mt_rand(1, 5));
             }
@@ -886,7 +925,6 @@ class MS35 extends IPSModule
         SetValueInteger($id, $value);
     }
 
-
     protected function HasActiveParent()
     {
         $instance = @IPS_GetInstance($this->InstanceID);
@@ -899,12 +937,6 @@ class MS35 extends IPSModule
         return false;
     }
 
-    protected function GetParent()
-    {
-        $instance = @IPS_GetInstance($this->InstanceID);
-        return ($instance['ConnectionID'] > 0) ? $instance['ConnectionID'] : false;
-    }
-
 //Remove on next Symcon update
     protected function RegisterProfileInteger($Name, $Icon, $Prefix, $Suffix, $MinValue, $MaxValue, $StepSize)
     {
@@ -912,11 +944,12 @@ class MS35 extends IPSModule
         if (!IPS_VariableProfileExists($Name))
         {
             IPS_CreateVariableProfile($Name, 1);
-        } else
+        }
+        else
         {
             $profile = IPS_GetVariableProfile($Name);
             if ($profile['ProfileType'] != 1)
-                throw new Exception("Variable profile type does not match for profile " . $Name,E_USER_NOTICE);
+                throw new Exception("Variable profile type does not match for profile " . $Name, E_USER_NOTICE);
         }
 
         IPS_SetVariableProfileIcon($Name, $Icon);
@@ -930,7 +963,8 @@ class MS35 extends IPSModule
         {
             $MinValue = 0;
             $MaxValue = 0;
-        } else
+        }
+        else
         {
             $MinValue = $Associations[0][0];
             $MaxValue = $Associations[sizeof($Associations) - 1][0];
