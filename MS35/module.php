@@ -316,7 +316,7 @@ class MS35 extends IPSModule
      * Using the custom prefix this function will be callable from PHP and JSON-RPC through:
      */
 
-    public function SendSwitch(boolean $State)
+    public function SendSwitch(bool $State)
     {
         $OldState = GetValueBoolean($this->GetIDForIdent('STATE'));
         if ($State) //Einschalten
@@ -353,7 +353,7 @@ class MS35 extends IPSModule
         }
     }
 
-    public function SetRGB(integer $Red, integer $Green, integer $Blue)
+    public function SetRGB(int $Red, int $Green, int $Blue)
     {
         if (($Red < 0) or ( $Red > 255) or ( $Green < 0) or ( $Green > 255) or ( $Blue < 0) or ( $Blue > 255))
         {
@@ -404,7 +404,7 @@ class MS35 extends IPSModule
         }
     }
 
-    public function RunProgram(integer $Programm)
+    public function RunProgram(int $Programm)
     {
         if (($Programm < 1) or ( $Programm > 9))
         {
@@ -466,7 +466,7 @@ class MS35 extends IPSModule
         }
     }
 
-    public function SetSpeed(integer $Speed)
+    public function SetSpeed(int $Speed)
     {
         if (($Speed < 0) or ( $Speed > 8))
         {
@@ -482,7 +482,7 @@ class MS35 extends IPSModule
         }
     }
 
-    public function SetBrightness(integer $Level)
+    public function SetBrightness(int $Level)
     {
         if (($Level < 1) or ( $Level > 3))
         {
@@ -494,7 +494,7 @@ class MS35 extends IPSModule
             $this->SetValueInteger('Brightness', $Level);
     }
 
-    public function SetProgram(integer $Programm, string $Data)
+    public function SetProgram(int $Programm, string $Data)
     {
         if (($Programm < 8) or ( $Programm > 9))
         {
