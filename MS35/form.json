@@ -36,7 +36,7 @@
                 },
                 {
                     "type": "Button",
-                    "label": "Start Program",
+                    "label": "Run program",
                     "onClick": "MS35_RunProgram($id, $ValueP);"
                 },
                 {
@@ -76,12 +76,12 @@
                 },
                 {
                     "type": "Button",
-                    "label": "ON",
+                    "label": "On",
                     "onClick": "MS35_SendSwitch($id, true);"
                 },
                 {
                     "type": "Button",
-                    "label": "OFF",
+                    "label": "Off",
                     "onClick": "MS35_SendSwitch($id, false);"
                 }
             ]

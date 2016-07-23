@@ -1,0 +1,19 @@
+{
+    "translations": {
+        "de": {
+            "Fadetime": "Dimmzeit",
+            "Set RGB": "Farbe setzen",
+            "Program": "Programm",
+            "Run program": "Programm starten",
+            "Speed": "Geschwindigkeit",
+            "Set speed": "Geschwindigkeit setzen",
+            "Brightness": "Helligkeit",
+            "Set brightness": "Helligkeit setzen",
+            "Play": "Start",
+            "Pause": "Pause",
+            "Stop": "Stop",
+            "On": "An",
+            "Off": "Aus"
+        }
+    }
+}
