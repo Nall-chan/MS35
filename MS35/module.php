@@ -249,6 +249,9 @@ class MS35 extends IPSModule
         $this->RegisterVariableInteger("Brightness", "Brightness", "MS35.Brightness", 6);
         $this->EnableAction("Brightness");
 
+        $this->UnregisterVariable("BufferIN");
+        $this->UnregisterVariable("ReplyEvent");
+        $this->UnregisterVariable("Connected");
         //$this->RegisterVariableString("BufferIN", "BufferIN", "", -4);
         //$this->RegisterVariableBoolean("ReplyEvent", "ReplyEvent", "", -5);
         //$this->RegisterVariableBoolean("Connected", "Connected", "", -3);
