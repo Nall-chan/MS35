@@ -77,6 +77,7 @@ class MS35 extends IPSModule
             case DM_CONNECT:
             case DM_DISCONNECT:
                 $this->ForceRefresh();
+
                 break;
             case IM_CHANGESTATUS:
                 if (($SenderID == @IPS_GetInstance($this->InstanceID)['ConnectionID']) and ( $Data[0] == IS_ACTIVE))
@@ -102,7 +103,8 @@ class MS35 extends IPSModule
      */
     protected function ForceRefresh()
     {
-        $this->ApplyChanges();
+        if ($this->SetParentConfig())
+            $this->DoInit();
     }
 
     /**
@@ -139,6 +141,12 @@ class MS35 extends IPSModule
     public function ApplyChanges()
     {
         parent::ApplyChanges();
+
+        $this->RegisterMessage(0, IPS_KERNELMESSAGE);
+        $this->RegisterMessage($this->InstanceID, DM_CONNECT);
+        $this->RegisterMessage($this->InstanceID, DM_DISCONNECT);
+
+        $this->SetReceiveDataFilter(".*018EF6B5-AB94-40C6-AA53-46943E824ACF.*");
 
         $this->RegisterProfileIntegerEx("MS35.Program", "Gear", "", "", Array(
             Array(1, 'Farbwechsel 1', '', -1),
@@ -199,33 +207,36 @@ class MS35 extends IPSModule
         if (IPS_GetKernelRunlevel() != KR_READY)
             return;
 
-        $ParentID = $this->GetParentData();
+        $this->ForceRefresh();
+    }
 
-        if ($ParentID > 0)
+    private function SetParentConfig()
+    {
+        $ParentId = $this->GetParentData();
+        if ($ParentId > 0)
         {
+            $this->SetSummary(IPS_GetProperty($ParentId, 'Port'));
 
-            $ParentInstance = IPS_GetInstance($ParentID);
+            $ParentInstance = IPS_GetInstance($ParentId);
             if ($ParentInstance['ModuleInfo']['ModuleID'] == '{6DC3D946-0D31-450F-A8C6-C42DB8D7D4F1}')
             {
-                if (IPS_GetProperty($ParentID, 'StopBits') <> '1')
-                    IPS_SetProperty($ParentID, 'StopBits', '1');
-                if (IPS_GetProperty($ParentID, 'BaudRate') <> '38400')
-                    IPS_SetProperty($ParentID, 'BaudRate', '38400');
-                if (IPS_GetProperty($ParentID, 'Parity') <> 'None')
-                    IPS_SetProperty($ParentID, 'Parity', 'None');
-                if (IPS_GetProperty($ParentID, 'DataBits') <> '8')
-                    IPS_SetProperty($ParentID, 'DataBits', '8');
-                if (IPS_HasChanges($ParentID))
-                    IPS_ApplyChanges($ParentID);
+                if (IPS_GetProperty($ParentId, 'StopBits') <> '1')
+                    IPS_SetProperty($ParentId, 'StopBits', '1');
+                if (IPS_GetProperty($ParentId, 'BaudRate') <> '38400')
+                    IPS_SetProperty($ParentId, 'BaudRate', '38400');
+                if (IPS_GetProperty($ParentId, 'Parity') <> 'None')
+                    IPS_SetProperty($ParentId, 'Parity', 'None');
+                if (IPS_GetProperty($ParentId, 'DataBits') <> '8')
+                    IPS_SetProperty($ParentId, 'DataBits', '8');
+                if (IPS_HasChanges($ParentId))
+                    @IPS_ApplyChanges($ParentId);
             }
+            return true;
         }
-        try
+        else
         {
-            $this->DoInit();
-        }
-        catch (Exception $exc)
-        {
-            trigger_error($exc->getMessage(), E_USER_NOTICE);
+            $this->SetSummary('(none)');
+            return false;
         }
     }
 
@@ -707,7 +718,6 @@ class MS35 extends IPSModule
      *
      * @access private
      * @return boolean True bei Erflog, sonst false.
-     * @throws Exception Wenn kein aktiver Parent vorhanden ist.
      */
     private function DoInit()
     {
@@ -719,7 +729,8 @@ class MS35 extends IPSModule
         }
         catch (Exception $exc)
         {
-            throw $exc;
+            trigger_error($exc->getMessage(), E_USER_NOTICE);
+            return false;
         }
         if (!$ret)
             return false;
