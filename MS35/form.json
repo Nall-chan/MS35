@@ -26,7 +26,7 @@
                 },
                 {
                     "type": "Button",
-                    "label": "Set RGB",
+                    "label": "Set Color",
                     "onClick": "MS35_SetRGB($id, $ValueR, $ValueG, $ValueB);"
                 },
                 {
@@ -36,7 +36,7 @@
                 },
                 {
                     "type": "Button",
-                    "label": "Start Program",
+                    "label": "Start program",
                     "onClick": "MS35_RunProgram($id, $ValueP);"
                 },
                 {
@@ -46,7 +46,7 @@
                 },
                 {
                     "type": "Button",
-                    "label": "Set Speed",
+                    "label": "Set speed",
                     "onClick": "MS35_SetSpeed($id, $ValueS);"
                 },
                 {
@@ -56,7 +56,7 @@
                 },
                 {
                     "type": "Button",
-                    "label": "Set Brightness",
+                    "label": "Set brightness",
                     "onClick": "MS35_SetBrightness($id, $ValueH);"
                 },
                 {

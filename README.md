@@ -57,7 +57,7 @@ IPS-Modul für den Conrad MS35 RGB-Controller.
 
 ## 2. Voraussetzungen
 
-   - IPS ab Version 3.1 oder Version 4.x
+   - IPS  Version 3.1 bis 3.4 oder ab Version 4.1
 
    - MS-35 RGB-Controller
 
@@ -71,7 +71,7 @@ IPS-Modul für den Conrad MS35 RGB-Controller.
    Ist der Ordner Modules nicht vorhanden, so ist er anzulegen.  
    IPS-Dienst neustarten.
 
-**IPS 4.x:**  
+**IPS 4.1:**  
    Über das Modul-Control folgende URL hinzufügen.  
    `git://github.com/Nall-chan/IPSMS35.git`  
 
@@ -216,6 +216,7 @@ IPS-Modul für den Conrad MS35 RGB-Controller.
 ## 11. Anhang
 
    Changlog:  
-   2.0. : Erstes (noch nicht endgültig getestetes) öffentliches Release für IPS 4.0
+   2.0 : Erstes (noch nicht endgültig getestetes) öffentliches Release für IPS 4.0
+   2.1 : Modul für IPS 4.1 angepaßt. Keine Unterstützung für IPS 4.0 !
 
 

@@ -1,9 +1,9 @@
 {
-	"id": "{FE324FCE-F38F-48C5-9760-6F013EA8A6F2}",
-	"author": "Michael Tröger",
-	"name": "MS35 RGB Library",
-	"url": "git.nall-chan.net",
-	"version": "1.2",
-	"build": 0,
-	"date": 0
+    "id": "{FE324FCE-F38F-48C5-9760-6F013EA8A6F2}",
+    "author": "Michael Tr\u00f6ger",
+    "name": "MS35 RGB Library",
+    "url": "git.nall-chan.net",
+    "version": "2.0",
+    "build": 0,
+    "date": 0
 }
