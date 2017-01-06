@@ -25,6 +25,8 @@ IPS-Modul für den Conrad MS35 RGB-Controller.
 
 11. [Anhang](#11-anhang) 
 
+12. [Lizenz](#12-lizenz)
+
 ## 1. Funktionsumfang
 
    Direkte native Unterstützung des Conrad MS-35 RGB-Controller (EAN: 4016138567267 Bestellnr.: 181818 ).
@@ -219,4 +221,6 @@ IPS-Modul für den Conrad MS35 RGB-Controller.
    2.0 : Erstes (noch nicht endgültig getestetes) öffentliches Release für IPS 4.0
    2.1 : Modul für IPS 4.1 angepaßt. Keine Unterstützung für IPS 4.0 !
 
+## 12. Lizenz
 
+  [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/)  

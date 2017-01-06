@@ -281,13 +281,16 @@ trait InstanceStatus
     {
         $OldParentId = $this->Parent;
         $ParentId = @IPS_GetInstance($this->InstanceID)['ConnectionID'];
-        if ($OldParentId > 0)
-            $this->UnregisterMessage($OldParentId, IM_CHANGESTATUS);
-        if ($ParentId > 0)
-            $this->RegisterMessage($ParentId, IM_CHANGESTATUS);
-        else
-            $ParentId = 0;
-        $this->Parent = $ParentId;
+        if ($ParentId <> $OldParentId)
+        {
+            if ($OldParentId > 0)
+                $this->UnregisterMessage($OldParentId, IM_CHANGESTATUS);
+            if ($ParentId > 0)
+                $this->RegisterMessage($ParentId, IM_CHANGESTATUS);
+            else
+                $ParentId = 0;
+            $this->Parent = $ParentId;
+        }
         return $ParentId;
     }
 
