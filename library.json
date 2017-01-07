@@ -2,8 +2,12 @@
     "id": "{FE324FCE-F38F-48C5-9760-6F013EA8A6F2}",
     "author": "Michael Tr\u00f6ger",
     "name": "MS35 RGB Library",
-    "url": "git.nall-chan.net",
-    "version": "2.0",
-    "build": 0,
-    "date": 0
+    "url": "https://github.com/Nall-chan/IPSMS35",
+    "version": "2.01",
+    "build": 110,
+    "date": 1483805292,
+    "title": "RGB-Controller MS35",
+    "description": "Ermöglich die Anbindung der RGB-Controller vom Typ MS35.",
+    "tags": ["MS35", "Conrad", "RGB", "Licht"],
+    "req_ips_version": "4.1"
 }

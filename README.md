@@ -4,27 +4,16 @@ IPS-Modul für den Conrad MS35 RGB-Controller.
 ## Inhaltsverzeichnis
 
 1. [Funktionsumfang](#1-funktionsumfang)
-
 2. [Voraussetzungen](#2-voraussetzungen)
-
 3. [Software-Installation](#3-software-installation)
-
 4. [Hardware-Installation & Einrichtung](#4-hardware-installation--einrichtung)
-
 5. [Einrichten der Instanzen in IPS](#5-einrichten-der-instanzen-in-ips)
-
 6. [Statusvariablen und Profile](#6-statusvariablen-und-profile)
-
 7. [WebFront](#7-webfront)
-
 8. [PHP-Befehlsreferenz](#8-php-befehlsreferenz)
-
 9. [Parameter / Modul-Infos](#9-parameter--modul-infos)
-
 10. [Tips & Tricks](#10-tips--tricks)
-
 11. [Anhang](#11-anhang) 
-
 12. [Lizenz](#12-lizenz)
 
 ## 1. Funktionsumfang
@@ -67,15 +56,17 @@ IPS-Modul für den Conrad MS35 RGB-Controller.
 
 ## 3. Software-Installation
 
-**IPS 3.1 bis 3.4:**  
+### IPS 3.1 bis 3.4:
    Bei GitHub das gepackte Modul als ZIP-File laden: [MS35.ZIP](https://github.com/Nall-chan/IPSMS35/raw/master/IPS3.X/MS35.zip)  
    Die enthaltende Datei MS35.dll in das /modules Verzeichnis von IPS kopieren.  
    Ist der Ordner Modules nicht vorhanden, so ist er anzulegen.  
    IPS-Dienst neustarten.
 
-**IPS 4.1:**  
+### IPS 4.1:
    Über das Modul-Control folgende URL hinzufügen.  
    `git://github.com/Nall-chan/IPSMS35.git`  
+
+   **Bei kommerzieller Nutzung (z.B. als Errichter oder Integrator) wenden Sie sich bitte an den Autor.**  
 
 ## 4. Hardware-Installation & Einrichtung
 
@@ -218,8 +209,8 @@ IPS-Modul für den Conrad MS35 RGB-Controller.
 ## 11. Anhang
 
    Changlog:  
-   2.0 : Erstes (noch nicht endgültig getestetes) öffentliches Release für IPS 4.0
-   2.1 : Modul für IPS 4.1 angepaßt. Keine Unterstützung für IPS 4.0 !
+   2.1 : Modul für IPS 4.1 angepaßt. Keine Unterstützung für IPS 4.0 !  
+   2.0 : Erstes (noch nicht endgültig getestetes) öffentliches Release für IPS 4.0  
 
 ## 12. Lizenz
 
