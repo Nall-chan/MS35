@@ -209,8 +209,14 @@ IPS-Modul für den Conrad MS35 RGB-Controller.
 ## 11. Anhang
 
    Changlog:  
-   2.1 : Modul für IPS 4.1 angepaßt. Keine Unterstützung für IPS 4.0 !  
-   2.0 : Erstes (noch nicht endgültig getestetes) öffentliches Release für IPS 4.0  
+   Version 2.2 :  
+     - Fix: Kleine Bugfixes  
+
+   Version 2.1 :  
+     - Modul für IPS 4.1 angepaßt. Keine Unterstützung für IPS 4.0 !  
+
+   Version 2.0 :  
+     - Erstes (noch nicht endgültig getestetes) öffentliches Release für IPS 4.0  
 
 ## 12. Lizenz
 

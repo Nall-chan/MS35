@@ -213,31 +213,41 @@ class MS35 extends IPSModule
     private function SetParentConfig()
     {
         $ParentId = $this->GetParentData();
-        if ($ParentId > 0)
+        if ($ParentId == 0)
+            $this->SetSummary('(none)');
+        return false;
+
+
+
+        $ParentInstance = IPS_GetInstance($ParentId);
+        if ($ParentInstance['ModuleInfo']['ModuleID'] == '{6DC3D946-0D31-450F-A8C6-C42DB8D7D4F1}')
         {
             $this->SetSummary(IPS_GetProperty($ParentId, 'Port'));
 
-            $ParentInstance = IPS_GetInstance($ParentId);
-            if ($ParentInstance['ModuleInfo']['ModuleID'] == '{6DC3D946-0D31-450F-A8C6-C42DB8D7D4F1}')
-            {
-                if (IPS_GetProperty($ParentId, 'StopBits') <> '1')
-                    IPS_SetProperty($ParentId, 'StopBits', '1');
-                if (IPS_GetProperty($ParentId, 'BaudRate') <> '38400')
-                    IPS_SetProperty($ParentId, 'BaudRate', '38400');
-                if (IPS_GetProperty($ParentId, 'Parity') <> 'None')
-                    IPS_SetProperty($ParentId, 'Parity', 'None');
-                if (IPS_GetProperty($ParentId, 'DataBits') <> '8')
-                    IPS_SetProperty($ParentId, 'DataBits', '8');
-                if (IPS_HasChanges($ParentId))
-                    @IPS_ApplyChanges($ParentId);
-            }
-            return true;
-        }
-        else
+            if (IPS_GetProperty($ParentId, 'StopBits') <> '1')
+                IPS_SetProperty($ParentId, 'StopBits', '1');
+            if (IPS_GetProperty($ParentId, 'BaudRate') <> '38400')
+                IPS_SetProperty($ParentId, 'BaudRate', '38400');
+            if (IPS_GetProperty($ParentId, 'Parity') <> 'None')
+                IPS_SetProperty($ParentId, 'Parity', 'None');
+            if (IPS_GetProperty($ParentId, 'DataBits') <> '8')
+                IPS_SetProperty($ParentId, 'DataBits', '8');
+            if (IPS_HasChanges($ParentId))
+                @IPS_ApplyChanges($ParentId);
+        } else
         {
-            $this->SetSummary('(none)');
-            return false;
+            $config = json_decode(IPS_GetConfiguration($ParentId), true);
+            if (array_key_exists('Port', $config))
+                $this->SetSummary($config['Port']);
+            elseif (array_key_exists('Host', $config))
+                $this->SetSummary($config['Host']);
+            elseif (array_key_exists('Address', $config))
+                $this->SetSummary($config['Address']);
+            elseif (array_key_exists('Name', $config))
+                $this->SetSummary($config['Name']);
+            $this->SetSummary('see ' . $ParentId);
         }
+        return true;
     }
 
 ################## PUBLIC
