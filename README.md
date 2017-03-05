@@ -70,9 +70,9 @@ IPS-Modul für den Conrad MS35 RGB-Controller.
 
 ## 4. Hardware-Installation & Einrichtung
 
-   ![](Doku/Doku_html_m4b3399bc.png)  
+   ![](docs/Doku_html_m4b3399bc.png)  
    Den Controller gemäß Handbuch beschalten.  
-   ![](Doku/Doku_html_m47910d47.png)  
+   ![](docs/Doku_html_m47910d47.png)  
    Die serielle Verbindung z.B. mit dem Programmierkabel (oder andere jede Art einer seriellen Anbindung) herstellen.  
 
 ## 5. Einrichten der Instanzen in IPS
@@ -83,11 +83,11 @@ IPS-Modul für den Conrad MS35 RGB-Controller.
    Wird eine andere Hardware zur Datenübertragung genutzt, ist diese ebenfalls auf diese Parameter zu konfigurieren und die SerialPort-Instanz zu löschen.  
    Die Instanz der MS35 benötigt keine eigene Konfiguration.  
    Dafür wurde das Testcenter umgesetzt, mit dem die Funktion sofort überprüft werden kann.  
-   ![](Doku/Doku_html_m1ed1e14.png)  
+   ![](docs/Doku_html_m1ed1e14.png)  
 
 ## 6. Statusvariablen und Profile
 
-   ![](Doku/Doku_html_74a518cb.png)
+   ![](docs/Doku_html_74a518cb.png)
 
    Die Statusvariablen werden für jeden Controller automatisch angelegt. Löschen kann zu Fehlfunktionen führen; da Sie z.B. für das ausführen eines Farb-Programms benötigt werden. Umbenennen ist natürlich kein Problem.  
    Definition:  
@@ -112,7 +112,7 @@ IPS-Modul für den Conrad MS35 RGB-Controller.
 
    Der Controller kann direkt über das WebFront bedient werden, ohne das weitere erstellen von Scripten.  
    Es ist für alle Statusvariablen eine Standardaktion hinterlegt, welche sich direkt auf den Controller auswirkt. Dies kann auf Wunsch auch unter dem Reiter 'Statusvariablen' der MS35-Instanz, deaktiviert werden.  
-   ![](Doku/Doku_html_7c4200a.png)  
+   ![](docs/Doku_html_7c4200a.png)  
 
 ## 8. PHP-Befehlsreferenz
 
