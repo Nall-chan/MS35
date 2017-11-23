@@ -28,83 +28,11 @@ class MS35 extends IPSModule
     use VariableHelper,
         DebugHelper,
         Semaphore,
-        Profile,
-        InstanceStatus;
-
-    /**
-     * Wert einer Eigenschaft aus den InstanceBuffer lesen.
-     * 
-     * @access public
-     * @param string $name Propertyname
-     * @return mixed Value of Name
-     */
-    public function __get($name)
+        VariableProfile,
+        InstanceStatus,
+        BufferHelper
     {
-//        $this->SendDebug('Get ' . $name, $this->GetBuffer($name), 0);
-        return unserialize($this->GetBuffer($name));
-    }
-
-    /**
-     * Wert einer Eigenschaft in den InstanceBuffer schreiben.
-     * 
-     * @access public
-     * @param string $name Propertyname
-     * @param mixed Value of Name
-     */
-    public function __set($name, $value)
-    {
-//        $this->SendDebug('Set ' . $name, serialize($value), 0);
-        $this->SetBuffer($name, serialize($value));
-    }
-
-    /**
-     * Nachrichten aus der Nachrichtenschlange verarbeiten.
-     *
-     * @access public
-     * @param int $TimeStamp
-     * @param int $SenderID
-     * @param int $Message
-     * @param array|int $Data
-     */
-    public function MessageSink($TimeStamp, $SenderID, $Message, $Data)
-    {
-        switch ($Message)
-        {
-            case IPS_KERNELMESSAGE:
-                if ($Data[0] == KR_READY)
-                    $this->KernelReady();
-                break;
-            case DM_CONNECT:
-            case DM_DISCONNECT:
-                $this->ForceRefresh();
-
-                break;
-            case IM_CHANGESTATUS:
-                if (($SenderID == @IPS_GetInstance($this->InstanceID)['ConnectionID']) and ( $Data[0] == IS_ACTIVE))
-                    $this->ForceRefresh();
-                break;
-        }
-    }
-
-    /**
-     * Wird ausgeführt wenn der Kernel hochgefahren wurde.
-     * 
-     * @access protected
-     */
-    protected function KernelReady()
-    {
-        $this->ApplyChanges();
-    }
-
-    /**
-     * Wird ausgeführt wenn sich der Parent ändert.
-     * 
-     * @access protected
-     */
-    protected function ForceRefresh()
-    {
-        if ($this->SetParentConfig())
-            $this->DoInit();
+        InstanceStatus::MessageSink as IOMessageSink; // MessageSink gibt es sowohl hier in der Klasse, als auch im Trait InstanceStatus. Hier wird für die Methode im Trait ein Alias benannt.
     }
 
     /**
@@ -140,13 +68,12 @@ class MS35 extends IPSModule
      */
     public function ApplyChanges()
     {
-        parent::ApplyChanges();
 
         $this->RegisterMessage(0, IPS_KERNELMESSAGE);
         $this->RegisterMessage($this->InstanceID, DM_CONNECT);
         $this->RegisterMessage($this->InstanceID, DM_DISCONNECT);
 
-        $this->SetReceiveDataFilter(".*018EF6B5-AB94-40C6-AA53-46943E824ACF.*");
+        parent::ApplyChanges();
 
         $this->RegisterProfileIntegerEx("MS35.Program", "Gear", "", "", Array(
             Array(1, 'Farbwechsel 1', '', -1),
@@ -196,58 +123,99 @@ class MS35 extends IPSModule
         $this->RegisterVariableInteger("Brightness", "Brightness", "MS35.Brightness", 6);
         $this->EnableAction("Brightness");
 
+        // Remove OLD Workaround
         $this->UnregisterVariable("BufferIN");
         $this->UnregisterVariable("ReplyEvent");
         $this->UnregisterVariable("Connected");
 
-        //prüfen ob IO ein SerialPort ist
-        //        
-        // Zwangskonfiguration des SerialPort, wenn vorhanden und verbunden
-        // Aber nie bei einem Neustart :)
-        if (IPS_GetKernelRunlevel() != KR_READY)
+        // Wenn Kernel nicht bereit, dann warten... KR_READY kommt ja gleich
+        if (IPS_GetKernelRunlevel() <> KR_READY)
             return;
 
-        $this->ForceRefresh();
+        // Wenn Parent aktiv, dann Anmeldung an der Hardware bzw. Datenabgleich starten
+        if ($this->HasActiveParent())
+            $this->IOChangeState(IS_ACTIVE);
+        else
+            $this->SetStatus(IS_INACTIVE);
     }
 
-    private function SetParentConfig()
+    /**
+     * Nachrichten aus der Nachrichtenschlange verarbeiten.
+     *
+     * @access public
+     * @param int $TimeStamp
+     * @param int $SenderID
+     * @param int $Message
+     * @param array|int $Data
+     */
+    public function MessageSink($TimeStamp, $SenderID, $Message, $Data)
     {
-        $ParentId = $this->GetParentData();
-        if ($ParentId == 0)
+        switch ($Message)
+        {
+            case IPS_KERNELSTARTED:
+                if ($this->HasActiveParent())
+                    $this->IOChangeState(IS_ACTIVE);
+                else
+                    $this->IOChangeState(IS_INACTIVE);
+                break;
+        }
+    }
+
+    /**
+     * Wird ausgeführt wenn sich der Status vom Parent ändert.
+     * @access protected
+     */
+    protected function IOChangeState($State)
+    {
+        // Anzeige Port in der INFO Spalte
+        if ($this->ParentId > 0)
+        {
+            $ParentInstance = IPS_GetInstance($this->ParentId);
+            if ($ParentInstance['ModuleInfo']['ModuleID'] == '{6DC3D946-0D31-450F-A8C6-C42DB8D7D4F1}')
+                $this->SetSummary(IPS_GetProperty($this->ParentId, 'Port'));
+            else
+            {
+                $config = json_decode(IPS_GetConfiguration($ParentId), true);
+                if (array_key_exists('Port', $config))
+                    $this->SetSummary($config['Port']);
+                elseif (array_key_exists('Host', $config))
+                    $this->SetSummary($config['Host']);
+                elseif (array_key_exists('Address', $config))
+                    $this->SetSummary($config['Address']);
+                elseif (array_key_exists('Name', $config))
+                    $this->SetSummary($config['Name']);
+                $this->SetSummary('see ' . $ParentId);
+            }
+        }
+        else
+        {
             $this->SetSummary('(none)');
-        return false;
+        }
 
+        // Wenn der IO Aktiv wurde
+        if ($State == IS_ACTIVE)
+        {
+            $this->DoInit();
+        }
+        else // und wenn nicht
+        {
+            $this->SetStatus(IS_INACTIVE);
+        }
+    }
 
-
-        $ParentInstance = IPS_GetInstance($ParentId);
+    public function GetConfigurationForParent()
+    {
+        $ParentInstance = IPS_GetInstance($this->ParentId);
         if ($ParentInstance['ModuleInfo']['ModuleID'] == '{6DC3D946-0D31-450F-A8C6-C42DB8D7D4F1}')
         {
-            $this->SetSummary(IPS_GetProperty($ParentId, 'Port'));
-
-            if (IPS_GetProperty($ParentId, 'StopBits') <> '1')
-                IPS_SetProperty($ParentId, 'StopBits', '1');
-            if (IPS_GetProperty($ParentId, 'BaudRate') <> '38400')
-                IPS_SetProperty($ParentId, 'BaudRate', '38400');
-            if (IPS_GetProperty($ParentId, 'Parity') <> 'None')
-                IPS_SetProperty($ParentId, 'Parity', 'None');
-            if (IPS_GetProperty($ParentId, 'DataBits') <> '8')
-                IPS_SetProperty($ParentId, 'DataBits', '8');
-            if (IPS_HasChanges($ParentId))
-                @IPS_ApplyChanges($ParentId);
-        } else
-        {
-            $config = json_decode(IPS_GetConfiguration($ParentId), true);
-            if (array_key_exists('Port', $config))
-                $this->SetSummary($config['Port']);
-            elseif (array_key_exists('Host', $config))
-                $this->SetSummary($config['Host']);
-            elseif (array_key_exists('Address', $config))
-                $this->SetSummary($config['Address']);
-            elseif (array_key_exists('Name', $config))
-                $this->SetSummary($config['Name']);
-            $this->SetSummary('see ' . $ParentId);
+            $Config['StopBits'] = 1;
+            $Config['BaudRate'] = 38400;
+            $Config['Parity'] = 'None';
+            $Config['DataBits'] = 8;
+            return json_encode($Config);
         }
-        return true;
+        else // Kein SerialPort, sondern TCP oder XBEE Brücke. User muss selber den Port am Endgerät einstellen.
+            return json_encode(array());
     }
 
 ################## PUBLIC

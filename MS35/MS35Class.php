@@ -170,7 +170,8 @@ trait VariableHelper
     private function SetValueBoolean(string $Ident, bool $value)
     {
         $id = $this->GetIDForIdent($Ident);
-        SetValueBoolean($id, $value);
+        if ($id != false)
+            SetValueBoolean($id, $value);
     }
 
     /**
@@ -181,7 +182,8 @@ trait VariableHelper
     private function SetValueInteger(string $Ident, int $value)
     {
         $id = $this->GetIDForIdent($Ident);
-        SetValueInteger($id, $value);
+        if ($id != false)
+            SetValueInteger($id, $value);
     }
 
 }
@@ -218,6 +220,10 @@ trait DebugHelper
                 $this->SendDebug($Message . ":" . $Key, $DebugData, 0);
             }
         }
+        else if (is_bool($Data))
+        {
+            parent::SendDebug($Message, ($Data ? 'TRUE' : 'FALSE'), 0);
+        }
         else
         {
             parent::SendDebug($Message, $Data, $Format);
@@ -241,7 +247,7 @@ trait Semaphore
     {
         for ($i = 0; $i < 100; $i++)
         {
-            if (IPS_SemaphoreEnter("MS35_" . (string) $this->InstanceID . (string) $ident, 1))
+            if (IPS_SemaphoreEnter("__CLASS__" . (string) $this->InstanceID . (string) $ident, 1))
             {
                 return true;
             }
@@ -259,16 +265,45 @@ trait Semaphore
      */
     private function unlock($ident)
     {
-        IPS_SemaphoreLeave("MS35_" . (string) $this->InstanceID . (string) $ident);
+        IPS_SemaphoreLeave("__CLASS__" . (string) $this->InstanceID . (string) $ident);
     }
 
 }
 
 /**
  * Trait mit Hilfsfunktionen für den Datenaustausch.
+ * @property integer $ParentID
  */
 trait InstanceStatus
 {
+
+    /**
+     * Interne Funktion des SDK.
+     *
+     * @access public
+     */
+    protected function MessageSink($TimeStamp, $SenderID, $Message, $Data)
+    {
+        $this->IOChangeState(IS_INACTIVE);
+        switch ($Message)
+        {
+            case DM_CONNECT:
+                $this->RegisterParent();
+                if ($this->HasActiveParent())
+                    $this->IOChangeState(IS_ACTIVE);
+                else
+                    $this->IOChangeState(IS_INACTIVE);
+                break;
+            case DM_DISCONNECT:
+                $this->RegisterParent();
+                $this->IOChangeState(IS_INACTIVE);
+                break;
+            case IM_CHANGESTATUS:
+                if ($SenderID == $this->ParentID)
+                    $this->IOChangeState($Data[0]);
+                break;
+        }
+    }
 
     /**
      * Ermittelt den Parent und verwaltet die Einträge des Parent im MessageSink
@@ -277,9 +312,9 @@ trait InstanceStatus
      * @access protected
      * @return int ID des Parent.
      */
-    protected function GetParentData()
+    protected function RegisterParent()
     {
-        $OldParentId = $this->Parent;
+        $OldParentId = $this->ParentID;
         $ParentId = @IPS_GetInstance($this->InstanceID)['ConnectionID'];
         if ($ParentId <> $OldParentId)
         {
@@ -289,22 +324,9 @@ trait InstanceStatus
                 $this->RegisterMessage($ParentId, IM_CHANGESTATUS);
             else
                 $ParentId = 0;
-            $this->Parent = $ParentId;
+            $this->ParentID = $ParentId;
         }
         return $ParentId;
-    }
-
-    /**
-     * Setzt den Status dieser Instanz auf den übergebenen Status.
-     * Prüft vorher noch ob sich dieser vom aktuellen Status unterscheidet.
-     * 
-     * @access protected
-     * @param int $InstanceStatus
-     */
-    protected function SetStatus($InstanceStatus)
-    {
-        if ($InstanceStatus <> IPS_GetInstance($this->InstanceID)['InstanceStatus'])
-            parent::SetStatus($InstanceStatus);
     }
 
     /**
@@ -328,9 +350,41 @@ trait InstanceStatus
 }
 
 /**
+ * Trait welcher Objekt-Eigenschaften in den Instance-Buffer schreiben und lesen kann.
+ */
+trait BufferHelper
+{
+
+    /**
+     * Wert einer Eigenschaft aus den InstanceBuffer lesen.
+     * 
+     * @access public
+     * @param string $name Propertyname
+     * @return mixed Value of Name
+     */
+    public function __get($name)
+    {
+        return unserialize($this->GetBuffer($name));
+    }
+
+    /**
+     * Wert einer Eigenschaft in den InstanceBuffer schreiben.
+     * 
+     * @access public
+     * @param string $name Propertyname
+     * @param mixed Value of Name
+     */
+    public function __set($name, $value)
+    {
+        $this->SetBuffer($name, serialize($value));
+    }
+
+}
+
+/**
  * Trait mit Hilfsfunktionen für Variablenprofile.
  */
-trait Profile
+trait VariableProfile
 {
 
     /**
@@ -355,12 +409,19 @@ trait Profile
             $MinValue = $Associations[0][0];
             $MaxValue = $Associations[sizeof($Associations) - 1][0];
         }
-
         $this->RegisterProfileInteger($Name, $Icon, $Prefix, $Suffix, $MinValue, $MaxValue, 0);
-
+        $old = IPS_GetVariableProfile($Name)["Associations"];
+        $OldValues = array_column($old, 'Value');
         foreach ($Associations as $Association)
         {
             IPS_SetVariableProfileAssociation($Name, $Association[0], $Association[1], $Association[2], $Association[3]);
+            $OldKey = array_search($Association[0], $OldValues);
+            if (!($OldKey === false ))
+                unset($OldValues[$OldKey]);
+        }
+        foreach ($OldValues as $OldKey => $OldValue)
+        {
+            IPS_SetVariableProfileAssociation($Name, $OldValue, '', '', 0);
         }
     }
 
@@ -378,39 +439,78 @@ trait Profile
      */
     protected function RegisterProfileInteger($Name, $Icon, $Prefix, $Suffix, $MinValue, $MaxValue, $StepSize)
     {
+        $this->RegisterProfile(1, $Name, $Icon, $Prefix, $Suffix, $MinValue, $MaxValue, $StepSize);
+    }
+
+    /**
+     * Erstell und konfiguriert ein VariablenProfil für den Typ float
+     *
+     * @access protected
+     * @param string $Name Name des Profils.
+     * @param string $Icon Name des Icon.
+     * @param string $Prefix Prefix für die Darstellung.
+     * @param string $Suffix Suffix für die Darstellung.
+     * @param int $MinValue Minimaler Wert.
+     * @param int $MaxValue Maximaler wert.
+     * @param int $StepSize Schrittweite
+     */
+    protected function RegisterProfileFloat($Name, $Icon, $Prefix, $Suffix, $MinValue, $MaxValue, $StepSize, $Digits)
+    {
+        $this->RegisterProfile(2, $Name, $Icon, $Prefix, $Suffix, $MinValue, $MaxValue, $StepSize, $Digits);
+    }
+
+    /**
+     * Erstell und konfiguriert ein VariablenProfil für den Typ float
+     *
+     * @access protected
+     * @param int $VarTyp Typ der Variable
+     * @param string $Name Name des Profils.
+     * @param string $Icon Name des Icon.
+     * @param string $Prefix Prefix für die Darstellung.
+     * @param string $Suffix Suffix für die Darstellung.
+     * @param int $MinValue Minimaler Wert.
+     * @param int $MaxValue Maximaler wert.
+     * @param int $StepSize Schrittweite
+     */
+    protected function RegisterProfile($VarTyp, $Name, $Icon, $Prefix, $Suffix, $MinValue, $MaxValue, $StepSize, $Digits = 0)
+    {
 
         if (!IPS_VariableProfileExists($Name))
         {
-            IPS_CreateVariableProfile($Name, 1);
+            IPS_CreateVariableProfile($Name, $VarTyp);
         }
         else
         {
             $profile = IPS_GetVariableProfile($Name);
-            if ($profile['ProfileType'] != 1)
-                throw new Exception("Variable profile type does not match for profile " . $Name, E_USER_NOTICE);
+            if ($profile['ProfileType'] != $VarTyp)
+                throw new Exception("Variable profile type does not match for profile " . $Name, E_USER_WARNING);
         }
 
         IPS_SetVariableProfileIcon($Name, $Icon);
         IPS_SetVariableProfileText($Name, $Prefix, $Suffix);
         IPS_SetVariableProfileValues($Name, $MinValue, $MaxValue, $StepSize);
+        if ($VarTyp == vtFloat)
+            IPS_SetVariableProfileDigits($Name, $Digits);
     }
 
     /**
      * Löscht ein Variablenprofile, sofern es nicht außerhalb dieser Instanz noch verwendet wird.
-     * @param string $Profil Name des zu löschenden Profils.
+     * @param string $Name Name des zu löschenden Profils.
      */
-    protected function UnregisterProfil(string $Profil)
+    protected function UnregisterProfil(string $Name)
     {
-        if (!IPS_VariableProfileExists($Profil))
+        if (!IPS_VariableProfileExists($Name))
             return;
         foreach (IPS_GetVariableList() as $VarID)
         {
             if (IPS_GetParent($VarID) == $this->InstanceID)
                 continue;
-            if (IPS_GetVariable($VarID)['VariableCustomProfile'] == $Profil)
+            if (IPS_GetVariable($VarID)['VariableCustomProfile'] == $Name)
+                return;
+            if (IPS_GetVariable($VarID)['VariableProfile'] == $Name)
                 return;
         }
-        IPS_DeleteVariableProfile($Profil);
+        IPS_DeleteVariableProfile($Name);
     }
 
 }
