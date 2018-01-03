@@ -13,7 +13,15 @@
             "Pause": "Pause",
             "Stop": "Stop",
             "ON": "AN",
-            "OFF": "AUS"
+            "OFF": "AUS",
+            "Invalid parameter": "Ungültiger Parameter",
+            "Invalid value": "Ungültiger Wert",
+            "Invalid ident": "Ungültiger Ident",
+            "Controller send NACK.": "Gerät hat nicht bestätigt",
+            "Controller do not response.": "Gerät nat nicht geantwortet.",
+            "Send is blocked.": "Senden blockiert",
+            "Could not initialize controller.":"Konnte Gerät nicht initialisieren.",
+            "Instance has no active parent.":"Instanz hat keinen aktiven Parent."
         }
     }
 }

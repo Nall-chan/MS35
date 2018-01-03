@@ -7,9 +7,9 @@
  * @package       MS35
  * @file          module.php
  * @author        Michael Tröger <micha@nall-chan.net>
- * @copyright     2017 Michael Tröger
+ * @copyright     2018 Michael Tröger
  * @license       https://creativecommons.org/licenses/by-nc-sa/4.0/ CC BY-NC-SA 4.0
- * @version       2.02
+ * @version       2.03
  */
 require_once(__DIR__ . "/MS35Class.php");  // diverse Klassen
 
@@ -176,7 +176,7 @@ class MS35 extends IPSModule
                 $this->SetSummary(IPS_GetProperty($this->ParentId, 'Port'));
             else
             {
-                $config = json_decode(IPS_GetConfiguration($this->ParentId ), true);
+                $config = json_decode(IPS_GetConfiguration($this->ParentId), true);
                 if (array_key_exists('Port', $config))
                     $this->SetSummary($config['Port']);
                 elseif (array_key_exists('Host', $config))
@@ -185,7 +185,7 @@ class MS35 extends IPSModule
                     $this->SetSummary($config['Address']);
                 elseif (array_key_exists('Name', $config))
                     $this->SetSummary($config['Name']);
-                $this->SetSummary('see ' . $this->ParentId );
+                $this->SetSummary('see ' . $this->ParentId);
             }
         }
         else
@@ -284,7 +284,7 @@ class MS35 extends IPSModule
     {
         if (($Red < 0) or ( $Red > 255) or ( $Green < 0) or ( $Green > 255) or ( $Blue < 0) or ( $Blue > 255))
         {
-            trigger_error('Invalid Parameterset', E_USER_NOTICE);
+            trigger_error($this->Translate('Invalid parameter'), E_USER_NOTICE);
             return false;
         }
         $Data = chr(01) . chr(00) . chr($Red) . chr($Green) . chr($Blue) . chr(00) . chr(00);
@@ -372,7 +372,7 @@ class MS35 extends IPSModule
     {
         if (($Programm < 1) or ( $Programm > 9))
         {
-            trigger_error('Invalid Program-Index', E_USER_NOTICE);
+            trigger_error($this->Translate('Invalid parameter'), E_USER_NOTICE);
             return false;
         }
 
@@ -448,7 +448,7 @@ class MS35 extends IPSModule
     {
         if (($Speed < 0) or ( $Speed > 8))
         {
-            trigger_error('Invalid Speed-Level', E_USER_NOTICE);
+            trigger_error($this->Translate('Invalid parameter'), E_USER_NOTICE);
             return false;
         }
         $Program = GetValueInteger($this->GetIDForIdent('Program'));
@@ -476,7 +476,7 @@ class MS35 extends IPSModule
     {
         if (($Level < 1) or ( $Level > 3))
         {
-            trigger_error('Invalid Brightness-Level', E_USER_NOTICE);
+            trigger_error($this->Translate('Invalid parameter'), E_USER_NOTICE);
             return false;
         }
         $data = chr(0x0C) . chr($Level) . chr(00) . chr(00) . chr(00) . chr(00) . chr(00);
@@ -501,14 +501,14 @@ class MS35 extends IPSModule
     {
         if (($Programm < 8) or ( $Programm > 9))
         {
-            trigger_error('Invalid Program-Index', E_USER_NOTICE);
+            trigger_error($this->Translate('Invalid parameter'), E_USER_NOTICE);
             return false;
         }
 
         $PrgData = json_decode($Data);
         if ($PrgData == NULL)
         {
-            trigger_error('Error in Program-Data', E_USER_NOTICE);
+            trigger_error($this->Translate('Invalid parameter'), E_USER_NOTICE);
             return false;
         }
 
@@ -520,7 +520,7 @@ class MS35 extends IPSModule
         $i = count($PrgData);
         if (($i < 1) or ( $i > 51))
         {
-            trigger_error('Error in Program-Data', E_USER_NOTICE);
+            trigger_error($this->Translate('Invalid parameter'), E_USER_NOTICE);
             return false;
         }
 
@@ -538,7 +538,7 @@ class MS35 extends IPSModule
                 $Hold = $Slot->H;
                 if (($Red < 0) or ( $Red > 255) or ( $Green < 0) or ( $Green > 255) or ( $Blue < 0) or ( $Blue > 255) or ( $Fade < 0) or ( $Fade > 255) or ( $Hold < 0) or ( $Hold > 255))
                 {
-                    trigger_error('Error in Program-Data', E_USER_NOTICE);
+                    trigger_error($this->Translate('Invalid parameter'), E_USER_NOTICE);
                     $ret = false;
                     continue;
                 }
@@ -587,7 +587,7 @@ class MS35 extends IPSModule
                         $this->Stop();
                         break;
                     default:
-                        trigger_error('Invalid Value', E_USER_NOTICE);
+                        trigger_error($this->Translate('Invalid value'), E_USER_NOTICE);
                         break;
                 }
                 break;
@@ -598,7 +598,7 @@ class MS35 extends IPSModule
                 $this->SetBrightness($Value);
                 break;
             default:
-                trigger_error('Invalid Ident', E_USER_NOTICE);
+                trigger_error($this->Translate('Invalid ident'), E_USER_NOTICE);
                 break;
         }
     }
@@ -660,7 +660,7 @@ class MS35 extends IPSModule
                         $this->SendDebug('NACK', '', 1);
                         $this->Connected = false;
                         $this->unlock('SendCommand');
-                        trigger_error('Controller send NACK.', E_USER_NOTICE);
+                        trigger_error($this->Translate('Controller send NACK.'), E_USER_NOTICE);
                         return false;
                     }
                 }
@@ -671,7 +671,7 @@ class MS35 extends IPSModule
 
                     $this->Connected = false;
                     $this->unlock('SendCommand');
-                    trigger_error('Controller do not response.', E_USER_NOTICE);
+                    trigger_error($this->Translate('Controller do not response.'), E_USER_NOTICE);
                     return false;
                 }
             }
@@ -679,7 +679,7 @@ class MS35 extends IPSModule
             {
                 $this->SendDebug('Timeout', '', 1);
                 $this->unlock('SendCommand');
-                trigger_error('Controller do not response.', E_USER_NOTICE);
+                trigger_error($this->Translate('Controller do not response.'), E_USER_NOTICE);
                 return false;
             }
         }
@@ -687,7 +687,7 @@ class MS35 extends IPSModule
         {
             $this->SendDebug('Timeout', '', 1);
 
-            trigger_error('SendCommand is blocked.', E_USER_NOTICE);
+            trigger_error($this->Translate('Send is blocked.'), E_USER_NOTICE);
             return false;
         }
     }
@@ -821,7 +821,7 @@ class MS35 extends IPSModule
         $this->Connected = false;
         $this->InitRun = false;
         $this->SendDebug('Error Init', 'Controller', 0);
-        throw new Exception('Could not initialize Controller', E_USER_NOTICE);
+        throw new Exception($this->Translate('Could not initialize controller.'), E_USER_NOTICE);
     }
 
     /**
@@ -902,7 +902,7 @@ class MS35 extends IPSModule
     protected function SendDataToParent($Data)
     {
         if (!$this->HasActiveParent())
-            throw new Exception("Instance has no active Parent.", E_USER_NOTICE);
+            throw new Exception($this->Translate("Instance has no active parent."), E_USER_NOTICE);
         $result = parent::SendDataToParent(json_encode(Array("DataID" => "{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}", "Buffer" => utf8_encode($Data))));
         return ($result === false ? false : true);
     }
