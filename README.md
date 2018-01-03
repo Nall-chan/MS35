@@ -141,7 +141,7 @@ bool MS35_SetRGB(integer $InstanzeID, integer $Red, integer $Green, integer $Blu
    Konnte der Befehl erfolgreich ausgeführt werden, liefert er als Ergebnis TRUE, andernfalls FALSE.  
 
 ```php
-bool MS35_Switch(integer $InstanzeID, bool State);`  
+bool MS35_Switch(integer $InstanzeID, bool $State);`  
 ```
    Schaltet den Controller aus oder ein.  
    Dabei wird das Gerät nicht komplett abgeschaltet, da es sonst nicht mehr erreichbar wäre.  
@@ -199,7 +199,7 @@ string MS35_SetBrightness(integer $InstanzeID, integer $Brightness);
 string MS35_SetProgram(integer $InstanzeID, integer $Program, string $Data);
 ```
    Schreibt eines der benutzerspezifischen Programme 8 oder 9 in den Controller.  
-   $Programm` darf nur 8 oder 9 enthalten.  
+   `$Programm` darf nur 8 oder 9 enthalten.  
    `$Data` ist ein JSON-Codierter String welcher das Programm nach folgendem Schema enthalten muss:  
    (Beispiele im Kapitel 10)  
    `[{"R":255,"G":255,"B":255,"H":5,"F":5},{"R":0,"G":0,"B":255,"H":5,"F":5}]`  
