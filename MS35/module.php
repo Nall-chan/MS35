@@ -7,9 +7,9 @@
  * @package       MS35
  * @file          module.php
  * @author        Michael Tröger <micha@nall-chan.net>
- * @copyright     2016 Michael Tröger
+ * @copyright     2017 Michael Tröger
  * @license       https://creativecommons.org/licenses/by-nc-sa/4.0/ CC BY-NC-SA 4.0
- * @version       1.0
+ * @version       2.02
  */
 require_once(__DIR__ . "/MS35Class.php");  // diverse Klassen
 
@@ -153,6 +153,7 @@ class MS35 extends IPSModule
         switch ($Message)
         {
             case IPS_KERNELSTARTED:
+                $this->RegisterParent();
                 if ($this->HasActiveParent())
                     $this->IOChangeState(IS_ACTIVE);
                 else
@@ -175,7 +176,7 @@ class MS35 extends IPSModule
                 $this->SetSummary(IPS_GetProperty($this->ParentId, 'Port'));
             else
             {
-                $config = json_decode(IPS_GetConfiguration($ParentId), true);
+                $config = json_decode(IPS_GetConfiguration($this->ParentId ), true);
                 if (array_key_exists('Port', $config))
                     $this->SetSummary($config['Port']);
                 elseif (array_key_exists('Host', $config))
@@ -184,7 +185,7 @@ class MS35 extends IPSModule
                     $this->SetSummary($config['Address']);
                 elseif (array_key_exists('Name', $config))
                     $this->SetSummary($config['Name']);
-                $this->SetSummary('see ' . $ParentId);
+                $this->SetSummary('see ' . $this->ParentId );
             }
         }
         else
