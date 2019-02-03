@@ -48,7 +48,6 @@ trait DebugHelper
             parent::SendDebug($Message, $Data, $Format);
         }
     }
-
 }
 
 /**
@@ -81,7 +80,6 @@ trait Semaphore
     {
         IPS_SemaphoreLeave("__CLASS__" . (string) $this->InstanceID . (string) $ident);
     }
-
 }
 
 /**
@@ -161,7 +159,6 @@ trait InstanceStatus
         }
         return false;
     }
-
 }
 
 /**
@@ -192,7 +189,6 @@ trait BufferHelper
     {
         $this->SetBuffer($name, serialize($value));
     }
-
 }
 
 /**
@@ -322,7 +318,6 @@ trait VariableProfile
         }
         IPS_DeleteVariableProfile($Name);
     }
-
 }
 
 /** @} */
