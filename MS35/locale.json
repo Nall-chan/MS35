@@ -1,12 +1,21 @@
 {
     "translations": {
         "de": {
+            "Color change 1": "Farbwechsel 1",
+            "Color change 2": "Farbwechsel 2",
+            "Color change 3": "Farbwechsel 3",
+            "Thunderstorm": "Gewitter",
+            "Fire": "Kaminfeuer",
+            "Sunrise and sunset": "Sonnenauf- & untergang",
+            "Flashes of color": "Farbblitze",
             "Fadetime": "Dimmzeit",
             "Set Color": "Farbe setzen",
             "Program": "Programm",
             "Start program": "Starte Programme",
             "Speed": "Geschwindigkeit",
             "Set speed": "Geschwindigkeit setzen",
+            "State": "Status",
+            "Color": "Farbe",
             "Brightness": "Helligkeit",
             "Set brightness": "Helligkeit setzen",
             "Play": "Play",
@@ -14,14 +23,17 @@
             "Stop": "Stop",
             "ON": "AN",
             "OFF": "AUS",
-            "Invalid parameter": "Ungültiger Parameter",
-            "Invalid value": "Ungültiger Wert",
-            "Invalid ident": "Ungültiger Ident",
-            "Controller send NACK.": "Gerät hat nicht bestätigt",
-            "Controller do not response.": "Gerät nat nicht geantwortet.",
+            "Red": "Rot",
+            "Green": "Gr\u00fcn",
+            "Blue": "Blau",
+            "Invalid parameter": "Ung\u00fcltiger Parameter",
+            "Invalid value": "Ung\u00fcltiger Wert",
+            "Invalid ident": "Ung\u00fcltiger Ident",
+            "Controller send NACK.": "Ger\u00e4t hat nicht best\u00e4tigt",
+            "Controller do not response.": "Ger\u00e4t nat nicht geantwortet.",
             "Send is blocked.": "Senden blockiert",
-            "Could not initialize controller.":"Konnte Gerät nicht initialisieren.",
-            "Instance has no active parent.":"Instanz hat keinen aktiven Parent."
+            "Could not initialize controller.": "Konnte Ger\u00e4t nicht initialisieren.",
+            "Instance has no active parent.": "Instanz hat keinen aktiven Parent."
         }
     }
 }

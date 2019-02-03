@@ -11,7 +11,7 @@
  * @license       https://creativecommons.org/licenses/by-nc-sa/4.0/ CC BY-NC-SA 4.0
  * @version       2.10
  */
-require_once(__DIR__ . "/MS35Class.php");  // diverse Klassen
+require_once(__DIR__ . '/MS35Class.php');  // diverse Klassen
 
 /**
  * MS35 ist die Klasse für einen RGB-Controller MS35 von der Fa.Conrad
@@ -40,7 +40,7 @@ class MS35 extends IPSModule
     public function Create()
     {
         parent::Create();
-        $this->RequireParent("{6DC3D946-0D31-450F-A8C6-C42DB8D7D4F1}");
+        $this->RequireParent('{6DC3D946-0D31-450F-A8C6-C42DB8D7D4F1}');
     }
 
     /**
@@ -51,10 +51,10 @@ class MS35 extends IPSModule
     public function Destroy()
     {
         if (!IPS_InstanceExists($this->InstanceID)) {
-            $this->UnregisterProfil("MS35.Program");
-            $this->UnregisterProfil("MS35.PrgStatus");
-            $this->UnregisterProfil("MS35.Speed");
-            $this->UnregisterProfil("MS35.Brightness");
+            $this->UnregisterProfil('MS35.Program');
+            $this->UnregisterProfil('MS35.PrgStatus');
+            $this->UnregisterProfil('MS35.Speed');
+            $this->UnregisterProfil('MS35.Brightness');
         }
         parent::Destroy();
     }
@@ -72,25 +72,25 @@ class MS35 extends IPSModule
 
         parent::ApplyChanges();
 
-        $this->RegisterProfileIntegerEx("MS35.Program", "Gear", "", "", array(
-            array(1, 'Farbwechsel 1', '', -1),
-            array(2, 'Farbwechsel 2', '', -1),
-            array(3, 'Farbwechsel 3', '', -1),
-            array(4, 'Gewitter', '', -1),
-            array(5, 'Kaminfeuer', '', -1),
-            array(6, 'Sonnenauf- & untergang', '', -1),
-            array(7, 'Farbblitze', '', -1),
+        $this->RegisterProfileIntegerEx('MS35.Program', 'Gear', '', '', array(
+            array(1, $this->Translate('Color change 1'), '', -1),
+            array(2, $this->Translate('Color change 2'), '', -1),
+            array(3, $this->Translate('Color change 3'), '', -1),
+            array(4, $this->Translate('Thunderstorm'), '', -1),
+            array(5, $this->Translate('Fire'), '', -1),
+            array(6, $this->Translate('Sunrise and sunset'), '', -1),
+            array(7, $this->Translate('Flashes of color'), '', -1),
             array(8, 'User 1', '', -1),
             array(9, 'User 2', '', -1)
         ));
 
-        $this->RegisterProfileIntegerEx("MS35.PrgStatus", "Bulb", "", "", array(
+        $this->RegisterProfileIntegerEx('MS35.PrgStatus', 'Bulb', '', '', array(
             array(1, 'Play', '', -1),
             array(2, 'Pause', '', -1),
             array(3, 'Stop', '', -1)
         ));
 
-        $this->RegisterProfileIntegerEx("MS35.Speed", "Intensity", "", "", array(
+        $this->RegisterProfileIntegerEx('MS35.Speed', 'Intensity', '', '', array(
             array(0, 'normal', '', -1),
             array(1, '1/2', '', -1),
             array(2, '1/4', '', -1),
@@ -101,29 +101,29 @@ class MS35 extends IPSModule
             array(7, '1/128', '', -1)
         ));
 
-        $this->RegisterProfileIntegerEx("MS35.Brightness", "Sun", "", "", array(
+        $this->RegisterProfileIntegerEx('MS35.Brightness', 'Sun', '', '', array(
             array(1, 'normal', '', -1),
             array(2, '1/2', '', -1),
             array(3, '1/3', '', -1)
         ));
 
-        $this->RegisterVariableBoolean("STATE", "STATE", "~Switch", 1);
-        $this->EnableAction("STATE");
-        $this->RegisterVariableInteger("Color", "Color", "~HexColor", 2);
-        $this->EnableAction("Color");
-        $this->RegisterVariableInteger("Program", "Program", "MS35.Program", 3);
-        $this->EnableAction("Program");
-        $this->RegisterVariableInteger("Play", "Play", "MS35.PrgStatus", 4);
-        $this->EnableAction("Play");
-        $this->RegisterVariableInteger("Speed", "Speed", "MS35.Speed", 5);
-        $this->EnableAction("Speed");
-        $this->RegisterVariableInteger("Brightness", "Brightness", "MS35.Brightness", 6);
-        $this->EnableAction("Brightness");
+        $this->RegisterVariableBoolean('STATE', $this->Translate('State'), '~Switch', 1);
+        $this->EnableAction('STATE');
+        $this->RegisterVariableInteger('Color', $this->Translate('Color'), '~HexColor', 2);
+        $this->EnableAction('Color');
+        $this->RegisterVariableInteger('Program', $this->Translate('Program'), 'MS35.Program', 3);
+        $this->EnableAction('Program');
+        $this->RegisterVariableInteger('Play', $this->Translate('Play'), 'MS35.PrgStatus', 4);
+        $this->EnableAction('Play');
+        $this->RegisterVariableInteger('Speed', $this->Translate('Speed'), 'MS35.Speed', 5);
+        $this->EnableAction('Speed');
+        $this->RegisterVariableInteger('Brightness', $this->Translate('Brightness'), 'MS35.Brightness', 6);
+        $this->EnableAction('Brightness');
 
         // Remove OLD Workaround
-        $this->UnregisterVariable("BufferIN");
-        $this->UnregisterVariable("ReplyEvent");
-        $this->UnregisterVariable("Connected");
+        $this->UnregisterVariable('BufferIN');
+        $this->UnregisterVariable('ReplyEvent');
+        $this->UnregisterVariable('Connected');
 
         // Wenn Kernel nicht bereit, dann warten... KR_READY kommt ja gleich
         if (IPS_GetKernelRunlevel() <> KR_READY) {
@@ -827,9 +827,9 @@ class MS35 extends IPSModule
     protected function SendDataToParent($Data)
     {
         if (!$this->HasActiveParent()) {
-            throw new Exception($this->Translate("Instance has no active parent."), E_USER_NOTICE);
+            throw new Exception($this->Translate('Instance has no active parent.'), E_USER_NOTICE);
         }
-        $result = parent::SendDataToParent(json_encode(array("DataID" => "{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}", "Buffer" => utf8_encode($Data))));
+        $result = parent::SendDataToParent(json_encode(array('DataID' => '{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}', 'Buffer' => utf8_encode($Data))));
         return ($result === false ? false : true);
     }
 
