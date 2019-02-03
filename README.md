@@ -251,6 +251,9 @@ string MS35_SetProgram(integer $InstanzeID, integer $Program, string $Data);
 
 ### 2. Changlog
 
+   Version 2.10 :  
+     - Release für Store    
+
    Version 2.04 :  
      - Fix: Für IPS 5.0  
 

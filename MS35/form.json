@@ -4,85 +4,91 @@
             ],
     "actions":
             [
-                {
-                    "name": "ValueR",
-                    "type": "NumberSpinner",
-                    "caption": "R"
+                { 
+                    "type": "RowLayout",
+                    "items": [
+                        {
+                            "type": "HorizontalSlider",
+                            "name": "ValueR",
+                            "caption": "Red",
+                            "minimum": 0,
+                            "maximum": 255,
+                            "onChange": "MS35_SetRGB($id, $ValueR, $ValueG, $ValueB);"
+                        },
+                        {
+                            "type": "HorizontalSlider",
+                            "name": "ValueG",
+                            "caption": "Green",
+                            "minimum": 0,
+                            "maximum": 255,
+                            "onChange": "MS35_SetRGB($id, $ValueR, $ValueG, $ValueB);"
+                        }, {
+                            "type": "HorizontalSlider",
+                            "name": "ValueB",
+                            "caption": "Blue",
+                            "minimum": 0,
+                            "maximum": 255,
+                            "onChange": "MS35_SetRGB($id, $ValueR, $ValueG, $ValueB);"
+                        }]
                 },
-                {
-                    "name": "ValueG",
-                    "type": "NumberSpinner",
-                    "caption": "G"
+                { 
+                    "type": "RowLayout",
+                    "items": [
+                        {
+                            "type": "HorizontalSlider",
+                            "name": "ValueP",
+                            "caption": "Program",
+                            "minimum": 1,
+                            "maximum": 9,
+                            "onChange": "MS35_RunProgram($id, $ValueP);"
+                        }, {
+                            "type": "HorizontalSlider",
+                            "name": "ValueS",
+                            "caption": "Speed",
+                            "minimum": 0,
+                            "maximum": 8,
+                            "onChange": "MS35_SetSpeed($id, $ValueS);"
+                        }, {
+                            "type": "HorizontalSlider",
+                            "name": "ValueH",
+                            "caption": "Brightness",
+                            "minimum": 1,
+                            "maximum": 3,
+                            "onChange": "MS35_SetBrightness($id, $ValueH);"
+                        }]
                 },
-                {
-                    "name": "ValueB",
-                    "type": "NumberSpinner",
-                    "caption": "B"
+                { 
+                    "type": "RowLayout",
+                    "items": [
+                        {
+                            "type": "Button",
+                            "label": "Play",
+                            "onClick": "MS35_Play($id);"
+                        },
+                        {
+                            "type": "Button",
+                            "label": "Pause",
+                            "onClick": "MS35_Pause($id);"
+                        },
+                        {
+                            "type": "Button",
+                            "label": "Stop",
+                            "onClick": "MS35_Stop($id);"
+                        }]
                 },
-                {
-                    "name": "Fade",
-                    "type": "NumberSpinner",
-                    "caption": "Fadetime"
-                },
-                {
-                    "type": "Button",
-                    "label": "Set Color",
-                    "onClick": "MS35_SetRGB($id, $ValueR, $ValueG, $ValueB);"
-                },
-                {
-                    "name": "ValueP",
-                    "type": "NumberSpinner",
-                    "caption": "Program"
-                },
-                {
-                    "type": "Button",
-                    "label": "Start program",
-                    "onClick": "MS35_RunProgram($id, $ValueP);"
-                },
-                {
-                    "name": "ValueS",
-                    "type": "NumberSpinner",
-                    "caption": "Speed"
-                },
-                {
-                    "type": "Button",
-                    "label": "Set speed",
-                    "onClick": "MS35_SetSpeed($id, $ValueS);"
-                },
-                {
-                    "name": "ValueH",
-                    "type": "NumberSpinner",
-                    "caption": "Brightness"
-                },
-                {
-                    "type": "Button",
-                    "label": "Set brightness",
-                    "onClick": "MS35_SetBrightness($id, $ValueH);"
-                },
-                {
-                    "type": "Button",
-                    "label": "Play",
-                    "onClick": "MS35_Play($id);"
-                },
-                {
-                    "type": "Button",
-                    "label": "Pause",
-                    "onClick": "MS35_Pause($id);"
-                },
-                {
-                    "type": "Button",
-                    "label": "Stop",
-                    "onClick": "MS35_Stop($id);"
-                },
-                {
-                    "type": "Button",
-                    "label": "ON",
-                    "onClick": "MS35_SendSwitch($id, true);"
-                },
-                {
-                    "type": "Button",
-                    "label": "OFF",
-                    "onClick": "MS35_SendSwitch($id, false);"
+                { 
+                    "type": "RowLayout",
+                    "items": [
+                        {
+                            "type": "Button",
+                            "label": "ON",
+                            "onClick": "MS35_SendSwitch($id, true);"
+                        },
+                        {
+                            "type": "Button",
+                            "label": "OFF",
+                            "onClick": "MS35_SendSwitch($id, false);"
+                        }]
                 }
             ]
 }

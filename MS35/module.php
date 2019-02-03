@@ -7,9 +7,9 @@
  * @package       MS35
  * @file          module.php
  * @author        Michael Tröger <micha@nall-chan.net>
- * @copyright     2018 Michael Tröger
+ * @copyright     2019 Michael Tröger
  * @license       https://creativecommons.org/licenses/by-nc-sa/4.0/ CC BY-NC-SA 4.0
- * @version       2.03
+ * @version       2.10
  */
 require_once(__DIR__ . "/MS35Class.php");  // diverse Klassen
 
@@ -24,16 +24,14 @@ require_once(__DIR__ . "/MS35Class.php");  // diverse Klassen
  */
 class MS35 extends IPSModule
 {
-    use VariableHelper,
-        DebugHelper,
+
+    use DebugHelper,
         Semaphore,
         VariableProfile,
         InstanceStatus,
-        BufferHelper
-    {
+        BufferHelper {
         InstanceStatus::MessageSink as IOMessageSink; // MessageSink gibt es sowohl hier in der Klasse, als auch im Trait InstanceStatus. Hier wird für die Methode im Trait ein Alias benannt.
     }
-
     /**
      * Interne Funktion des SDK.
      *
@@ -52,12 +50,13 @@ class MS35 extends IPSModule
      */
     public function Destroy()
     {
+        if (!IPS_InstanceExists($this->InstanceID)) {
+            $this->UnregisterProfil("MS35.Program");
+            $this->UnregisterProfil("MS35.PrgStatus");
+            $this->UnregisterProfil("MS35.Speed");
+            $this->UnregisterProfil("MS35.Brightness");
+        }
         parent::Destroy();
-
-        $this->UnregisterProfil("MS35.Program");
-        $this->UnregisterProfil("MS35.PrgStatus");
-        $this->UnregisterProfil("MS35.Speed");
-        $this->UnregisterProfil("MS35.Brightness");
     }
 
     /**
@@ -208,12 +207,11 @@ class MS35 extends IPSModule
             $Config['DataBits'] = 8;
             return json_encode($Config);
         } else { // Kein SerialPort, sondern TCP oder XBEE Brücke. User muss selber den Port am Endgerät einstellen.
-            return json_encode(array());
+            return json_encode([]);
         }
     }
 
     ################## PUBLIC
-
     /**
      * IPS-Instanz Funktion MS35_SendSwitch.
      * Schaltet den Controller ein oder aus.
@@ -233,21 +231,21 @@ class MS35 extends IPSModule
                     return false;
                 }
             }
-            $this->SetValueBoolean('STATE', true);
+            $this->SetValue('STATE', true);
             return true;
         } else { //Ausschalten
             $data = chr(01) . chr(00) . chr(00) . chr(00) . chr(00) . chr(00) . chr(00);  // farbe weg
             if ($this->SendCommand($data)) {
-                $this->SetValueBoolean('STATE', false);
-                $this->SetValueInteger('Color', 0);
-                $this->SetValueInteger('Play', 3);
+                $this->SetValue('STATE', false);
+                $this->SetValue('Color', 0);
+                $this->SetValue('Play', 3);
                 $data = chr(0x0B) . chr(01) . chr(00) . chr(00) . chr(00) . chr(00) . chr(00);
                 if ($this->SendCommand($data)) {
-                    $this->SetValueInteger('Speed', 0);
+                    $this->SetValue('Speed', 0);
                 }
                 $data = chr(0x0C) . chr(01) . chr(00) . chr(00) . chr(00) . chr(00) . chr(00);
                 if ($this->SendCommand($data)) {
-                    $this->SetValueInteger('Brightness', 1);
+                    $this->SetValue('Brightness', 1);
                 }
                 $data = chr(0x01) . chr(00) . chr(00) . chr(00) . chr(00) . chr(00) . chr(00);
                 $this->SendCommand($data);
@@ -269,16 +267,16 @@ class MS35 extends IPSModule
      */
     public function SetRGB(int $Red, int $Green, int $Blue)
     {
-        if (($Red < 0) or ($Red > 255) or ($Green < 0) or ($Green > 255) or ($Blue < 0) or ($Blue > 255)) {
+        if (($Red < 0) or ( $Red > 255) or ( $Green < 0) or ( $Green > 255) or ( $Blue < 0) or ( $Blue > 255)) {
             trigger_error($this->Translate('Invalid parameter'), E_USER_NOTICE);
             return false;
         }
         $Data = chr(01) . chr(00) . chr($Red) . chr($Green) . chr($Blue) . chr(00) . chr(00);
         $Color = ($Red << 16) + ($Green << 8) + $Blue;
         if ($this->SendCommand($Data)) {
-            $this->SetValueInteger('Color', $Color);
-            $this->SetValueBoolean('STATE', true);
-            $this->SetValueInteger('Play', 3);
+            $this->SetValue('Color', $Color);
+            $this->SetValue('STATE', true);
+            $this->SetValue('Play', 3);
             return true;
         }
         return false;
@@ -295,8 +293,8 @@ class MS35 extends IPSModule
     {
         $Data = chr(0x0A) . chr(0x07) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00); //'Play'
         if ($this->SendCommand($Data)) {
-            $this->SetValueBoolean('STATE', true);
-            $this->SetValueInteger('Play', 1);
+            $this->SetValue('STATE', true);
+            $this->SetValue('Play', 1);
             return true;
         }
         return false;
@@ -313,8 +311,8 @@ class MS35 extends IPSModule
     {
         $Data = chr(0x0A) . chr(0x06) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00); //'Pause'
         if ($this->SendCommand($Data)) {
-            $this->SetValueBoolean('STATE', true);
-            $this->SetValueInteger('Play', 2);
+            $this->SetValue('STATE', true);
+            $this->SetValue('Play', 2);
             return true;
         }
         return false;
@@ -335,8 +333,8 @@ class MS35 extends IPSModule
         $Blue = $Color & 0x000000ff;
         $Data = chr(01) . chr(00) . chr($Red) . chr($Green) . chr($Blue) . chr(00) . chr(00);
         if ($this->SendCommand($Data)) {
-            $this->SetValueBoolean('STATE', true);
-            $this->SetValueInteger('Play', 3); //stop
+            $this->SetValue('STATE', true);
+            $this->SetValue('Play', 3); //stop
             return true;
         }
         return false;
@@ -352,7 +350,7 @@ class MS35 extends IPSModule
      */
     public function RunProgram(int $Programm)
     {
-        if (($Programm < 1) or ($Programm > 9)) {
+        if (($Programm < 1) or ( $Programm > 9)) {
             trigger_error($this->Translate('Invalid parameter'), E_USER_NOTICE);
             return false;
         }
@@ -369,16 +367,16 @@ class MS35 extends IPSModule
         $data[8] = chr(0x0A) . chr(0x01) . chr(0x09) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00); //'User2'
         if ($this->SendCommand($data[$Programm - 1])) {
             $ret = true;
-            $this->SetValueBoolean('STATE', true);
-            $this->SetValueInteger('Program', $Programm);
-            $this->SetValueInteger('Play', 1); //play
+            $this->SetValue('STATE', true);
+            $this->SetValue('Program', $Programm);
+            $this->SetValue('Play', 1); //play
             $wait = true;
-            if (($Programm == 4) or ($Programm == 5)) {
-                $this->SetValueInteger('Speed', 0);
+            if (($Programm == 4) or ( $Programm == 5)) {
+                $this->SetValue('Speed', 0);
             } else {
                 $Speed = GetValueInteger($this->GetIDForIdent('Speed'));
-                if (($Speed < 0) or ($Speed > 8)) {
-                    $this->SetValueInteger('Speed', 0);
+                if (($Speed < 0) or ( $Speed > 8)) {
+                    $this->SetValue('Speed', 0);
                 } else {
                     if ($Speed <> 0) {
                         $send = chr(0x0B) . chr(intval(pow(2, $Speed))) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00);
@@ -391,8 +389,8 @@ class MS35 extends IPSModule
                 }
             }
             $Brightness = GetValueInteger($this->GetIDForIdent('Brightness'));
-            if (($Brightness < 1) or ($Brightness > 3)) {
-                $this->SetValueInteger('Brightness', 1);
+            if (($Brightness < 1) or ( $Brightness > 3)) {
+                $this->SetValue('Brightness', 1);
             } else {
                 if ($Brightness <> 1) {
                     $send = chr(0x0C) . chr(value) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00);
@@ -420,15 +418,15 @@ class MS35 extends IPSModule
      */
     public function SetSpeed(int $Speed)
     {
-        if (($Speed < 0) or ($Speed > 8)) {
+        if (($Speed < 0) or ( $Speed > 8)) {
             trigger_error($this->Translate('Invalid parameter'), E_USER_NOTICE);
             return false;
         }
         $Program = GetValueInteger($this->GetIDForIdent('Program'));
-        if (($Program <> 4) and ($Program <> 5)) {
+        if (($Program <> 4) and ( $Program <> 5)) {
             $data = chr(0x0B) . chr(intval(pow(2, $Speed))) . chr(00) . chr(00) . chr(00) . chr(00) . chr(00);
             if ($this->SendCommand($data)) {
-                $this->SetValueInteger('Speed', $Speed);
+                $this->SetValue('Speed', $Speed);
                 return true;
             }
         }
@@ -445,13 +443,13 @@ class MS35 extends IPSModule
      */
     public function SetBrightness(int $Level)
     {
-        if (($Level < 1) or ($Level > 3)) {
+        if (($Level < 1) or ( $Level > 3)) {
             trigger_error($this->Translate('Invalid parameter'), E_USER_NOTICE);
             return false;
         }
         $data = chr(0x0C) . chr($Level) . chr(00) . chr(00) . chr(00) . chr(00) . chr(00);
         if ($this->SendCommand($data)) {
-            $this->SetValueInteger('Brightness', $Level);
+            $this->SetValue('Brightness', $Level);
             return true;
         }
         return false;
@@ -468,7 +466,7 @@ class MS35 extends IPSModule
      */
     public function SetProgram(int $Programm, string $Data)
     {
-        if (($Programm < 8) or ($Programm > 9)) {
+        if (($Programm < 8) or ( $Programm > 9)) {
             trigger_error($this->Translate('Invalid parameter'), E_USER_NOTICE);
             return false;
         }
@@ -487,7 +485,7 @@ class MS35 extends IPSModule
         }
 
         $i = count($PrgData);
-        if (($i < 1) or ($i > 51)) {
+        if (($i < 1) or ( $i > 51)) {
             trigger_error($this->Translate('Invalid parameter'), E_USER_NOTICE);
             return false;
         }
@@ -502,7 +500,7 @@ class MS35 extends IPSModule
                 $Blue = $Slot->B;
                 $Fade = $Slot->F;
                 $Hold = $Slot->H;
-                if (($Red < 0) or ($Red > 255) or ($Green < 0) or ($Green > 255) or ($Blue < 0) or ($Blue > 255) or ($Fade < 0) or ($Fade > 255) or ($Hold < 0) or ($Hold > 255)) {
+                if (($Red < 0) or ( $Red > 255) or ( $Green < 0) or ( $Green > 255) or ( $Blue < 0) or ( $Blue > 255) or ( $Fade < 0) or ( $Fade > 255) or ( $Hold < 0) or ( $Hold > 255)) {
                     trigger_error($this->Translate('Invalid parameter'), E_USER_NOTICE);
                     $ret = false;
                     continue;
@@ -517,7 +515,6 @@ class MS35 extends IPSModule
     }
 
     ################## ActionHandler
-
     /**
      * Interne Funktion des SDK.
      *
@@ -568,7 +565,6 @@ class MS35 extends IPSModule
     }
 
     ################## PRIVATE
-
     /**
      * Sendet ein Command an den Controller.
      *
@@ -662,21 +658,21 @@ class MS35 extends IPSModule
         }
 
 
-        $this->SetValueBoolean('STATE', true);
+        $this->SetValue('STATE', true);
         $data = chr(0x0B) . chr(0x01) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00);
         if ($this->SendCommand($data)) {
-            $this->SetValueInteger('Speed', 0);
+            $this->SetValue('Speed', 0);
         }
         $data = chr(0x0C) . chr(0x01) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00);
         if ($this->SendCommand($data)) {
-            $this->SetValueInteger('Brightness', 1);
+            $this->SetValue('Brightness', 1);
         }
         $data = chr(0x01) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00);
         if ($this->SendCommand($data)) {
-            $this->SetValueInteger('Color', 0);
+            $this->SetValue('Color', 0);
         }
-        $this->SetValueInteger('Play', 3);
-        $this->SetValueInteger('Program', 1);
+        $this->SetValue('Play', 3);
+        $this->SetValue('Program', 1);
         $this->SendDebug('End Init', 'Instance', 0);
 
         return true;
@@ -807,7 +803,6 @@ class MS35 extends IPSModule
     }
 
     ################## DATAPOINTS
-
     /**
      * Interne Funktion des SDK.
      *
@@ -837,6 +832,7 @@ class MS35 extends IPSModule
         $result = parent::SendDataToParent(json_encode(array("DataID" => "{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}", "Buffer" => utf8_encode($Data))));
         return ($result === false ? false : true);
     }
+
 }
 
 /** @} */

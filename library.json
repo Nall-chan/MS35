@@ -3,11 +3,10 @@
     "author": "Michael Tr\u00f6ger",
     "name": "MS35 RGB Library",
     "url": "https://github.com/Nall-chan/IPSMS35",
-    "version": "2.03",
-    "build": 115,
-    "date": 1485116235,
+    "version": "2.10",
+    "build": 120,
+    "date": 1549215518,
     "compatibility": {
-        "version": "4.3",
-        "date": 1498241677
+        "version": "5.0"
     }
 }
