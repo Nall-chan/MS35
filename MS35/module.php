@@ -24,7 +24,6 @@ require_once(__DIR__ . "/MS35Class.php");  // diverse Klassen
  */
 class MS35 extends IPSModule
 {
-
     use DebugHelper,
         Semaphore,
         VariableProfile,
@@ -267,7 +266,7 @@ class MS35 extends IPSModule
      */
     public function SetRGB(int $Red, int $Green, int $Blue)
     {
-        if (($Red < 0) or ( $Red > 255) or ( $Green < 0) or ( $Green > 255) or ( $Blue < 0) or ( $Blue > 255)) {
+        if (($Red < 0) or ($Red > 255) or ($Green < 0) or ($Green > 255) or ($Blue < 0) or ($Blue > 255)) {
             trigger_error($this->Translate('Invalid parameter'), E_USER_NOTICE);
             return false;
         }
@@ -350,7 +349,7 @@ class MS35 extends IPSModule
      */
     public function RunProgram(int $Programm)
     {
-        if (($Programm < 1) or ( $Programm > 9)) {
+        if (($Programm < 1) or ($Programm > 9)) {
             trigger_error($this->Translate('Invalid parameter'), E_USER_NOTICE);
             return false;
         }
@@ -371,11 +370,11 @@ class MS35 extends IPSModule
             $this->SetValue('Program', $Programm);
             $this->SetValue('Play', 1); //play
             $wait = true;
-            if (($Programm == 4) or ( $Programm == 5)) {
+            if (($Programm == 4) or ($Programm == 5)) {
                 $this->SetValue('Speed', 0);
             } else {
                 $Speed = GetValueInteger($this->GetIDForIdent('Speed'));
-                if (($Speed < 0) or ( $Speed > 8)) {
+                if (($Speed < 0) or ($Speed > 8)) {
                     $this->SetValue('Speed', 0);
                 } else {
                     if ($Speed <> 0) {
@@ -389,7 +388,7 @@ class MS35 extends IPSModule
                 }
             }
             $Brightness = GetValueInteger($this->GetIDForIdent('Brightness'));
-            if (($Brightness < 1) or ( $Brightness > 3)) {
+            if (($Brightness < 1) or ($Brightness > 3)) {
                 $this->SetValue('Brightness', 1);
             } else {
                 if ($Brightness <> 1) {
@@ -418,12 +417,12 @@ class MS35 extends IPSModule
      */
     public function SetSpeed(int $Speed)
     {
-        if (($Speed < 0) or ( $Speed > 8)) {
+        if (($Speed < 0) or ($Speed > 8)) {
             trigger_error($this->Translate('Invalid parameter'), E_USER_NOTICE);
             return false;
         }
         $Program = GetValueInteger($this->GetIDForIdent('Program'));
-        if (($Program <> 4) and ( $Program <> 5)) {
+        if (($Program <> 4) and ($Program <> 5)) {
             $data = chr(0x0B) . chr(intval(pow(2, $Speed))) . chr(00) . chr(00) . chr(00) . chr(00) . chr(00);
             if ($this->SendCommand($data)) {
                 $this->SetValue('Speed', $Speed);
@@ -443,7 +442,7 @@ class MS35 extends IPSModule
      */
     public function SetBrightness(int $Level)
     {
-        if (($Level < 1) or ( $Level > 3)) {
+        if (($Level < 1) or ($Level > 3)) {
             trigger_error($this->Translate('Invalid parameter'), E_USER_NOTICE);
             return false;
         }
@@ -466,7 +465,7 @@ class MS35 extends IPSModule
      */
     public function SetProgram(int $Programm, string $Data)
     {
-        if (($Programm < 8) or ( $Programm > 9)) {
+        if (($Programm < 8) or ($Programm > 9)) {
             trigger_error($this->Translate('Invalid parameter'), E_USER_NOTICE);
             return false;
         }
@@ -485,7 +484,7 @@ class MS35 extends IPSModule
         }
 
         $i = count($PrgData);
-        if (($i < 1) or ( $i > 51)) {
+        if (($i < 1) or ($i > 51)) {
             trigger_error($this->Translate('Invalid parameter'), E_USER_NOTICE);
             return false;
         }
@@ -500,7 +499,7 @@ class MS35 extends IPSModule
                 $Blue = $Slot->B;
                 $Fade = $Slot->F;
                 $Hold = $Slot->H;
-                if (($Red < 0) or ( $Red > 255) or ( $Green < 0) or ( $Green > 255) or ( $Blue < 0) or ( $Blue > 255) or ( $Fade < 0) or ( $Fade > 255) or ( $Hold < 0) or ( $Hold > 255)) {
+                if (($Red < 0) or ($Red > 255) or ($Green < 0) or ($Green > 255) or ($Blue < 0) or ($Blue > 255) or ($Fade < 0) or ($Fade > 255) or ($Hold < 0) or ($Hold > 255)) {
                     trigger_error($this->Translate('Invalid parameter'), E_USER_NOTICE);
                     $ret = false;
                     continue;
@@ -832,7 +831,6 @@ class MS35 extends IPSModule
         $result = parent::SendDataToParent(json_encode(array("DataID" => "{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}", "Buffer" => utf8_encode($Data))));
         return ($result === false ? false : true);
     }
-
 }
 
 /** @} */
