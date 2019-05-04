@@ -1,10 +1,10 @@
-[![Version](https://img.shields.io/badge/Symcon-PHPModul-red.svg)](https://www.symcon.de/service/dokumentation/entwicklerbereich/sdk-tools/sdk-php/)
-[![Version](https://img.shields.io/badge/Modul%20Version-2.04-blue.svg)]()
-[![Version](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-green.svg)](https://creativecommons.org/licenses/by-nc-sa/4.0/)  
-[![Version](https://img.shields.io/badge/Symcon%20Version-4.3%20%3E-green.svg)](https://www.symcon.de/forum/threads/30857-IP-Symcon-4-3-%28Stable%29-Changelog)
+[![SDK](https://img.shields.io/badge/Symcon-PHPModul-red.svg)](https://www.symcon.de/service/dokumentation/entwicklerbereich/sdk-tools/sdk-php/)
+[![Version](https://img.shields.io/badge/Modul%20Version-2.10-blue.svg)]()
+[![License](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-green.svg)](https://creativecommons.org/licenses/by-nc-sa/4.0/)  
+[![Version](https://img.shields.io/badge/Symcon%20Version-5.1%20%3E-green.svg)](https://www.symcon.de/forum/threads/30857-IP-Symcon-5-1-%28Stable%29-Changelog)
 [![StyleCI](https://styleci.io/repos/34270836/shield?style=flat)](https://styleci.io/repos/34270836)  
 
-# IPSMS35
+# Symcon-Modul: MS35
 IPS-Modul für den Conrad MS35 RGB-Controller.  
 
 ## Inhaltsverzeichnis
@@ -57,24 +57,17 @@ IPS-Modul für den Conrad MS35 RGB-Controller.
 
 ## 2. Voraussetzungen
 
-   - IPS  Version 3.1 bis 3.4 oder ab Version 4.3
+   - Symcon Version 5.1  
 
-   - MS-35 RGB-Controller
+   - MS-35 RGB-Controller  
 
-   - RS232-Schnittstelle auf TTL-Basis (oder jede andere Form der seriellen Datenanbindung mit 5V; z.B. XBee mit TTL-Adapterplatine)
+   - RS232-Schnittstelle auf TTL-Basis (oder jede andere Form der seriellen Datenanbindung mit 5V; z.B. XBee mit TTL-Adapterplatine)  
 
 ## 3. Software-Installation
 
-### IPS 3.1 bis 3.4:
-   Bei GitHub das gepackte Modul als ZIP-File laden: [MS35.ZIP](https://github.com/Nall-chan/IPSMS35/raw/master/IPS3.X/MS35.zip)  
-   Die enthaltende Datei MS35.dll in das /modules Verzeichnis von IPS kopieren.  
-   Ist der Ordner Modules nicht vorhanden, so ist er anzulegen.  
-   IPS-Dienst neustarten.
-
-### IPS 4.3:
-   Über das Modul-Control folgende URL hinzufügen.  
-   `git://github.com/Nall-chan/IPSMS35.git`  
-
+**IPS 5.1:**  
+   Bei privater Nutzung:
+     Über den 'Module-Store' in IPS.  
    **Bei kommerzieller Nutzung (z.B. als Errichter oder Integrator) wenden Sie sich bitte an den Autor.**  
 
 ## 4. Hardware-Installation & Einrichtung
@@ -252,7 +245,7 @@ string MS35_SetProgram(integer $InstanzeID, integer $Program, string $Data);
 ### 2. Changlog
 
    Version 2.10 :  
-     - Release für Store    
+     - Release für IPS 5.1 und den Module-Store  
 
    Version 2.04 :  
      - Fix: Für IPS 5.0  
