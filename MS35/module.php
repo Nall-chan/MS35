@@ -1,7 +1,7 @@
 <?php
 
 declare(strict_types=1);
-/**
+/*
  * @addtogroup ms35
  * @{
  *
@@ -20,7 +20,7 @@ eval('declare(strict_types=1);namespace MS35 {?>' . file_get_contents(__DIR__ . 
 
 /**
  * MS35 ist die Klasse für einen RGB-Controller MS35 von der Fa.Conrad
- * Erweitert ipsmodule
+ * Erweitert ipsmodule.
  *
  * @property string $Buffer Receive Buffer.
  * @property bool $Connected Aktuell verbunden ?
@@ -38,10 +38,9 @@ class MS35 extends IPSModule
         \MS35\InstanceStatus::RegisterParent as IORegisterParent;
         \MS35\InstanceStatus::RequestAction as IORequestAction;
     }
+
     /**
      * Interne Funktion des SDK.
-     *
-     * @access public
      */
     public function Create()
     {
@@ -51,8 +50,6 @@ class MS35 extends IPSModule
 
     /**
      * Interne Funktion des SDK.
-     *
-     * @access public
      */
     public function Destroy()
     {
@@ -67,8 +64,6 @@ class MS35 extends IPSModule
 
     /**
      * Interne Funktion des SDK.
-     *
-     * @access public
      */
     public function ApplyChanges()
     {
@@ -132,7 +127,7 @@ class MS35 extends IPSModule
         $this->UnregisterVariable('Connected');
 
         // Wenn Kernel nicht bereit, dann warten... KR_READY kommt ja gleich
-        if (IPS_GetKernelRunlevel() <> KR_READY) {
+        if (IPS_GetKernelRunlevel() != KR_READY) {
             return;
         }
         $this->RegisterParent();
@@ -148,10 +143,9 @@ class MS35 extends IPSModule
     /**
      * Nachrichten aus der Nachrichtenschlange verarbeiten.
      *
-     * @access public
-     * @param int $TimeStamp
-     * @param int $SenderID
-     * @param int $Message
+     * @param int       $TimeStamp
+     * @param int       $SenderID
+     * @param int       $Message
      * @param array|int $Data
      */
     public function MessageSink($TimeStamp, $SenderID, $Message, $Data)
@@ -205,7 +199,6 @@ class MS35 extends IPSModule
 
     /**
      * Wird ausgeführt wenn sich der Status vom Parent ändert.
-     * @access protected
      */
     protected function IOChangeState($State)
     {
@@ -231,13 +224,14 @@ class MS35 extends IPSModule
         }
     }
 
-    ################## PUBLIC
+    //################# PUBLIC
+
     /**
      * IPS-Instanz Funktion MS35_SendSwitch.
      * Schaltet den Controller ein oder aus.
      *
-     * @access public
      * @param bool $State true für ein, false für aus.
+     *
      * @return bool True wenn Befehl erfolgreich ausgeführt wurde, sonst false.
      */
     public function SendSwitch(bool $State)
@@ -279,10 +273,10 @@ class MS35 extends IPSModule
      * IPS-Instanz Funktion MS35_SetRGB.
      * Setzt eine Farbe.
      *
-     * @access public
-     * @param int $Red Anteil Rot von 0 bis 255.
+     * @param int $Red   Anteil Rot von 0 bis 255.
      * @param int $Green Anteil Grün von 0 bis 255.
-     * @param int $Blue Anteil Blau von 0 bis 255.
+     * @param int $Blue  Anteil Blau von 0 bis 255.
+     *
      * @return bool True wenn Befehl erfolgreich ausgeführt wurde, sonst false.
      */
     public function SetRGB(int $Red, int $Green, int $Blue)
@@ -306,7 +300,6 @@ class MS35 extends IPSModule
      * IPS-Instanz Funktion MS35_Play.
      * Startet die Wiedergabe des aktiven Programms bzw. setzt ein pausiertes fort.
      *
-     * @access public
      * @return bool True wenn Befehl erfolgreich ausgeführt wurde, sonst false.
      */
     public function Play()
@@ -324,7 +317,6 @@ class MS35 extends IPSModule
      * IPS-Instanz Funktion MS35_Pause.
      * Pausiert die aktuelle Wiedergabe des aktiven Programmes.
      *
-     * @access public
      * @return bool True wenn Befehl erfolgreich ausgeführt wurde, sonst false.
      */
     public function Pause()
@@ -342,7 +334,6 @@ class MS35 extends IPSModule
      * IPS-Instanz Funktion MS35_Stop.
      * Stopt die Wiedergabe des aktiven Programmes.
      *
-     * @access public
      * @return bool True wenn Befehl erfolgreich ausgeführt wurde, sonst false.
      */
     public function Stop()
@@ -364,8 +355,8 @@ class MS35 extends IPSModule
      * IPS-Instanz Funktion MS35_RunProgram.
      * Startet die Wiedergabe eines Programmes.
      *
-     * @access public
      * @param int $Programm Die Nummer des zu startenden Programmes (1-9).
+     *
      * @return bool True wenn Befehl erfolgreich ausgeführt wurde, sonst false.
      */
     public function RunProgram(int $Programm)
@@ -398,7 +389,7 @@ class MS35 extends IPSModule
                 if (($Speed < 0) or ($Speed > 8)) {
                     $this->SetValue('Speed', 0);
                 } else {
-                    if ($Speed <> 0) {
+                    if ($Speed != 0) {
                         $send = chr(0x0B) . chr(intval(pow(2, $Speed))) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00);
                         IPS_Sleep(400);
                         $wait = false;
@@ -412,7 +403,7 @@ class MS35 extends IPSModule
             if (($Brightness < 1) or ($Brightness > 3)) {
                 $this->SetValue('Brightness', 1);
             } else {
-                if ($Brightness <> 1) {
+                if ($Brightness != 1) {
                     $send = chr(0x0C) . chr(value) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00);
                     if ($wait) {
                         IPS_Sleep(400);
@@ -432,8 +423,8 @@ class MS35 extends IPSModule
      * IPS-Instanz Funktion MS35_SetSpeed.
      * Setzt die Geschwindigkeit der Wiedergabe des aktiven Programmes.
      *
-     * @access public
      * @param int $Speed Die Geschwindikeit von 0-8 einer Verlangsamung mit den Faktoren 1,2,4,8,16,32,64,128 entspricht.
+     *
      * @return bool True wenn Befehl erfolgreich ausgeführt wurde, sonst false.
      */
     public function SetSpeed(int $Speed)
@@ -443,7 +434,7 @@ class MS35 extends IPSModule
             return false;
         }
         $Program = GetValueInteger($this->GetIDForIdent('Program'));
-        if (($Program <> 4) and ($Program <> 5)) {
+        if (($Program != 4) and ($Program != 5)) {
             $data = chr(0x0B) . chr(intval(pow(2, $Speed))) . chr(00) . chr(00) . chr(00) . chr(00) . chr(00);
             if ($this->SendCommand($data)) {
                 $this->SetValue('Speed', $Speed);
@@ -457,8 +448,8 @@ class MS35 extends IPSModule
      * IPS-Instanz Funktion MS35_SetBrightness.
      * Setzt die Helligkeit.
      *
-     * @access public
      * @param int $Level Helligkeit  1=normal, 2 = mittel, 3 = dunkel.
+     *
      * @return bool True wenn Befehl erfolgreich ausgeführt wurde, sonst false.
      */
     public function SetBrightness(int $Level)
@@ -479,9 +470,9 @@ class MS35 extends IPSModule
      * IPS-Instanz Funktion MS35_SetProgram.
      * Speicher ein Programm im Controller.
      *
-     * @access public
-     * @param int $Programm Zu beschreibendes Programm (8 oder 9).
-     * @param string $Data JSON-String mit dem Programm.
+     * @param int    $Programm Zu beschreibendes Programm (8 oder 9).
+     * @param string $Data     JSON-String mit dem Programm.
+     *
      * @return bool True wenn Befehl erfolgreich ausgeführt wurde, sonst false.
      */
     public function SetProgram(int $Programm, string $Data)
@@ -534,11 +525,10 @@ class MS35 extends IPSModule
         return false;
     }
 
-    ################## ActionHandler
+    //################# ActionHandler
+
     /**
      * Interne Funktion des SDK.
-     *
-     * @access public
      */
     public function RequestAction($Ident, $Value)
     {
@@ -587,13 +577,14 @@ class MS35 extends IPSModule
         }
     }
 
-    ################## PRIVATE
+    //################# PRIVATE
+
     /**
      * Sendet ein Command an den Controller.
      *
-     * @access private
      * @param string $Data Der Binäre Command-String
-     * @return boolean True bei erfolg, sonst false.
+     *
+     * @return bool True bei erfolg, sonst false.
      */
     private function SendCommand(string $Data)
     {
@@ -663,8 +654,7 @@ class MS35 extends IPSModule
     /**
      * Initialisiert den Controller und setzt die Statusvariablen auf einen definierten Wert.
      *
-     * @access private
-     * @return boolean True bei Erflog, sonst false.
+     * @return bool True bei Erflog, sonst false.
      */
     private function DoInit()
     {
@@ -679,7 +669,6 @@ class MS35 extends IPSModule
         if (!$ret) {
             return false;
         }
-
 
         $this->SetValue('STATE', true);
         $data = chr(0x0B) . chr(0x01) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00);
@@ -704,9 +693,9 @@ class MS35 extends IPSModule
     /**
      * Sendet die Initialisierung an den Controller und prüft die Rückmeldung.
      *
-     * @access private
-     * @return boolean True bei Erfolg, sonst false.
      * @throws Exception Wenn kein aktiver Parent verbunden ist.
+     *
+     * @return bool True bei Erfolg, sonst false.
      */
     private function SendInit()
     {
@@ -724,6 +713,7 @@ class MS35 extends IPSModule
             } catch (Exception $exc) {
                 $this->InitRun = false;
                 $this->Connected = false;
+
                 throw $exc;
             }
             if ($sendok) {
@@ -742,12 +732,14 @@ class MS35 extends IPSModule
         }
         if ($InitState) {
             $InitState = false;
+
             try {
                 $this->SendDebug('Send', chr(0xFD) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0xCF) . chr(0x2C), 1);
                 $sendok = $this->SendDataToParent(chr(0xFD) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0xCF) . chr(0x2C));
             } catch (Exception $exc) {
                 $this->InitRun = false;
                 $this->Connected = false;
+
                 throw $exc;
             }
 
@@ -775,14 +767,15 @@ class MS35 extends IPSModule
         $this->Connected = false;
         $this->InitRun = false;
         $this->SendDebug('Error Init', 'Controller', 0);
+
         throw new Exception($this->Translate('Could not initialize controller.'), E_USER_NOTICE);
     }
 
     /**
      * Fügt dem übergebenden String eine CRC16 hinzu.
      *
-     * @access private
      * @param string $string String aus welchem die CRC gebildet wird.
+     *
      * @return string Der übergebene String mit angehängter CRC16 Checksumme.
      */
     private function AddCRC16(string $string)
@@ -808,9 +801,9 @@ class MS35 extends IPSModule
     /**
      * Warte auf das SetReply Event.
      *
-     * @access private
      * @param int $Timeout Max. Zeit in ms in der dass Event eintreffen muss.
-     * @return boolean True wenn das Event eintrifft, false wenn Timeout erreicht wurde.
+     *
+     * @return bool True wenn das Event eintrifft, false wenn Timeout erreicht wurde.
      */
     private function WaitForResponse(int $Timeout)
     {
@@ -825,11 +818,10 @@ class MS35 extends IPSModule
         return false;
     }
 
-    ################## DATAPOINTS
+    //################# DATAPOINTS
+
     /**
      * Interne Funktion des SDK.
-     *
-     * @access public
      */
     public function ReceiveData($JSONString)
     {
@@ -844,8 +836,6 @@ class MS35 extends IPSModule
 
     /**
      * Interne Funktion des SDK.
-     *
-     * @access protected
      */
     protected function SendDataToParent($Data)
     {
@@ -853,8 +843,8 @@ class MS35 extends IPSModule
             throw new Exception($this->Translate('Instance has no active parent.'), E_USER_NOTICE);
         }
         $result = parent::SendDataToParent(json_encode(['DataID' => '{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}', 'Buffer' => utf8_encode($Data)]));
-        return ($result === false ? false : true);
+        return $result === false ? false : true;
     }
 }
 
-/** @} */
+/* @} */
