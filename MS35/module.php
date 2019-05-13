@@ -214,10 +214,10 @@ class MS35 extends IPSModule
     {
         $ParentInstance = IPS_GetInstance($this->ParentID);
         if ($ParentInstance['ModuleInfo']['ModuleID'] == '{6DC3D946-0D31-450F-A8C6-C42DB8D7D4F1}') {
-            $Config['StopBits'] = 1;
-            $Config['BaudRate'] = 38400;
+            $Config['StopBits'] = '1';
+            $Config['BaudRate'] = '38400';
             $Config['Parity'] = 'None';
-            $Config['DataBits'] = 8;
+            $Config['DataBits'] = '8';
             return json_encode($Config);
         } else { // Kein SerialPort, sondern TCP oder XBEE Brücke. User muss selber den Port am Endgerät einstellen.
             return json_encode([]);
