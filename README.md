@@ -1,29 +1,29 @@
 [![SDK](https://img.shields.io/badge/Symcon-PHPModul-red.svg)](https://www.symcon.de/service/dokumentation/entwicklerbereich/sdk-tools/sdk-php/)
-[![Version](https://img.shields.io/badge/Modul%20Version-2.10-blue.svg)]()
-[![License](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-green.svg)](https://creativecommons.org/licenses/by-nc-sa/4.0/)  
-[![Version](https://img.shields.io/badge/Symcon%20Version-5.1%20%3E-green.svg)](https://www.symcon.de/forum/threads/30857-IP-Symcon-5-1-%28Stable%29-Changelog)
-[![StyleCI](https://styleci.io/repos/34270836/shield?style=flat)](https://styleci.io/repos/34270836)  
+[![Version](https://img.shields.io/badge/Modul%20Version-2.20-blue.svg)]()
+[![Version](https://img.shields.io/badge/Symcon%20Version-5.1%20%3E-green.svg)](https://www.symcon.de/forum/threads/30857-IP-Symcon-5-1-%28Stable%29-Changelog)  
+[![License](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-green.svg)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
+[![Check Style](https://github.com/Nall-chan/MS35/workflows/Check%20Style/badge.svg)](https://github.com/Nall-chan/MS35/actions) [![Run Tests](https://github.com/Nall-chan/MS35/workflows/Run%20Tests/badge.svg)](https://github.com/Nall-chan/MS35/actions) 
 
-# Symcon-Modul: MS35
+# Symcon-Modul: MS35 <!-- omit in toc -->
 IPS-Modul für den Conrad MS35 RGB-Controller.  
 
-## Inhaltsverzeichnis
+## Inhaltsverzeichnis <!-- omit in toc -->
 
-1. [Funktionsumfang](#1-funktionsumfang)
-2. [Voraussetzungen](#2-voraussetzungen)
-3. [Software-Installation](#3-software-installation)
-4. [Hardware-Installation & Einrichtung](#4-hardware-installation--einrichtung)
-5. [Einrichten der Instanzen in IPS](#5-einrichten-der-instanzen-in-ips)
-6. [Statusvariablen und Profile](#6-statusvariablen-und-profile)
-7. [WebFront](#7-webfront)
-8. [PHP-Befehlsreferenz](#8-php-befehlsreferenz)
-9. [Parameter / Modul-Infos](#9-parameter--modul-infos)
-10. [Tips & Tricks](#10-tips--tricks)
-11. [Anhang](#11-anhang)
-    1. [GUID der Module](#1-guid-der-module)
-    2. [Changlog](#2-changlog)
-    3. [Spenden](#3-spenden)
-12. [Lizenz](#12-lizenz)
+- [1. Funktionsumfang](#1-funktionsumfang)
+- [2. Voraussetzungen](#2-voraussetzungen)
+- [3. Software-Installation](#3-software-installation)
+- [4. Hardware-Installation & Einrichtung](#4-hardware-installation--einrichtung)
+- [5. Einrichten der Instanzen in IPS](#5-einrichten-der-instanzen-in-ips)
+- [6. Statusvariablen und Profile](#6-statusvariablen-und-profile)
+- [7. WebFront](#7-webfront)
+- [8. PHP-Befehlsreferenz](#8-php-befehlsreferenz)
+- [9. Parameter / Modul-Infos](#9-parameter--modul-infos)
+- [10. Tips & Tricks](#10-tips--tricks)
+- [11. Anhang](#11-anhang)
+  - [1. GUID der Module](#1-guid-der-module)
+  - [2. Changelog](#2-changelog)
+  - [3. Spenden](#3-spenden)
+- [12. Lizenz](#12-lizenz)
 
 ## 1. Funktionsumfang
 
@@ -96,26 +96,26 @@ IPS-Modul für den Conrad MS35 RGB-Controller.
 
 **Statusvariablen**:
 
-| Name       | Typ     | Ident      | Beschreibung                                                                            |
+|    Name    |   Typ   |   Ident    |                                      Beschreibung                                       |
 | :--------: | :-----: | :--------: | :-------------------------------------------------------------------------------------: |
-| STATE      | boolean | STATE      | True wenn das Gerät eingeschaltet ist                                                   |
-| Color      | integer | Color      | Aktueller Farbwert, nur gültig wenn kein Programm läuft                                 |
-| Program    | integer | Program    | Aktuell aktives Programm. Wertebereich: 1-9                                             |
-| Play       | integer | Play       | Status der Programmausführung 1 = Play; 2 = Pause; 3 = Stop                             |
-| Brightness | integer | Brightness | Helligkeit  1 = normal; 2 = mittel; 3 = dunkel                                          |
-| Speed      | integer | Speed      | Geschwindigkeit der Programmausführung Werte: 1,2,4,8,16,32,64,128 fache Verlangsamung. |
+|   STATE    | boolean |   STATE    |                          True wenn das Gerät eingeschaltet ist                          |
+|   Color    | integer |   Color    |                 Aktueller Farbwert, nur gültig wenn kein Programm läuft                 |
+|  Program   | integer |  Program   |                       Aktuell aktives Programm. Wertebereich: 1-9                       |
+|    Play    | integer |    Play    |               Status der Programmausführung 1 = Play; 2 = Pause; 3 = Stop               |
+| Brightness | integer | Brightness |                     Helligkeit  1 = normal; 2 = mittel; 3 = dunkel                      |
+|   Speed    | integer |   Speed    | Geschwindigkeit der Programmausführung Werte: 1,2,4,8,16,32,64,128 fache Verlangsamung. |
 
 
    Die benötigten Profile werden ebenfalls automatisch angelegt.  
 
 **Profile**:
 
-| Name            | Typ     | verwendet von Statusvariablen |
+|      Name       |   Typ   | verwendet von Statusvariablen |
 | :-------------: | :-----: | :---------------------------: |
-| MS35.PrgStatus  | integer | Play                          |
-| MS35.Program    | integer | Program                       |
-| MS35.Brightness | integer | Brightness                    |
-| MS35.Speed      | integer | Speed                         |
+| MS35.PrgStatus  | integer |             Play              |
+|  MS35.Program   | integer |            Program            |
+| MS35.Brightness | integer |          Brightness           |
+|   MS35.Speed    | integer |             Speed             |
 
 ## 7. WebFront
 
@@ -200,7 +200,7 @@ string MS35_SetProgram(integer $InstanzeID, integer $Program, string $Data);
 
    - R,G,B sind die Farbwerte der Kanäle von 0-255.  
    - H  ist die Haltezeit der Farbe von 0-255 x 0,13 Sek (Hold)  
-   - F  ist die Überblendzeit von 0-255 x 0,13 Sek (Fade)  
+   - F  ist die Zeit für das Überblenden von 0-255 x 0,13 Sek (Fade)  
             Es dürfen maximal 51 dieser Sequenzen übergeben werden.  
 	Konnte der Befehl erfolgreich ausgeführt werden, liefert er als Ergebnis TRUE, andernfalls FALSE.  
 
@@ -213,7 +213,7 @@ string MS35_SetProgram(integer $InstanzeID, integer $Program, string $Data);
 
    - Sollte das Gerät mal nicht korrekt antworten, so wird bei der nächsten Ausführung eines Befehls versucht der Controller neu zu initialisieren. Welches einen Verlust der schon eingestellten Helligkeit und Geschwindigkeit bedeutet.  
    - Das Modul fügt automatisch Zwangspausen in ms Bereich ein, wenn zu viele Befehle auf einmal übertragen werden müssen (z.B. SetProgram). Würde dies nicht passieren, kommt der Controller häufig aus dem Sync zur Schnittstelle und muss neu initialisiert werden. Bevor er auf Befehle wieder reagiert.  
-   - SetProgram kann maximal 51 Squenzen aufnehmen und im Controller abspeichern. Diese Übertragung dauert Zeit. Im Zweifelsfall ist die maximal Ausführungszeit des Scriptes anzupassen.  
+   - SetProgram kann maximal 51 Sequenzen aufnehmen und im Controller abspeichern. Diese Übertragung dauert Zeit. Im Zweifelsfall ist die maximal Ausführungszeit des Scripts anzupassen.  
 
    Folgender PHP-Code liefert **ein** Beispiel wie man den JSON-String mit dem korrekten Aufbau, erzeugen kann:  
 
@@ -238,14 +238,17 @@ string MS35_SetProgram(integer $InstanzeID, integer $Program, string $Data);
 
 ###  1. GUID der Module
 
-| Modul | Typ     | Prefix | GUID                                   |
-| :---: | :-----: | :----: | :------------------------------------: |
-| MS35  | Device  | MS35   | {78EC291F-DD08-474C-950B-4EC547F31D26} |
+| Modul |  Typ   | Prefix |                  GUID                  |
+| :---: | :----: | :----: | :------------------------------------: |
+| MS35  | Device |  MS35  | {78EC291F-DD08-474C-950B-4EC547F31D26} |
 
-### 2. Changlog
+### 2. Changelog
+
+   Version 2.20 :  
+     - Schreibfehler korrigiert.  
 
    Version 2.10 :  
-     - Release für IPS 5.1 und den Module-Store  
+     - Release für IPS 5.1 und den Module-Store.  
 
    Version 2.04 :  
      - Fix: Für IPS 5.0  
@@ -257,14 +260,14 @@ string MS35_SetProgram(integer $InstanzeID, integer $Program, string $Data);
      - Fix: Kleine Bugfixes  
 
    Version 2.01 :  
-     - Modul für IPS 4.1 angepaßt. Keine Unterstützung für IPS 4.0 !  
+     - Modul für IPS 4.1 angepasst. Keine Unterstützung für IPS 4.0 !  
 
    Version 2.0 :  
      - Erstes (noch nicht endgültig getestetes) öffentliches Release für IPS 4.0  
 
 ### 3. Spenden  
   
-  Die Library ist für die nicht kommzerielle Nutzung kostenlos, Schenkungen als Unterstützung für den Autor werden hier akzeptiert:  
+  Die Library ist für die nicht kommerzielle Nutzung kostenlos, Schenkungen als Unterstützung für den Autor werden hier akzeptiert:  
 
 <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=G2SLW2MEMQZH2" target="_blank"><img src="https://www.paypalobjects.com/de_DE/DE/i/btn/btn_donate_LG.gif" border="0" /></a>
 

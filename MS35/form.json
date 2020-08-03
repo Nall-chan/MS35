@@ -1,8 +1,7 @@
 {
-    "actions":
-            [
-                {
-                    "type": "TestCenter"
-                }
-            ]
+    "actions": [
+        {
+            "type": "TestCenter"
+        }
+    ]
 }
