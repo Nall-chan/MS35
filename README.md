@@ -1,8 +1,10 @@
 [![SDK](https://img.shields.io/badge/Symcon-PHPModul-red.svg)](https://www.symcon.de/service/dokumentation/entwicklerbereich/sdk-tools/sdk-php/)
 [![Version](https://img.shields.io/badge/Modul%20Version-2.20-blue.svg)]()
-[![Version](https://img.shields.io/badge/Symcon%20Version-5.1%20%3E-green.svg)](https://www.symcon.de/forum/threads/30857-IP-Symcon-5-1-%28Stable%29-Changelog)  
-[![License](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-green.svg)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
-[![Check Style](https://github.com/Nall-chan/MS35/workflows/Check%20Style/badge.svg)](https://github.com/Nall-chan/MS35/actions) [![Run Tests](https://github.com/Nall-chan/MS35/workflows/Run%20Tests/badge.svg)](https://github.com/Nall-chan/MS35/actions) 
+[![License](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-green.svg)](https://creativecommons.org/licenses/by-nc-sa/4.0/)  
+[![Version](https://img.shields.io/badge/Symcon%20Version-5.1%20%3E-green.svg)](https://www.symcon.de/forum/threads/30857-IP-Symcon-5-1-%28Stable%29-Changelog)
+[![Check Style](https://github.com/Nall-chan/MS35/workflows/Check%20Style/badge.svg)](https://github.com/Nall-chan/MS35/actions) [![Run Tests](https://github.com/Nall-chan/MS35/workflows/Run%20Tests/badge.svg)](https://github.com/Nall-chan/MS35/actions)  
+[![Spenden](https://www.paypalobjects.com/de_DE/DE/i/btn/btn_donate_SM.gif)](#3-spenden)
+[![Wunschliste](https://img.shields.io/badge/Wunschliste-Amazon-ff69fb.svg)](#3-spenden) 
 
 # Symcon-Modul: MS35 <!-- omit in toc -->
 IPS-Modul für den Conrad MS35 RGB-Controller.  
@@ -12,13 +14,13 @@ IPS-Modul für den Conrad MS35 RGB-Controller.
 - [1. Funktionsumfang](#1-funktionsumfang)
 - [2. Voraussetzungen](#2-voraussetzungen)
 - [3. Software-Installation](#3-software-installation)
-- [4. Hardware-Installation & Einrichtung](#4-hardware-installation--einrichtung)
+- [4. Hardware-Installation \& Einrichtung](#4-hardware-installation--einrichtung)
 - [5. Einrichten der Instanzen in IPS](#5-einrichten-der-instanzen-in-ips)
 - [6. Statusvariablen und Profile](#6-statusvariablen-und-profile)
 - [7. WebFront](#7-webfront)
 - [8. PHP-Befehlsreferenz](#8-php-befehlsreferenz)
 - [9. Parameter / Modul-Infos](#9-parameter--modul-infos)
-- [10. Tips & Tricks](#10-tips--tricks)
+- [10. Tips \& Tricks](#10-tips--tricks)
 - [11. Anhang](#11-anhang)
   - [1. GUID der Module](#1-guid-der-module)
   - [2. Changelog](#2-changelog)
@@ -271,6 +273,7 @@ string MS35_SetProgram(integer $InstanzeID, integer $Program, string $Data);
 
 <a href="https://www.paypal.com/donate?hosted_button_id=G2SLW2MEMQZH2" target="_blank"><img src="https://www.paypalobjects.com/de_DE/DE/i/btn/btn_donate_LG.gif" border="0" /></a>
 
+[![Wunschliste](https://img.shields.io/badge/Wunschliste-Amazon-ff69fb.svg)](https://www.amazon.de/hz/wishlist/ls/YU4AI9AQT9F?ref_=wl_share)
 
 ## 12. Lizenz
 

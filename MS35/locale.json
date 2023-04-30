@@ -33,7 +33,8 @@
             "Controller do not response.": "Gerät nat nicht geantwortet.",
             "Send is blocked.": "Senden blockiert",
             "Could not initialize controller.": "Konnte Gerät nicht initialisieren.",
-            "Instance has no active parent.": "Instanz hat keinen aktiven Parent."
+            "Instance has no active parent.": "Instanz hat keinen aktiven Parent.",
+            "This module is free for non-commercial use,\r\nDonations in support of the author are accepted here:": "Dieses Modul ist für die nicht kommerzielle Nutzung kostenlos,\r\nSchenkungen als Unterstützung für den Autor werden hier akzeptiert:"
         }
     }
 }
