@@ -24,15 +24,15 @@
             "ON": "AN",
             "OFF": "AUS",
             "Red": "Rot",
-            "Green": "Gr\u00fcn",
+            "Green": "Grün",
             "Blue": "Blau",
-            "Invalid parameter": "Ung\u00fcltiger Parameter",
-            "Invalid value": "Ung\u00fcltiger Wert",
-            "Invalid ident": "Ung\u00fcltiger Ident",
-            "Controller send NACK.": "Ger\u00e4t hat nicht best\u00e4tigt",
-            "Controller do not response.": "Ger\u00e4t nat nicht geantwortet.",
+            "Invalid parameter": "Ungültiger Parameter",
+            "Invalid value": "Ungültiger Wert",
+            "Invalid ident": "Ungültiger Ident",
+            "Controller send NACK.": "Gerät hat nicht bestätigt",
+            "Controller do not response.": "Gerät nat nicht geantwortet.",
             "Send is blocked.": "Senden blockiert",
-            "Could not initialize controller.": "Konnte Ger\u00e4t nicht initialisieren.",
+            "Could not initialize controller.": "Konnte Gerät nicht initialisieren.",
             "Instance has no active parent.": "Instanz hat keinen aktiven Parent."
         }
     }
