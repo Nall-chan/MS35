@@ -1,7 +1,7 @@
 [![SDK](https://img.shields.io/badge/Symcon-PHPModul-red.svg)](https://www.symcon.de/service/dokumentation/entwicklerbereich/sdk-tools/sdk-php/)
-[![Version](https://img.shields.io/badge/Modul%20Version-2.20-blue.svg)]()
-[![License](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-green.svg)](https://creativecommons.org/licenses/by-nc-sa/4.0/)  
-[![Version](https://img.shields.io/badge/Symcon%20Version-5.1%20%3E-green.svg)](https://www.symcon.de/forum/threads/30857-IP-Symcon-5-1-%28Stable%29-Changelog)
+[![Version](https://img.shields.io/badge/Modul%20Version-2.21-blue.svg)]()
+![Version](https://img.shields.io/badge/Symcon%20Version-7.0%20%3E-green.svg)  
+[![License](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-green.svg)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
 [![Check Style](https://github.com/Nall-chan/MS35/workflows/Check%20Style/badge.svg)](https://github.com/Nall-chan/MS35/actions) [![Run Tests](https://github.com/Nall-chan/MS35/workflows/Run%20Tests/badge.svg)](https://github.com/Nall-chan/MS35/actions)  
 [![Spenden](https://www.paypalobjects.com/de_DE/DE/i/btn/btn_donate_SM.gif)](#3-spenden)
 [![Wunschliste](https://img.shields.io/badge/Wunschliste-Amazon-ff69fb.svg)](#3-spenden) 
@@ -246,7 +246,10 @@ string MS35_SetProgram(integer $InstanzeID, integer $Program, string $Data);
 
 ### 2. Changelog
 
-   Version 2.20 :  
+   Version 2.22 :  
+     - Version für IPS 7.0.  
+   
+   Version 2.21 :  
      - Schreibfehler korrigiert.  
 
    Version 2.10 :  

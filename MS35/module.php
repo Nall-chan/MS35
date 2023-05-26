@@ -10,7 +10,7 @@ declare(strict_types=1);
  * @author        Michael Tröger <micha@nall-chan.net>
  * @copyright     2020 Michael Tröger
  * @license       https://creativecommons.org/licenses/by-nc-sa/4.0/ CC BY-NC-SA 4.0
- * @version       2.20
+ * @version       2.21
  */
 eval('declare(strict_types=1);namespace MS35 {?>' . file_get_contents(__DIR__ . '/../libs/helper/BufferHelper.php') . '}');
 eval('declare(strict_types=1);namespace MS35 {?>' . file_get_contents(__DIR__ . '/../libs/helper/ParentIOHelper.php') . '}');
@@ -23,26 +23,31 @@ eval('declare(strict_types=1);namespace MS35 {?>' . file_get_contents(__DIR__ . 
  * Erweitert ipsmodule.
  *
  * @property string $Buffer Receive Buffer.
+ * @property bool $InitRun Init läuft
  * @property bool $Connected Aktuell verbunden ?
  * @property bool $SetReplyEvent Daten empfangen.
  * @property int $ParentID Aktueller IO-Parent.
+ * @method void UnregisterProfile(string $Name)
+ * @method void RegisterProfileIntegerEx(string $Name, string $Icon, string $Prefix, string $Suffix, array $Associations, int $MaxValue = -1, float $StepSize = 0)
+ * @method bool lock(string $ident)
+ * @method void unlock(string $ident)
  */
-class MS35 extends IPSModule
+class MS35 extends IPSModuleStrict
 {
     use \MS35\DebugHelper,
         \MS35\Semaphore,
         \MS35\VariableProfileHelper,
         \MS35\InstanceStatus,
         \MS35\BufferHelper {
-        \MS35\InstanceStatus::MessageSink as IOMessageSink;
-        \MS35\InstanceStatus::RegisterParent as IORegisterParent;
-        \MS35\InstanceStatus::RequestAction as IORequestAction;
-    }
+            \MS35\InstanceStatus::MessageSink as IOMessageSink;
+            \MS35\InstanceStatus::RegisterParent as IORegisterParent;
+            \MS35\InstanceStatus::RequestAction as IORequestAction;
+        }
 
     /**
      * Interne Funktion des SDK.
      */
-    public function Create()
+    public function Create(): void
     {
         parent::Create();
         $this->RequireParent('{6DC3D946-0D31-450F-A8C6-C42DB8D7D4F1}');
@@ -51,13 +56,13 @@ class MS35 extends IPSModule
     /**
      * Interne Funktion des SDK.
      */
-    public function Destroy()
+    public function Destroy(): void
     {
         if (!IPS_InstanceExists($this->InstanceID)) {
-            $this->UnregisterProfil('MS35.Program');
-            $this->UnregisterProfil('MS35.PrgStatus');
-            $this->UnregisterProfil('MS35.Speed');
-            $this->UnregisterProfil('MS35.Brightness');
+            $this->UnregisterProfile('MS35.Program');
+            $this->UnregisterProfile('MS35.PrgStatus');
+            $this->UnregisterProfile('MS35.Speed');
+            $this->UnregisterProfile('MS35.Brightness');
         }
         parent::Destroy();
     }
@@ -65,7 +70,7 @@ class MS35 extends IPSModule
     /**
      * Interne Funktion des SDK.
      */
-    public function ApplyChanges()
+    public function ApplyChanges(): void
     {
         $this->RegisterMessage(0, IPS_KERNELSTARTED);
         $this->RegisterMessage($this->InstanceID, FM_CONNECT);
@@ -148,7 +153,7 @@ class MS35 extends IPSModule
      * @param int       $Message
      * @param array|int $Data
      */
-    public function MessageSink($TimeStamp, $SenderID, $Message, $Data)
+    public function MessageSink(int $TimeStamp, int $SenderID, int $Message, array $Data): void
     {
         $this->IOMessageSink($TimeStamp, $SenderID, $Message, $Data);
         switch ($Message) {
@@ -158,7 +163,7 @@ class MS35 extends IPSModule
         }
     }
 
-    public function GetConfigurationForParent()
+    public function GetConfigurationForParent(): string
     {
         $ParentInstance = IPS_GetInstance($this->ParentID);
         if ($ParentInstance['ModuleInfo']['ModuleID'] == '{6DC3D946-0D31-450F-A8C6-C42DB8D7D4F1}') {
@@ -182,7 +187,7 @@ class MS35 extends IPSModule
      *
      * @return bool True wenn Befehl erfolgreich ausgeführt wurde, sonst false.
      */
-    public function SendSwitch(bool $State)
+    public function SendSwitch(bool $State): bool
     {
         if ($State) { //Einschalten
             if (!$this->Connected) {
@@ -227,7 +232,7 @@ class MS35 extends IPSModule
      *
      * @return bool True wenn Befehl erfolgreich ausgeführt wurde, sonst false.
      */
-    public function SetRGB(int $Red, int $Green, int $Blue)
+    public function SetRGB(int $Red, int $Green, int $Blue): bool
     {
         if (($Red < 0) || ($Red > 255) || ($Green < 0) || ($Green > 255) || ($Blue < 0) || ($Blue > 255)) {
             trigger_error($this->Translate('Invalid parameter'), E_USER_NOTICE);
@@ -250,7 +255,7 @@ class MS35 extends IPSModule
      *
      * @return bool True wenn Befehl erfolgreich ausgeführt wurde, sonst false.
      */
-    public function Play()
+    public function Play(): bool
     {
         $Data = chr(0x0A) . chr(0x07) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00); //'Play'
         if ($this->SendCommand($Data)) {
@@ -267,7 +272,7 @@ class MS35 extends IPSModule
      *
      * @return bool True wenn Befehl erfolgreich ausgeführt wurde, sonst false.
      */
-    public function Pause()
+    public function Pause(): bool
     {
         $Data = chr(0x0A) . chr(0x06) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00); //'Pause'
         if ($this->SendCommand($Data)) {
@@ -284,7 +289,7 @@ class MS35 extends IPSModule
      *
      * @return bool True wenn Befehl erfolgreich ausgeführt wurde, sonst false.
      */
-    public function Stop()
+    public function Stop(): bool
     {
         $Color = GetValueInteger($this->GetIDForIdent('Color'));
         $Red = ($Color & 0x00ff0000) >> 16;
@@ -307,7 +312,7 @@ class MS35 extends IPSModule
      *
      * @return bool True wenn Befehl erfolgreich ausgeführt wurde, sonst false.
      */
-    public function RunProgram(int $Programm)
+    public function RunProgram(int $Programm): bool
     {
         if (($Programm < 1) || ($Programm > 9)) {
             trigger_error($this->Translate('Invalid parameter'), E_USER_NOTICE);
@@ -375,7 +380,7 @@ class MS35 extends IPSModule
      *
      * @return bool True wenn Befehl erfolgreich ausgeführt wurde, sonst false.
      */
-    public function SetSpeed(int $Speed)
+    public function SetSpeed(int $Speed): bool
     {
         if (($Speed < 0) || ($Speed > 8)) {
             trigger_error($this->Translate('Invalid parameter'), E_USER_NOTICE);
@@ -400,7 +405,7 @@ class MS35 extends IPSModule
      *
      * @return bool True wenn Befehl erfolgreich ausgeführt wurde, sonst false.
      */
-    public function SetBrightness(int $Level)
+    public function SetBrightness(int $Level): bool
     {
         if (($Level < 1) || ($Level > 3)) {
             trigger_error($this->Translate('Invalid parameter'), E_USER_NOTICE);
@@ -423,7 +428,7 @@ class MS35 extends IPSModule
      *
      * @return bool True wenn Befehl erfolgreich ausgeführt wurde, sonst false.
      */
-    public function SetProgram(int $Programm, string $Data)
+    public function SetProgram(int $Programm, string $Data): bool
     {
         if (($Programm < 8) || ($Programm > 9)) {
             trigger_error($this->Translate('Invalid parameter'), E_USER_NOTICE);
@@ -478,10 +483,10 @@ class MS35 extends IPSModule
     /**
      * Interne Funktion des SDK.
      */
-    public function RequestAction($Ident, $Value)
+    public function RequestAction(string $Ident, mixed $Value): void
     {
         if ($this->IORequestAction($Ident, $Value)) {
-            return true;
+            return;
         }
         switch ($Ident) {
             case 'STATE':
@@ -530,21 +535,21 @@ class MS35 extends IPSModule
     /**
      * Interne Funktion des SDK.
      */
-    public function ReceiveData($JSONString)
+    public function ReceiveData(string $JSONString): string
     {
         $data = json_decode($JSONString);
 
         // Stream zusammenfügen
-        $this->Buffer .= utf8_decode($data->Buffer);
+        $this->Buffer .= hex2bin($data->Buffer);
         // Empfangs Event setzen
         $this->SetReplyEvent = true;
-        return true;
+        return '';
     }
 
     /**
      * Wird ausgeführt wenn der Kernel hochgefahren wurde.
      */
-    protected function KernelReady()
+    protected function KernelReady(): void
     {
         $this->RegisterParent();
         if ($this->HasActiveParent()) {
@@ -554,7 +559,7 @@ class MS35 extends IPSModule
         }
     }
 
-    protected function RegisterParent()
+    protected function RegisterParent(): void
     {
         $IOId = $this->IORegisterParent();
         // Anzeige Port in der INFO Spalte
@@ -583,7 +588,7 @@ class MS35 extends IPSModule
     /**
      * Wird ausgeführt wenn sich der Status vom Parent ändert.
      */
-    protected function IOChangeState($State)
+    protected function IOChangeState(int $State): void
     {
         // Wenn der IO Aktiv wurde
         if ($State == IS_ACTIVE) {
@@ -596,13 +601,12 @@ class MS35 extends IPSModule
     /**
      * Interne Funktion des SDK.
      */
-    protected function SendDataToParent($Data)
+    protected function SendDataToParent(string $Data): string
     {
         if (!$this->HasActiveParent()) {
             throw new Exception($this->Translate('Instance has no active parent.'), E_USER_NOTICE);
         }
-        $result = parent::SendDataToParent(json_encode(['DataID' => '{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}', 'Buffer' => utf8_encode($Data)]));
-        return $result === false ? false : true;
+        return parent::SendDataToParent(json_encode(['DataID' => '{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}', 'Buffer' => bin2hex($Data)]));
     }
 
     //################# PRIVATE
@@ -614,7 +618,7 @@ class MS35 extends IPSModule
      *
      * @return bool True bei erfolg, sonst false.
      */
-    private function SendCommand(string $Data)
+    private function SendCommand(string $Data): bool
     {
         if ($this->InitRun) {
             return false;
@@ -682,7 +686,7 @@ class MS35 extends IPSModule
      *
      * @return bool True bei Erfolg, sonst false.
      */
-    private function DoInit()
+    private function DoInit(): bool
     {
         $this->SendDebug('Start Init', 'Instance', 0);
 
@@ -723,7 +727,7 @@ class MS35 extends IPSModule
      *
      * @return bool True bei Erfolg, sonst false.
      */
-    private function SendInit()
+    private function SendInit(): bool
     {
         if ($this->InitRun) {
             return false;
@@ -793,8 +797,8 @@ class MS35 extends IPSModule
         $this->Connected = false;
         $this->InitRun = false;
         $this->SendDebug('Error Init', 'Controller', 0);
-
         throw new Exception($this->Translate('Could not initialize controller.'), E_USER_NOTICE);
+        return false;
     }
 
     /**
@@ -804,7 +808,7 @@ class MS35 extends IPSModule
      *
      * @return string Der übergebene String mit angehängter CRC16 Checksumme.
      */
-    private function AddCRC16(string $string)
+    private function AddCRC16(string $string): string
     {
         $crc = 0;
         for ($x = 0; $x < strlen($string); $x++) {
@@ -831,7 +835,7 @@ class MS35 extends IPSModule
      *
      * @return bool True wenn das Event eintrifft, false wenn Timeout erreicht wurde.
      */
-    private function WaitForResponse(int $Timeout)
+    private function WaitForResponse(int $Timeout): bool
     {
         for ($i = 0; $i < $Timeout / 5; $i++) {
             if ($this->SetReplyEvent) {
