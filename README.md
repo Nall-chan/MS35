@@ -56,7 +56,7 @@ Direkte native Unterstützung des Conrad MS-35 RGB-Controller (EAN: 401613856726
 
 Über den 'Module-Store' in IPS das Modul 'MS35' hinzufügen.  
 **Bei kommerzieller Nutzung (z.B. als Errichter oder Integrator) wenden Sie sich bitte an den Autor.**  
-![Module-Store](imgs/install.png)
+![Module-Store](imgs/store.png)
 
 ## 4. Hardware-Installation & Einrichtung
 
