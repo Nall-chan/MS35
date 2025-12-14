@@ -8,9 +8,9 @@ declare(strict_types=1);
  * @package       MS35
  * @file          module.php
  * @author        Michael Tröger <micha@nall-chan.net>
- * @copyright     2020 Michael Tröger
+ * @copyright     2025 Michael Tröger
  * @license       https://creativecommons.org/licenses/by-nc-sa/4.0/ CC BY-NC-SA 4.0
- * @version       2.21
+ * @version       2.22
  */
 eval('declare(strict_types=1);namespace MS35 {?>' . file_get_contents(__DIR__ . '/../libs/helper/BufferHelper.php') . '}');
 eval('declare(strict_types=1);namespace MS35 {?>' . file_get_contents(__DIR__ . '/../libs/helper/ParentIOHelper.php') . '}');
@@ -20,17 +20,19 @@ eval('declare(strict_types=1);namespace MS35 {?>' . file_get_contents(__DIR__ . 
 
 /**
  * MS35 ist die Klasse für einen RGB-Controller MS35 von der Fa.Conrad
- * Erweitert ipsmodule.
+ * Erweitert IPSModuleStrict
  *
- * @property string $Buffer Receive Buffer.
+ * @property string $Buffer Receive Buffer
  * @property bool $InitRun Init läuft
- * @property bool $Connected Aktuell verbunden ?
- * @property bool $SetReplyEvent Daten empfangen.
- * @property int $ParentID Aktueller IO-Parent.
+ * @property bool $Connected Aktuell verbunden
+ * @property bool $SetReplyEvent Daten empfangen
+ * @property int $ParentID Aktueller IO-Parent
  * @method void UnregisterProfile(string $Name)
- * @method void RegisterProfileIntegerEx(string $Name, string $Icon, string $Prefix, string $Suffix, array $Associations, int $MaxValue = -1, float $StepSize = 0)
  * @method bool lock(string $ident)
  * @method void unlock(string $ident)
+ * @method bool IORequestAction(string $Ident, mixed $Value)
+ * @method void IOMessageSink(int $TimeStamp, int $SenderID, int $Message, array $Data)
+ * @method int IORegisterParent()
  */
 class MS35 extends IPSModuleStrict
 {
@@ -43,32 +45,26 @@ class MS35 extends IPSModuleStrict
             \MS35\InstanceStatus::RegisterParent as IORegisterParent;
             \MS35\InstanceStatus::RequestAction as IORequestAction;
         }
+    private const PRESENTATION = 'PRESENTATION';
 
     /**
-     * Interne Funktion des SDK.
+     * Create
+     *
+     * @return void
      */
     public function Create(): void
     {
         parent::Create();
-        $this->RequireParent('{6DC3D946-0D31-450F-A8C6-C42DB8D7D4F1}');
+        $this->Buffer = '';
+        $this->InitRun = false;
+        $this->Connected = false;
+        $this->SetReplyEvent = false;
     }
 
     /**
-     * Interne Funktion des SDK.
-     */
-    public function Destroy(): void
-    {
-        if (!IPS_InstanceExists($this->InstanceID)) {
-            $this->UnregisterProfile('MS35.Program');
-            $this->UnregisterProfile('MS35.PrgStatus');
-            $this->UnregisterProfile('MS35.Speed');
-            $this->UnregisterProfile('MS35.Brightness');
-        }
-        parent::Destroy();
-    }
-
-    /**
-     * Interne Funktion des SDK.
+     * ApplyChanges
+     *
+     * @return void
      */
     public function ApplyChanges(): void
     {
@@ -78,58 +74,250 @@ class MS35 extends IPSModuleStrict
 
         parent::ApplyChanges();
 
-        $this->RegisterProfileIntegerEx('MS35.Program', 'Gear', '', '', [
-            [1, $this->Translate('Color change 1'), '', -1],
-            [2, $this->Translate('Color change 2'), '', -1],
-            [3, $this->Translate('Color change 3'), '', -1],
-            [4, $this->Translate('Thunderstorm'), '', -1],
-            [5, $this->Translate('Fire'), '', -1],
-            [6, $this->Translate('Sunrise and sunset'), '', -1],
-            [7, $this->Translate('Flashes of color'), '', -1],
-            [8, 'User 1', '', -1],
-            [9, 'User 2', '', -1]
-        ]);
+        $this->UnregisterProfile('MS35.Program');
+        $this->UnregisterProfile('MS35.PrgStatus');
+        $this->UnregisterProfile('MS35.Speed');
+        $this->UnregisterProfile('MS35.Brightness');
 
-        $this->RegisterProfileIntegerEx('MS35.PrgStatus', 'Bulb', '', '', [
-            [1, 'Play', '', -1],
-            [2, 'Pause', '', -1],
-            [3, 'Stop', '', -1]
-        ]);
-
-        $this->RegisterProfileIntegerEx('MS35.Speed', 'Intensity', '', '', [
-            [0, 'normal', '', -1],
-            [1, '1/2', '', -1],
-            [2, '1/4', '', -1],
-            [3, '1/8', '', -1],
-            [4, '1/16', '', -1],
-            [5, '1/32', '', -1],
-            [6, '1/64', '', -1],
-            [7, '1/128', '', -1]
-        ]);
-
-        $this->RegisterProfileIntegerEx('MS35.Brightness', 'Sun', '', '', [
-            [1, 'normal', '', -1],
-            [2, '1/2', '', -1],
-            [3, '1/3', '', -1]
-        ]);
-
-        $this->RegisterVariableBoolean('STATE', $this->Translate('State'), '~Switch', 1);
+        $this->RegisterVariableBoolean(
+            'STATE',
+            $this->Translate('State'),
+            [
+                self::PRESENTATION => VARIABLE_PRESENTATION_SWITCH
+            ],
+            1
+        );
         $this->EnableAction('STATE');
-        $this->RegisterVariableInteger('Color', $this->Translate('Color'), '~HexColor', 2);
+        $this->RegisterVariableInteger(
+            'Color',
+            $this->Translate('Color'),
+            [
+                self::PRESENTATION      => VARIABLE_PRESENTATION_COLOR
+            ],
+            2
+        );
         $this->EnableAction('Color');
-        $this->RegisterVariableInteger('Program', $this->Translate('Program'), 'MS35.Program', 3);
+        $this->RegisterVariableInteger(
+            'Program',
+            $this->Translate('Program'),
+            [
+                self::PRESENTATION => VARIABLE_PRESENTATION_ENUMERATION,
+                'ICON'             => 'Gear',
+                'LAYOUT'           => 0,
+                'OPTIONS'          => json_encode(
+                    [
+                        [
+                            'Value'      => 1,
+                            'Caption'    => $this->Translate('Color change 1'),
+                            'IconActive' => false,
+                            'IconValue'  => '',
+                            'Color'      => -1,
+                        ],
+                        [
+                            'Value'      => 2,
+                            'Caption'    => $this->Translate('Color change 2'),
+                            'IconActive' => false,
+                            'IconValue'  => '',
+                            'Color'      => -1,
+                        ],
+                        [
+                            'Value'      => 3,
+                            'Caption'    => $this->Translate('Color change 3'),
+                            'IconActive' => false,
+                            'IconValue'  => '',
+                            'Color'      => -1,
+                        ],
+                        [
+                            'Value'      => 4,
+                            'Caption'    => $this->Translate('Thunderstorm'),
+                            'IconActive' => false,
+                            'IconValue'  => '',
+                            'Color'      => -1,
+                        ],
+                        [
+                            'Value'      => 5,
+                            'Caption'    => $this->Translate('Fire'),
+                            'IconActive' => false,
+                            'IconValue'  => '',
+                            'Color'      => -1,
+                        ],
+                        [
+                            'Value'      => 6,
+                            'Caption'    => $this->Translate('Sunrise and sunset'),
+                            'IconActive' => false,
+                            'IconValue'  => '',
+                            'Color'      => -1,
+                        ],
+                        [
+                            'Value'      => 7,
+                            'Caption'    => $this->Translate('Flashes of color'),
+                            'IconActive' => false,
+                            'IconValue'  => '',
+                            'Color'      => -1,
+                        ],
+                        [
+                            'Value'      => 8,
+                            'Caption'    => $this->Translate('User 1'),
+                            'IconActive' => false,
+                            'IconValue'  => '',
+                            'Color'      => -1,
+                        ],
+                        [
+                            'Value'      => 9,
+                            'Caption'    => $this->Translate('User 2'),
+                            'IconActive' => false,
+                            'IconValue'  => '',
+                            'Color'      => -1,
+                        ]
+                    ]
+                )
+            ],
+            3
+        );
         $this->EnableAction('Program');
-        $this->RegisterVariableInteger('Play', $this->Translate('Play'), 'MS35.PrgStatus', 4);
+        $this->RegisterVariableInteger(
+            'Play',
+            $this->Translate('Play'),
+            [
+                self::PRESENTATION => VARIABLE_PRESENTATION_ENUMERATION,
+                'ICON'             => 'Bulb',
+                'LAYOUT'           => 0,
+                'OPTIONS'          => json_encode(
+                    [
+                        [
+                            'Value'      => 1,
+                            'Caption'    => $this->Translate('Play'),
+                            'IconActive' => false,
+                            'IconValue'  => '',
+                            'Color'      => -1,
+                        ],
+                        [
+                            'Value'      => 2,
+                            'Caption'    => $this->Translate('Pause'),
+                            'IconActive' => false,
+                            'IconValue'  => '',
+                            'Color'      => -1,
+                        ],
+                        [
+                            'Value'      => 3,
+                            'Caption'    => $this->Translate('Stop'),
+                            'IconActive' => false,
+                            'IconValue'  => '',
+                            'Color'      => -1,
+                        ]
+                    ]
+                )
+            ],
+            4
+        );
         $this->EnableAction('Play');
-        $this->RegisterVariableInteger('Speed', $this->Translate('Speed'), 'MS35.Speed', 5);
+        $this->RegisterVariableInteger(
+            'Speed',
+            $this->Translate('Speed'),
+            [
+                self::PRESENTATION => VARIABLE_PRESENTATION_ENUMERATION,
+                'ICON'             => 'Intensity',
+                'LAYOUT'           => 0,
+                'OPTIONS'          => json_encode(
+                    [
+                        [
+                            'Value'      => 0,
+                            'Caption'    => $this->Translate('normal'),
+                            'IconActive' => false,
+                            'IconValue'  => '',
+                            'Color'      => -1,
+                        ],
+                        [
+                            'Value'      => 1,
+                            'Caption'    => $this->Translate('1/2'),
+                            'IconActive' => false,
+                            'IconValue'  => '',
+                            'Color'      => -1,
+                        ],
+                        [
+                            'Value'      => 2,
+                            'Caption'    => $this->Translate('1/4'),
+                            'IconActive' => false,
+                            'IconValue'  => '',
+                            'Color'      => -1,
+                        ],
+                        [
+                            'Value'      => 3,
+                            'Caption'    => $this->Translate('1/8'),
+                            'IconActive' => false,
+                            'IconValue'  => '',
+                            'Color'      => -1,
+                        ],
+                        [
+                            'Value'      => 4,
+                            'Caption'    => $this->Translate('1/16'),
+                            'IconActive' => false,
+                            'IconValue'  => '',
+                            'Color'      => -1,
+                        ],
+                        [
+                            'Value'      => 5,
+                            'Caption'    => $this->Translate('1/32'),
+                            'IconActive' => false,
+                            'IconValue'  => '',
+                            'Color'      => -1,
+                        ],
+                        [
+                            'Value'      => 6,
+                            'Caption'    => $this->Translate('1/64'),
+                            'IconActive' => false,
+                            'IconValue'  => '',
+                            'Color'      => -1,
+                        ],
+                        [
+                            'Value'      => 7,
+                            'Caption'    => $this->Translate('1/128'),
+                            'IconActive' => false,
+                            'IconValue'  => '',
+                            'Color'      => -1,
+                        ]
+                    ]
+                )
+            ],
+            5
+        );
         $this->EnableAction('Speed');
-        $this->RegisterVariableInteger('Brightness', $this->Translate('Brightness'), 'MS35.Brightness', 6);
+        $this->RegisterVariableInteger(
+            'Brightness',
+            $this->Translate('Brightness'),
+            [
+                self::PRESENTATION => VARIABLE_PRESENTATION_ENUMERATION,
+                'ICON'             => 'Sun',
+                'LAYOUT'           => 0,
+                'OPTIONS'          => json_encode(
+                    [
+                        [
+                            'Value'      => 1,
+                            'Caption'    => $this->Translate('normal'),
+                            'IconActive' => false,
+                            'IconValue'  => '',
+                            'Color'      => -1,
+                        ],
+                        [
+                            'Value'      => 2,
+                            'Caption'    => $this->Translate('1/2'),
+                            'IconActive' => false,
+                            'IconValue'  => '',
+                            'Color'      => -1,
+                        ],
+                        [
+                            'Value'      => 3,
+                            'Caption'    => $this->Translate('1/3'),
+                            'IconActive' => false,
+                            'IconValue'  => '',
+                            'Color'      => -1,
+                        ]
+                    ]
+                )
+            ],
+            6
+        );
         $this->EnableAction('Brightness');
-
-        // Remove OLD Workaround
-        $this->UnregisterVariable('BufferIN');
-        $this->UnregisterVariable('ReplyEvent');
-        $this->UnregisterVariable('Connected');
 
         // Wenn Kernel nicht bereit, dann warten... KR_READY kommt ja gleich
         if (IPS_GetKernelRunlevel() != KR_READY) {
@@ -163,6 +351,11 @@ class MS35 extends IPSModuleStrict
         }
     }
 
+    /**
+     * GetConfigurationForParent
+     *
+     * @return string
+     */
     public function GetConfigurationForParent(): string
     {
         $ParentInstance = IPS_GetInstance($this->ParentID);
@@ -172,7 +365,7 @@ class MS35 extends IPSModuleStrict
             $Config['Parity'] = 'None';
             $Config['DataBits'] = '8';
             return json_encode($Config);
-        } else { // Kein SerialPort, sondern TCP oder XBEE Brücke. User muss selber den Port am Endgerät einstellen.
+        } else { // Kein SerialPort
             return json_encode([]);
         }
     }
@@ -481,7 +674,11 @@ class MS35 extends IPSModuleStrict
     //################# ActionHandler
 
     /**
-     * Interne Funktion des SDK.
+     * RequestAction
+     *
+     * @param  string $Ident
+     * @param  mixed $Value
+     * @return void
      */
     public function RequestAction(string $Ident, mixed $Value): void
     {
@@ -533,7 +730,10 @@ class MS35 extends IPSModuleStrict
     //################# DATAPOINTS
 
     /**
-     * Interne Funktion des SDK.
+     * ReceiveData
+     *
+     * @param  string $JSONString
+     * @return string
      */
     public function ReceiveData(string $JSONString): string
     {
@@ -547,7 +747,11 @@ class MS35 extends IPSModuleStrict
     }
 
     /**
+     * KernelReady
+     *
      * Wird ausgeführt wenn der Kernel hochgefahren wurde.
+     *
+     * @return void
      */
     protected function KernelReady(): void
     {
@@ -559,6 +763,11 @@ class MS35 extends IPSModuleStrict
         }
     }
 
+    /**
+     * RegisterParent
+     *
+     * @return void
+     */
     protected function RegisterParent(): void
     {
         $IOId = $this->IORegisterParent();
@@ -586,10 +795,19 @@ class MS35 extends IPSModuleStrict
     }
 
     /**
+     * IOChangeState
+     *
      * Wird ausgeführt wenn sich der Status vom Parent ändert.
+     *
+     * @param  int $State
+     * @return void
      */
     protected function IOChangeState(int $State): void
     {
+        $this->Buffer = '';
+        $this->InitRun = false;
+        $this->Connected = false;
+        $this->SetReplyEvent = false;
         // Wenn der IO Aktiv wurde
         if ($State == IS_ACTIVE) {
             $this->DoInit();
@@ -599,7 +817,10 @@ class MS35 extends IPSModuleStrict
     }
 
     /**
-     * Interne Funktion des SDK.
+     * SendDataToParent
+     *
+     * @param  string $Data
+     * @return string
      */
     protected function SendDataToParent(string $Data): string
     {
@@ -612,6 +833,8 @@ class MS35 extends IPSModuleStrict
     //################# PRIVATE
 
     /**
+     * SendCommand
+     *
      * Sendet ein Command an den Controller.
      *
      * @param string $Data Der Binäre Command-String
@@ -638,41 +861,36 @@ class MS35 extends IPSModuleStrict
         if ($this->lock('SendCommand')) {
             try {
                 $this->SendDebug('Send', $Data, 1);
-                $SendOk = $this->SendDataToParent($this->AddCRC16($Data));
+                $this->SendDataToParent($this->AddCRC16($Data));
             } catch (Exception $exc) {
                 $this->unlock('SendCommand');
                 trigger_error($exc->getMessage(), $exc->getCode());
                 return false;
             }
-            if ($SendOk) {
-                if ($this->WaitForResponse(1000)) {    //warte auf Reply
-                    $Buffer = $this->Buffer;
-                    $this->Buffer = '';
-                    if ($Buffer == 'a') {
-                        $this->SendDebug('ACK', '', 1);
 
-                        $this->unlock('SendCommand');
-                        return true;
-                    } else {
-                        $this->SendDebug('NACK', '', 1);
-                        $this->Connected = false;
-                        $this->unlock('SendCommand');
-                        trigger_error($this->Translate('Controller send NACK.'), E_USER_NOTICE);
-                        return false;
-                    }
+            if ($this->WaitForResponse(1000)) {    //warte auf Reply
+                $Buffer = $this->Buffer;
+                $this->Buffer = '';
+                if ($Buffer == 'a') {
+                    $this->SendDebug('ACK', '', 1);
+
+                    $this->unlock('SendCommand');
+                    return true;
                 } else {
-                    $this->SendDebug('Timeout', '', 1);
+                    $this->SendDebug('NACK', '', 1);
                     $this->Connected = false;
                     $this->unlock('SendCommand');
-                    trigger_error($this->Translate('Controller do not response.'), E_USER_NOTICE);
+                    trigger_error($this->Translate('Controller send NACK.'), E_USER_NOTICE);
                     return false;
                 }
             } else {
                 $this->SendDebug('Timeout', '', 1);
+                $this->Connected = false;
                 $this->unlock('SendCommand');
                 trigger_error($this->Translate('Controller do not response.'), E_USER_NOTICE);
                 return false;
             }
+
         } else {
             $this->SendDebug('Timeout', '', 1);
 
@@ -682,6 +900,8 @@ class MS35 extends IPSModuleStrict
     }
 
     /**
+     * DoInit
+     *
      * Initialisiert den Controller und setzt die Statusvariablen auf einen definierten Wert.
      *
      * @return bool True bei Erfolg, sonst false.
@@ -721,6 +941,8 @@ class MS35 extends IPSModuleStrict
     }
 
     /**
+     * SendInit
+     *
      * Sendet die Initialisierung an den Controller und prüft die Rückmeldung.
      *
      * @throws Exception Wenn kein aktiver Parent verbunden ist.
@@ -739,33 +961,30 @@ class MS35 extends IPSModuleStrict
         for ($i = 0; $i < 9; $i++) {
             try {
                 $this->SendDebug('Send', chr(0xFD), 1);
-                $SendOk = $this->SendDataToParent(chr(0xFD));
+                $this->SendDataToParent(chr(0xFD));
             } catch (Exception $exc) {
                 $this->InitRun = false;
                 $this->Connected = false;
-
                 throw $exc;
             }
-            if ($SendOk) {
-                if ($this->WaitForResponse(250)) {    //warte auf Reply
-                    $Buffer = $this->Buffer;
-                    $this->Buffer = '';
-                    if ($Buffer == 'e') {
-                        $this->SendDebug('Receive Sync', '', 1);
-                        $InitState = true;
-                        $i = 9;
-                    }
+
+            if ($this->WaitForResponse(250)) {    //warte auf Reply
+                $Buffer = $this->Buffer;
+                $this->Buffer = '';
+                if ($Buffer == 'e') {
+                    $this->SendDebug('Receive Sync', '', 1);
+                    $InitState = true;
+                    $i = 9;
                 }
-            } else {
-                $i = 9;
             }
+
         }
         if ($InitState) {
             $InitState = false;
 
             try {
                 $this->SendDebug('Send', chr(0xFD) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0xCF) . chr(0x2C), 1);
-                $SendOk = $this->SendDataToParent(chr(0xFD) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0xCF) . chr(0x2C));
+                $this->SendDataToParent(chr(0xFD) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0x00) . chr(0xCF) . chr(0x2C));
             } catch (Exception $exc) {
                 $this->InitRun = false;
                 $this->Connected = false;
@@ -773,16 +992,14 @@ class MS35 extends IPSModuleStrict
                 throw $exc;
             }
 
-            if ($SendOk) {
-                for ($i = 0; $i < 8; $i++) {
-                    if ($this->WaitForResponse(250)) {    //warte auf Reply
-                        $Buffer = $this->Buffer;
-                        if (strpos($Buffer, 'C_RGB')) {
-                            $this->Buffer = '';
-                            $this->SendDebug('Controller ident', $Buffer, 0);
-                            $InitState = true;
-                            $i = 4;
-                        }
+            for ($i = 0; $i < 8; $i++) {
+                if ($this->WaitForResponse(250)) {    //warte auf Reply
+                    $Buffer = $this->Buffer;
+                    if (strpos($Buffer, 'C_RGB')) {
+                        $this->Buffer = '';
+                        $this->SendDebug('Controller ident', $Buffer, 0);
+                        $InitState = true;
+                        $i = 4;
                     }
                 }
             }
@@ -798,10 +1015,11 @@ class MS35 extends IPSModuleStrict
         $this->InitRun = false;
         $this->SendDebug('Error Init', 'Controller', 0);
         throw new Exception($this->Translate('Could not initialize controller.'), E_USER_NOTICE);
-        return false;
     }
 
     /**
+     * AddCRC16
+     *
      * Fügt dem übergebenden String eine CRC16 hinzu.
      *
      * @param string $string String aus welchem die CRC gebildet wird.
@@ -829,6 +1047,8 @@ class MS35 extends IPSModuleStrict
     }
 
     /**
+     * WaitForResponse
+     *
      * Warte auf das SetReply Event.
      *
      * @param int $Timeout Max. Zeit in ms in der dass Event eintreffen muss.
