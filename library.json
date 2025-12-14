@@ -3,8 +3,8 @@
     "author": "Michael Tröger",
     "name": "MS35 RGB Library",
     "url": "https://github.com/Nall-chan/MS35",
-    "version": "2.21",
-    "build": 221,
+    "version": "2.22",
+    "build": 222,
     "date": 1765710249,
     "compatibility": {
         "version": "8.1"
